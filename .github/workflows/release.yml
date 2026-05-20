@@ -33,7 +33,6 @@ jobs:
             -r linux-x64 \
             --self-contained \
             -p:Version=${{ env.VERSION }} \
-            -p:FileVersion=${{ env.VERSION }}.0 \
             -o ./publish/linux-x64
 
       - name: Build AppImage
@@ -59,7 +58,6 @@ jobs:
             -p:PublishSingleFile=true \
             -p:IncludeNativeLibrariesForSelfExtract=true \
             -p:Version=${{ env.VERSION }} \
-            -p:FileVersion=${{ env.VERSION }}.0 \
             -o ./publish/win-x64
 
       - name: Build Windows ZIP
