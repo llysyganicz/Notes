@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Extract version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Install DotnetPackaging tool
+        run: dotnet tool install --global DotnetPackaging.Tool --version 10.1.3
+
+      # ── Linux ──────────────────────────────────────────────────────────────
+
+      - name: Publish Linux (x64)
+        run: |
+          dotnet publish Notes.csproj \
+            -c Release \
+            -r linux-x64 \
+            --self-contained \
+            -p:Version=${{ env.VERSION }} \
+            -p:FileVersion=${{ env.VERSION }}.0 \
+            -o ./publish/linux-x64
+
+      - name: Build AppImage
+        run: |
+          mkdir -p artifacts
+          dotnetpackager appimage \
+            --directory ./publish/linux-x64 \
+            --output ./artifacts/Notes-${{ github.ref_name }}-x86_64.AppImage \
+            --application-name "Notes" \
+            --summary "Markdown note-taking app" \
+            --version ${{ env.VERSION }} \
+            --homepage https://github.com/${{ github.repository }}
+          chmod +x ./artifacts/Notes-${{ github.ref_name }}-x86_64.AppImage
+
+      # ── Windows ────────────────────────────────────────────────────────────
+
+      - name: Publish Windows (x64)
+        run: |
+          dotnet publish Notes.csproj \
+            -c Release \
+            -r win-x64 \
+            --self-contained \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:Version=${{ env.VERSION }} \
+            -p:FileVersion=${{ env.VERSION }}.0 \
+            -o ./publish/win-x64
+
+      - name: Build Windows ZIP
+        run: |
+          cd ./publish/win-x64
+          zip -r ../../artifacts/Notes-${{ github.ref_name }}-win-x64.zip .
+
+      # ── Release ────────────────────────────────────────────────────────────
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          files: |
+            artifacts/Notes-${{ github.ref_name }}-x86_64.AppImage
+            artifacts/Notes-${{ github.ref_name }}-win-x64.zip
