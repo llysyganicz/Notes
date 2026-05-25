@@ -66,5 +66,7 @@ public partial class App : Application
         {
             viewModel.WorkspacePath = settings.WorkspacePath;
         }
+
+        await viewModel.LoadTreeCommand.ExecuteAsync(null);
     }
 }

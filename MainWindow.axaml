@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:Notes.ViewModels"
+        xmlns:models="using:Notes.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Notes.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -15,10 +16,20 @@
                 <MenuItem Header="E_xit" Command="{Binding ExitCommand}" />
             </MenuItem>
         </Menu>
-        <Border Padding="20">
-            <TextBlock Text="Notes will appear here."
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" />
-        </Border>
+        <TreeView ItemsSource="{Binding Root.Children}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Children}" DataType="models:NoteTreeNode">
+                    <TextBlock Text="{Binding Name}">
+                        <TextBlock.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Delete"
+                                          Command="{Binding $parent[TreeView].((vm:MainWindowViewModel)DataContext).DeleteNoteCommand}"
+                                          CommandParameter="{Binding}" />
+                            </ContextMenu>
+                        </TextBlock.ContextMenu>
+                    </TextBlock>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
     </DockPanel>
 </Window>

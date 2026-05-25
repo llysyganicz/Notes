@@ -438,32 +438,32 @@ Greenfield — no existing data to migrate. The settings file is created on firs
 
 #### Automated
 
-- [x] 2.1 `dotnet build` succeeds with no new warnings
-- [x] 2.2 `dotnet test` remains green
+- [x] 2.1 `dotnet build` succeeds with no new warnings — 2b4cec39
+- [x] 2.2 `dotnet test` remains green — 2b4cec39
 
 #### Manual
 
-- [x] 2.3 First launch (delete `settings.json` first) shows the main window with the folder picker as a modal on top; selecting a folder writes `settings.json` and the main window's title bar reflects the chosen path
-- [x] 2.4 Cancelling the first-launch picker exits the app cleanly (main window closes with it)
-- [x] 2.5 Restarting the app skips the picker and opens straight to the main window
-- [x] 2.6 `File → Change Notes Folder…` reopens the picker; selecting updates title bar; cancelling leaves things unchanged
-- [x] 2.7 `File → Exit` closes the app
-- [x] 2.8 Stale workspace path: deleting/renaming the saved folder before relaunch causes the app to show the picker (clear-and-reset behavior)
+- [x] 2.3 First launch (delete `settings.json` first) shows the main window with the folder picker as a modal on top; selecting a folder writes `settings.json` and the main window's title bar reflects the chosen path — 2b4cec39
+- [x] 2.4 Cancelling the first-launch picker exits the app cleanly (main window closes with it) — 2b4cec39
+- [x] 2.5 Restarting the app skips the picker and opens straight to the main window — 2b4cec39
+- [x] 2.6 `File → Change Notes Folder…` reopens the picker; selecting updates title bar; cancelling leaves things unchanged — 2b4cec39
+- [x] 2.7 `File → Exit` closes the app — 2b4cec39
+- [x] 2.8 Stale workspace path: deleting/renaming the saved folder before relaunch causes the app to show the picker (clear-and-reset behavior) — 2b4cec39
 
 ### Phase 3: Note tree and delete with confirmation
 
 #### Automated
 
-- [ ] 3.1 `dotnet build` succeeds with no new warnings
-- [ ] 3.2 `dotnet test` remains green
+- [x] 3.1 `dotnet build` succeeds with no new warnings
+- [x] 3.2 `dotnet test` remains green
 
 #### Manual
 
-- [ ] 3.3 Workspace with nested `.md` files renders the full hierarchy; folders expand/collapse; same-named folders at different depths remain distinct
-- [ ] 3.4 Changing the workspace via the menu reloads the tree
-- [ ] 3.5 Right-clicking a file node opens a context menu with "Delete"
-- [ ] 3.6 Clicking Delete opens the confirmation dialog showing the note's relative path
-- [ ] 3.7 Confirming deletes the file from disk and removes the leaf from the tree
-- [ ] 3.8 Cancelling the confirmation dialog leaves the file and tree untouched
-- [ ] 3.9 An empty workspace shows an empty `TreeView` with no error
-- [ ] 3.10 A workspace with `.templates/` shows the templates folder and its `.md` files (per chosen no-filter behavior)
+- [x] 3.3 Workspace with nested `.md` files renders the full hierarchy; folders expand/collapse; same-named folders at different depths remain distinct
+- [x] 3.4 Changing the workspace via the menu reloads the tree
+- [x] 3.5 Right-clicking a file node opens a context menu with "Delete"
+- [x] 3.6 Clicking Delete opens the confirmation dialog showing the note's relative path
+- [x] 3.7 Confirming deletes the file from disk and removes the leaf from the tree
+- [x] 3.8 Cancelling the confirmation dialog leaves the file and tree untouched
+- [x] 3.9 An empty workspace shows an empty `TreeView` with no error
+- [x] 3.10 A workspace with `.templates/` shows the templates folder and its `.md` files (per chosen no-filter behavior)

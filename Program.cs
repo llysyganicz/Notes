@@ -37,6 +37,7 @@ class Program
         services.AddSingleton<NoteTreeBuilder>();
         services.AddSingleton<INoteDeleter, NoteDeleter>();
         services.AddSingleton<IFolderPicker, AvaloniaFolderPicker>();
+        services.AddSingleton<IConfirmDialogService, ConfirmDialogService>();
 
         services.AddTransient<MainWindow>();
         services.AddTransient<MainWindowViewModel>();
