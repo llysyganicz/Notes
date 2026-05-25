@@ -1,7 +1,7 @@
 ---
 change_id: workspace-and-note-list
 title: Workspace selection, note list with folder grouping, and note deletion
-status: implementing
+status: implemented
 created: 2026-05-25
 updated: 2026-05-25
 roadmap_ref: S-01

@@ -454,16 +454,16 @@ Greenfield — no existing data to migrate. The settings file is created on firs
 
 #### Automated
 
-- [x] 3.1 `dotnet build` succeeds with no new warnings
-- [x] 3.2 `dotnet test` remains green
+- [x] 3.1 `dotnet build` succeeds with no new warnings — 2c51c970
+- [x] 3.2 `dotnet test` remains green — 2c51c970
 
 #### Manual
 
-- [x] 3.3 Workspace with nested `.md` files renders the full hierarchy; folders expand/collapse; same-named folders at different depths remain distinct
-- [x] 3.4 Changing the workspace via the menu reloads the tree
-- [x] 3.5 Right-clicking a file node opens a context menu with "Delete"
-- [x] 3.6 Clicking Delete opens the confirmation dialog showing the note's relative path
-- [x] 3.7 Confirming deletes the file from disk and removes the leaf from the tree
-- [x] 3.8 Cancelling the confirmation dialog leaves the file and tree untouched
-- [x] 3.9 An empty workspace shows an empty `TreeView` with no error
-- [x] 3.10 A workspace with `.templates/` shows the templates folder and its `.md` files (per chosen no-filter behavior)
+- [x] 3.3 Workspace with nested `.md` files renders the full hierarchy; folders expand/collapse; same-named folders at different depths remain distinct — 2c51c970
+- [x] 3.4 Changing the workspace via the menu reloads the tree — 2c51c970
+- [x] 3.5 Right-clicking a file node opens a context menu with "Delete" — 2c51c970
+- [x] 3.6 Clicking Delete opens the confirmation dialog showing the note's relative path — 2c51c970
+- [x] 3.7 Confirming deletes the file from disk and removes the leaf from the tree — 2c51c970
+- [x] 3.8 Cancelling the confirmation dialog leaves the file and tree untouched — 2c51c970
+- [x] 3.9 An empty workspace shows an empty `TreeView` with no error — 2c51c970
+- [x] 3.10 A workspace with `.templates/` shows the templates folder and its `.md` files (per chosen no-filter behavior) — 2c51c970
