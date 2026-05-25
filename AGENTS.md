@@ -24,6 +24,7 @@ No test framework is configured yet. When adding tests, use a separate `Notes.Te
 - **MVVM pattern:** Keep business logic out of code-behind (.axaml.cs) files. Views bind to ViewModels; code-behind should only contain UI wiring.
 - **Compiled bindings** are enabled by default — use `x:DataType` in AXAML and avoid reflection-based bindings.
 - **Composition over inheritance** for extracting shared behavior between similar components.
+- **No `Async` suffix without a sync sibling:** prefer `Task LoadTree()` over `Task LoadTreeAsync()` — the `Task` return type already signals async. Keep the suffix only when a synchronous method with the same base name exists, or when the API is framework-owned (e.g. `IStorageProvider.OpenFolderPickerAsync`).
 
 ## Version Control
 
