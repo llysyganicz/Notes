@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using Notes.Services;
+using Notes.ViewModels;
 
 namespace Notes;
 
@@ -38,6 +39,7 @@ class Program
         services.AddSingleton<IFolderPicker, AvaloniaFolderPicker>();
 
         services.AddTransient<MainWindow>();
+        services.AddTransient<MainWindowViewModel>();
 
         return services.BuildServiceProvider();
     }

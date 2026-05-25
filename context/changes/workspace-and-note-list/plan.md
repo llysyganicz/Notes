@@ -425,30 +425,30 @@ Greenfield — no existing data to migrate. The settings file is created on firs
 
 #### Automated
 
-- [x] 1.1 `dotnet build` succeeds with no warnings introduced beyond baseline
-- [x] 1.2 `dotnet test` runs and all `Notes.Tests` cases pass
-- [x] 1.3 `Notes.sln` lists both projects and `dotnet build Notes.sln` builds both
-- [x] 1.4 DI container resolves `MainWindow` without throwing on startup
+- [x] 1.1 `dotnet build` succeeds with no warnings introduced beyond baseline — 42f936d2
+- [x] 1.2 `dotnet test` runs and all `Notes.Tests` cases pass — 42f936d2
+- [x] 1.3 `Notes.sln` lists both projects and `dotnet build Notes.sln` builds both — 42f936d2
+- [x] 1.4 DI container resolves `MainWindow` without throwing on startup — 42f936d2
 
 #### Manual
 
-- [x] 1.5 App still launches and shows the existing `Welcome to Avalonia!` window
+- [x] 1.5 App still launches and shows the existing `Welcome to Avalonia!` window — 42f936d2
 
 ### Phase 2: First-launch picker, main shell, and workspace menu
 
 #### Automated
 
-- [ ] 2.1 `dotnet build` succeeds with no new warnings
-- [ ] 2.2 `dotnet test` remains green
+- [x] 2.1 `dotnet build` succeeds with no new warnings
+- [x] 2.2 `dotnet test` remains green
 
 #### Manual
 
-- [ ] 2.3 First launch (delete `settings.json` first) shows the main window with the folder picker as a modal on top; selecting a folder writes `settings.json` and the main window's title bar reflects the chosen path
-- [ ] 2.4 Cancelling the first-launch picker exits the app cleanly (main window closes with it)
-- [ ] 2.5 Restarting the app skips the picker and opens straight to the main window
-- [ ] 2.6 `File → Change Notes Folder…` reopens the picker; selecting updates title bar; cancelling leaves things unchanged
-- [ ] 2.7 `File → Exit` closes the app
-- [ ] 2.8 Stale workspace path: deleting/renaming the saved folder before relaunch causes the app to show the picker (clear-and-reset behavior)
+- [x] 2.3 First launch (delete `settings.json` first) shows the main window with the folder picker as a modal on top; selecting a folder writes `settings.json` and the main window's title bar reflects the chosen path
+- [x] 2.4 Cancelling the first-launch picker exits the app cleanly (main window closes with it)
+- [x] 2.5 Restarting the app skips the picker and opens straight to the main window
+- [x] 2.6 `File → Change Notes Folder…` reopens the picker; selecting updates title bar; cancelling leaves things unchanged
+- [x] 2.7 `File → Exit` closes the app
+- [x] 2.8 Stale workspace path: deleting/renaming the saved folder before relaunch causes the app to show the picker (clear-and-reset behavior)
 
 ### Phase 3: Note tree and delete with confirmation
 
