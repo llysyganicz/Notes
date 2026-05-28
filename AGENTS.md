@@ -37,6 +37,7 @@ dotnet publish Notes/Notes.csproj -c Release -r win-x64 --self-contained
 - **Compiled bindings** are enabled by default — use `x:DataType` in AXAML and avoid reflection-based bindings.
 - **Share behavior across ViewModels via DI-injected services, not base-class hierarchies.** When two ViewModels need the same logic, register it as a service in `Notes/Program.cs` and inject it into both rather than introducing a `ViewModelBase` parent.
 - **No `Async` suffix without a sync sibling:** prefer `Task LoadTree()` over `Task LoadTreeAsync()` — the `Task` return type already signals async. Keep the suffix only when a synchronous method with the same base name exists, or when the API is framework-owned (e.g. `IStorageProvider.OpenFolderPickerAsync`).
+- **Test method naming — `Method_WhenScenario_ExpectedBehaviour`:** three PascalCase segments separated by underscores, e.g. `Load_WhenFileMissing_ReturnsEmpty`, `Save_WhenParentDirectoryMissing_CreatesParentDirectory`. The expected-behaviour segment leads with a verb (`Returns`, `Creates`, `Throws`, `Calls`). Use `WhenCalled` when the test asserts a general property with no specific scenario.
 
 ## Version Control
 
