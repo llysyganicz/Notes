@@ -111,7 +111,7 @@ jobs:
 
       - name: Publish Linux (x64)
         run: |
-          dotnet publish Notes.csproj -c Release -r linux-x64 \
+          dotnet publish Notes/Notes.csproj -c Release -r linux-x64 \
             --self-contained -o ./publish/linux-x64
 
       - name: Build AppImage
@@ -125,7 +125,7 @@ jobs:
 
       - name: Publish Windows (x64)
         run: |
-          dotnet publish Notes.csproj -c Release -r win-x64 \
+          dotnet publish Notes/Notes.csproj -c Release -r win-x64 \
             --self-contained -p:PublishSingleFile=true \
             -o ./publish/win-x64
 
@@ -191,7 +191,7 @@ The Linux AppImage works on Arch and Ubuntu but fails silently on Fedora 40 — 
 
 ## Getting Started
 
-1. Add version metadata to `Notes.csproj` before first release:
+1. Add version metadata to `Notes/Notes.csproj` before first release:
    ```xml
    <AssemblyTitle>Notes</AssemblyTitle>
    <Product>Notes</Product>

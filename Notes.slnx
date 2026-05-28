@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="Notes.csproj" />
+  <Project Path="Notes/Notes.csproj" />
   <Project Path="Notes.Tests/Notes.Tests.csproj" />
 </Solution>

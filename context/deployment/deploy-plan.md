@@ -40,7 +40,7 @@ gh run watch --repo llysyganicz/Notes
 ## Versioning
 
 - The tag drives the `Version` property passed to `dotnet publish` (e.g. tag `v1.2.3-beta.1` → `Version=1.2.3-beta.1`).
-- `FileVersion` is **not** overridden by the tag — it uses the static value in `Notes.csproj` (`0.0.1.0`). Update it manually in `Notes.csproj` for major releases. Windows requires `FileVersion` to be numeric (`major.minor.build.revision`).
+- `FileVersion` is **not** overridden by the tag — it uses the static value in `Notes/Notes.csproj` (`0.0.1.0`). Update it manually in `Notes/Notes.csproj` for major releases. Windows requires `FileVersion` to be numeric (`major.minor.build.revision`).
 
 ## Rollback
 
