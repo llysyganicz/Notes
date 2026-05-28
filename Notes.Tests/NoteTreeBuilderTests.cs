@@ -11,7 +11,7 @@ public sealed class NoteTreeBuilderTests
     private readonly NoteTreeBuilder _builder = new();
 
     [Fact]
-    public void Empty_input_produces_root_with_no_children()
+    public void Build_WhenInputEmpty_ReturnsRootWithNoChildren()
     {
         var tree = _builder.Build(new List<string>());
 
@@ -22,7 +22,7 @@ public sealed class NoteTreeBuilderTests
     }
 
     [Fact]
-    public void Single_root_level_file_becomes_a_file_child()
+    public void Build_WhenRootLevelFile_ReturnsFileChild()
     {
         var tree = _builder.Build(new[] { "notes.md" });
 
@@ -33,7 +33,7 @@ public sealed class NoteTreeBuilderTests
     }
 
     [Fact]
-    public void Nested_file_creates_intermediate_folder_nodes()
+    public void Build_WhenNestedFile_CreatesIntermediateFolderNodes()
     {
         var tree = _builder.Build(new[] { "a/b/c.md" });
 
@@ -54,7 +54,7 @@ public sealed class NoteTreeBuilderTests
     }
 
     [Fact]
-    public void Folders_sort_before_files_at_the_same_level()
+    public void Build_WhenFoldersAndFilesAtSameLevel_SortsFoldersFirst()
     {
         var tree = _builder.Build(new[] { "zzz.md", "aaa/file.md" });
 
@@ -66,7 +66,7 @@ public sealed class NoteTreeBuilderTests
     }
 
     [Fact]
-    public void Same_folder_name_at_different_depths_remain_distinct()
+    public void Build_WhenSameFolderNameAtDifferentDepths_KeepsThemDistinct()
     {
         var tree = _builder.Build(new[] { "sub/x.md", "outer/sub/y.md" });
 
@@ -80,7 +80,7 @@ public sealed class NoteTreeBuilderTests
     }
 
     [Fact]
-    public void Children_at_each_level_are_alphabetically_sorted()
+    public void Build_WhenCalled_SortsChildrenAlphabetically()
     {
         var tree = _builder.Build(new[] { "delta.md", "alpha.md", "charlie.md", "bravo.md" });
 
@@ -89,7 +89,7 @@ public sealed class NoteTreeBuilderTests
     }
 
     [Fact]
-    public void Sort_is_case_insensitive_within_a_level()
+    public void Build_WhenMixedCase_SortsCaseInsensitively()
     {
         var tree = _builder.Build(new[] { "Banana.md", "apple.md" });
 
