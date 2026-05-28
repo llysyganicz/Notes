@@ -58,7 +58,7 @@ Program.cs ──builds──> ServiceProvider ──held by──> App
         ┌────────────────────────────────────────────┴────────────────────────────────────────────┐
         ▼                                                                                          ▼
 MainWindowViewModel                                                              MainWindow.axaml (TreeView + Menu)
-  ├─ ISettingsService     (JSON read/write, atomic, per-OS path)
+  ├─ ISettingsService     (JSON read/write, per-OS path)
   ├─ IFolderPicker         (Avalonia IStorageProvider wrapper; self-resolves owner)
   ├─ IWorkspaceScanner     (Directory.EnumerateFiles ".md" recursive)
   ├─ NoteTreeBuilder       (pure: flat path list → NoteTreeNode hierarchy)

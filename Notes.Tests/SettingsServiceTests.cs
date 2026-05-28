@@ -70,13 +70,4 @@ public sealed class SettingsServiceTests : IDisposable
         Assert.True(File.Exists(nestedPath));
     }
 
-    [Fact]
-    public void Save_leaves_no_tmp_file_on_success()
-    {
-        var service = new SettingsService(ConfigPath());
-
-        service.Save(new AppSettings("/x"));
-
-        Assert.False(File.Exists(ConfigPath() + ".tmp"));
-    }
 }

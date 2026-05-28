@@ -45,10 +45,8 @@ public sealed class SettingsService : ISettingsService
             Directory.CreateDirectory(directory);
         }
 
-        var tmp = ConfigFilePath + ".tmp";
         var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(tmp, json);
-        File.Move(tmp, ConfigFilePath, overwrite: true);
+        File.WriteAllText(ConfigFilePath, json);
     }
 
     private static string DefaultConfigFilePath() =>
