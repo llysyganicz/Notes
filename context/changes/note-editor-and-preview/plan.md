@@ -613,21 +613,21 @@ No data migration. Existing `.md` files in the workspace open in the editor as-i
 
 #### Automated
 
-- [x] 2.1 `dotnet build` succeeds with no new warnings
-- [x] 2.2 `dotnet test` green; new `NewNoteNameValidatorTests` and extended tree VM tests pass
+- [x] 2.1 `dotnet build` succeeds with no new warnings — bcc2b62
+- [x] 2.2 `dotnet test` green; new `NewNoteNameValidatorTests` and extended tree VM tests pass — bcc2b62
 
 #### Manual
 
-- [x] 2.3 `File → New Note…` with no selection shows "Creating in: workspace root"
-- [x] 2.4 With a folder selected, the dialog shows the folder's relative path as the target
-- [x] 2.5 With a file selected, the dialog shows the parent folder (not the file's own path)
-- [x] 2.6 Empty / whitespace input disables Create and shows "Name cannot be empty"
-- [x] 2.7 Name with `/` or `\` shows the invalid-character error
-- [x] 2.8 Duplicate name shows the "already exists" error
-- [x] 2.9 Valid name creates the file in the resolved location, refreshes tree, opens the empty note in editor
-- [x] 2.10 Ctrl+N triggers the dialog without the menu being open
-- [x] 2.11 Cancelling leaves disk, tree, and editor untouched
-- [x] 2.12 Name entered without `.md` gets the suffix on disk
+- [x] 2.3 `File → New Note…` with no selection shows "Creating in: workspace root" — bcc2b62
+- [x] 2.4 With a folder selected, the dialog shows the folder's relative path as the target — bcc2b62
+- [x] 2.5 With a file selected, the dialog shows the parent folder (not the file's own path) — bcc2b62
+- [x] 2.6 Empty / whitespace input disables Create and shows "Name cannot be empty" — bcc2b62
+- [x] 2.7 Name with `/` or `\` shows the invalid-character error — bcc2b62
+- [x] 2.8 Duplicate name shows the "already exists" error — bcc2b62
+- [x] 2.9 Valid name creates the file in the resolved location, refreshes tree, opens the empty note in editor — bcc2b62
+- [x] 2.10 Ctrl+N triggers the dialog without the menu being open — bcc2b62
+- [x] 2.11 Cancelling leaves disk, tree, and editor untouched — bcc2b62
+- [x] 2.12 Name entered without `.md` gets the suffix on disk — bcc2b62
 
 ### Phase 3: Preview toggle
 

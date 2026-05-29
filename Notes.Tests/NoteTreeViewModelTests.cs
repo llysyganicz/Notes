@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Notes.Messaging;
 using Notes.Models;
 using Notes.Services;
+using Notes.Tests.Fakes;
 using Notes.ViewModels;
 using Xunit;
 
@@ -20,7 +21,7 @@ public sealed class NoteTreeViewModelTests : IDisposable
     private readonly StubConfirmDialogService _confirm = new();
     private readonly NewNoteNameValidator _validator = new();
     private readonly StubNewNoteDialogService _newNoteDialog = new();
-    private readonly StubNoteFileService _fileService = new();
+    private readonly InMemoryNoteFileService _fileService = new();
     private readonly string _workspace;
 
     public NoteTreeViewModelTests()
@@ -113,7 +114,7 @@ public sealed class NoteTreeViewModelTests : IDisposable
     [InlineData(NewNoteSelection.NoSelection, "", "untitled.md")]
     [InlineData(NewNoteSelection.FolderSelected, "sub", "sub/untitled.md")]
     [InlineData(NewNoteSelection.FileSelected, "sub/x.md", "sub/untitled.md")]
-    public async Task Receive_WhenNewNoteRequestedMessage_CreatesFileAtResolvedParent(
+    public void Receive_WhenNewNoteRequestedMessage_CreatesFileAtResolvedParent(
         NewNoteSelection selection,
         string selectedRelativePath,
         string expectedRelativePath)
@@ -140,10 +141,10 @@ public sealed class NoteTreeViewModelTests : IDisposable
             ? new List<string> { "untitled.md" }
             : new List<string> { "sub/x.md", "sub/untitled.md" };
 
-        await sut.HandleNewNote();
+        _messenger.Send(new NewNoteRequestedMessage());
 
         var expectedAbsolute = Path.Combine(_workspace, expectedRelativePath.Replace('/', Path.DirectorySeparatorChar));
-        Assert.Contains(expectedAbsolute, _fileService.SavedPaths);
+        Assert.Contains(expectedAbsolute, _fileService.FilesByPath);
         Assert.Equal(expectedRelativePath, sut.SelectedNode?.RelativePath);
     }
 
@@ -183,12 +184,4 @@ public sealed class NoteTreeViewModelTests : IDisposable
         }
     }
 
-    private sealed class StubNoteFileService : INoteFileService
-    {
-        public Dictionary<string, string> SavedPaths { get; } = new();
-
-        public string Read(string absolutePath) => string.Empty;
-
-        public void Save(string absolutePath, string text) => SavedPaths[absolutePath] = text;
-    }
 }

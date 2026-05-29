@@ -44,6 +44,6 @@ public sealed class NewNoteNameValidator : INewNoteNameValidator
             return new NoteNameResult.Failure("A note with that name already exists");
         }
 
-        return new NoteNameResult.Success(fileName);
+        return new NoteNameResult.Success(fileName, absolutePath);
     }
 }

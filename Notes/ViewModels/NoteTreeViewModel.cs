@@ -67,10 +67,17 @@ public sealed partial class NoteTreeViewModel :
 
     public async void Receive(NewNoteRequestedMessage message)
     {
-        await HandleNewNote();
+        try
+        {
+            await HandleNewNote();
+        }
+        catch
+        {
+            // async void recipients must not throw onto the SynchronizationContext.
+        }
     }
 
-    public async Task HandleNewNote()
+    private async Task HandleNewNote()
     {
         if (string.IsNullOrEmpty(_workspacePath))
         {
@@ -96,14 +103,7 @@ public sealed partial class NoteTreeViewModel :
             return;
         }
 
-        var parentSegment = string.IsNullOrEmpty(parentRelative)
-            ? string.Empty
-            : parentRelative.Replace('/', Path.DirectorySeparatorChar);
-        var absolutePath = string.IsNullOrEmpty(parentSegment)
-            ? Path.Combine(workspace, success.FileName)
-            : Path.Combine(workspace, parentSegment, success.FileName);
-
-        _fileService.Save(absolutePath, string.Empty);
+        _fileService.Save(success.AbsolutePath, string.Empty);
 
         await LoadTreeCommand.ExecuteAsync(null);
 

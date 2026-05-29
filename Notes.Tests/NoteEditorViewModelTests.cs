@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Notes.Messaging;
 using Notes.Models;
 using Notes.Services;
+using Notes.Tests.Fakes;
 using Notes.ViewModels;
 using Xunit;
 
@@ -13,7 +14,7 @@ namespace Notes.Tests;
 public sealed class NoteEditorViewModelTests
 {
     private readonly StrongReferenceMessenger _messenger = new();
-    private readonly StubNoteFileService _fileService = new();
+    private readonly InMemoryNoteFileService _fileService = new();
     private readonly StubAutoSaveScheduler _scheduler = new();
 
     private NoteEditorViewModel BuildSut() =>
@@ -137,17 +138,6 @@ public sealed class NoteEditorViewModelTests
         _scheduler.RaiseOnSave();
 
         Assert.Empty(_fileService.FilesByPath);
-    }
-
-    private sealed class StubNoteFileService : INoteFileService
-    {
-        public Dictionary<string, string> FilesByPath { get; } = new();
-
-        public string Read(string absolutePath) =>
-            FilesByPath.TryGetValue(absolutePath, out var value) ? value : string.Empty;
-
-        public void Save(string absolutePath, string text) =>
-            FilesByPath[absolutePath] = text;
     }
 
     private sealed class StubAutoSaveScheduler : IAutoSaveScheduler

@@ -9,7 +9,7 @@ public abstract record NoteNameResult
 {
     private NoteNameResult() { }
 
-    public sealed record Success(string FileName) : NoteNameResult;
+    public sealed record Success(string FileName, string AbsolutePath) : NoteNameResult;
 
     public sealed record Failure(string Error) : NoteNameResult;
 }

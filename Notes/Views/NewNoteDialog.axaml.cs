@@ -55,7 +55,7 @@ public partial class NewNoteDialog : Window
 
     private void OnCreate(object? sender, RoutedEventArgs e)
     {
-        var text = (NameInput.Text ?? string.Empty).Trim();
+        var text = NameInput.Text ?? string.Empty;
         if (_validate?.Invoke(text) is not null)
         {
             return;
