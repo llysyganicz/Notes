@@ -12,7 +12,7 @@ namespace Notes.Tests;
 
 public sealed class NoteTreeViewModelTests
 {
-    private readonly WeakReferenceMessenger _messenger = new();
+    private readonly StrongReferenceMessenger _messenger = new();
     private readonly StubWorkspaceScanner _scanner = new();
     private readonly NoteTreeBuilder _treeBuilder = new();
     private readonly StubNoteDeleter _deleter = new();

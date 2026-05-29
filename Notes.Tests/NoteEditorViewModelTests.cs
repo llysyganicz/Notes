@@ -12,7 +12,7 @@ namespace Notes.Tests;
 
 public sealed class NoteEditorViewModelTests
 {
-    private readonly WeakReferenceMessenger _messenger = new();
+    private readonly StrongReferenceMessenger _messenger = new();
     private readonly StubNoteFileService _fileService = new();
     private readonly StubAutoSaveScheduler _scheduler = new();
 

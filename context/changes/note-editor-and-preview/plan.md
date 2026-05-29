@@ -595,19 +595,19 @@ No data migration. Existing `.md` files in the workspace open in the editor as-i
 
 #### Automated
 
-- [x] 1.1 `dotnet build` succeeds with no new warnings beyond baseline
-- [x] 1.2 `dotnet test` is green; new `NoteFileServiceTests`, `NoteTreeViewModelTests`, `NoteEditorViewModelTests` cases pass alongside the existing S-01 suite
-- [x] 1.3 The app starts and resolves the new singletons + child VMs without DI errors
+- [x] 1.1 `dotnet build` succeeds with no new warnings beyond baseline — 842ffe9
+- [x] 1.2 `dotnet test` is green; new `NoteFileServiceTests`, `NoteTreeViewModelTests`, `NoteEditorViewModelTests` cases pass alongside the existing S-01 suite — 842ffe9
+- [x] 1.3 The app starts and resolves the new singletons + child VMs without DI errors — 842ffe9
 
 #### Manual
 
-- [x] 1.4 S-01 regressions: first-launch picker, stale-path recovery, Change Notes Folder, right-click → Delete with confirmation all behave as before
-- [x] 1.5 Selecting a `.md` file in the tree opens its content in the editor pane with markdown syntax highlighting visible
-- [x] 1.6 Selecting a folder node clears the editor and shows the empty hint
-- [x] 1.7 Typing pauses ~500 ms after the last keystroke and the file on disk reflects the new content
-- [x] 1.8 Switching notes immediately persists pending edits (no debounce wait); previous file matches the editor's last state
-- [x] 1.9 Deleting the currently-open note via the tree closes the editor to the empty hint without errors
-- [x] 1.10 Changing the workspace flushes pending saves, refreshes the tree, and resets the editor to empty
+- [x] 1.4 S-01 regressions: first-launch picker, stale-path recovery, Change Notes Folder, right-click → Delete with confirmation all behave as before — 842ffe9
+- [x] 1.5 Selecting a `.md` file in the tree opens its content in the editor pane with markdown syntax highlighting visible — 842ffe9
+- [x] 1.6 Selecting a folder node clears the editor and shows the empty hint — 842ffe9
+- [x] 1.7 Typing pauses ~500 ms after the last keystroke and the file on disk reflects the new content — 842ffe9
+- [x] 1.8 Switching notes immediately persists pending edits (no debounce wait); previous file matches the editor's last state — 842ffe9
+- [x] 1.9 Deleting the currently-open note via the tree closes the editor to the empty hint without errors — 842ffe9
+- [x] 1.10 Changing the workspace flushes pending saves, refreshes the tree, and resets the editor to empty — 842ffe9
 
 ### Phase 2: New note creation
 

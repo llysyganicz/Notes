@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -120,6 +122,17 @@ public sealed partial class NoteEditorViewModel :
 
         var relative = _currentNote.RelativePath.Replace('/', Path.DirectorySeparatorChar);
         var absolutePath = Path.Combine(_workspacePath, relative);
-        _fileService.Save(absolutePath, _currentEditorText);
+        try
+        {
+            _fileService.Save(absolutePath, _currentEditorText);
+        }
+        catch (IOException ex)
+        {
+            Trace.WriteLine($"Auto-save failed for '{absolutePath}': {ex.Message}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Trace.WriteLine($"Auto-save denied for '{absolutePath}': {ex.Message}");
+        }
     }
 }
