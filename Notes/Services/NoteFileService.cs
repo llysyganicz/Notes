@@ -14,7 +14,7 @@ public sealed class NoteFileService : INoteFileService
             return string.Empty;
         }
 
-        return File.ReadAllText(absolutePath, Encoding.UTF8);
+        return File.ReadAllText(absolutePath);
     }
 
     public void Save(string absolutePath, string text)

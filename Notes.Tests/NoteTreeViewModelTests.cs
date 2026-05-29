@@ -148,6 +148,41 @@ public sealed class NoteTreeViewModelTests : IDisposable
         Assert.Equal(expectedRelativePath, sut.SelectedNode?.RelativePath);
     }
 
+    [Fact]
+    public void Receive_WhenNewNoteRequestedMessageWithoutWorkspace_DoesNothing()
+    {
+        var sut = BuildSut();
+        _newNoteDialog.Response = "untitled";
+
+        _messenger.Send(new NewNoteRequestedMessage());
+
+        Assert.Empty(_fileService.FilesByPath);
+    }
+
+    [Fact]
+    public void Receive_WhenNewNoteDialogCancelled_DoesNothing()
+    {
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage(_workspace));
+        _newNoteDialog.Response = null;
+
+        _messenger.Send(new NewNoteRequestedMessage());
+
+        Assert.Empty(_fileService.FilesByPath);
+    }
+
+    [Fact]
+    public void Receive_WhenNewNoteDefensiveValidationFails_DoesNothing()
+    {
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage(_workspace));
+        _newNoteDialog.Response = "bad/name";
+
+        _messenger.Send(new NewNoteRequestedMessage());
+
+        Assert.Empty(_fileService.FilesByPath);
+    }
+
     private sealed class StubWorkspaceScanner : IWorkspaceScanner
     {
         public List<string> Paths { get; set; } = new();

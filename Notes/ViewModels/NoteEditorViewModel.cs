@@ -69,9 +69,17 @@ public sealed partial class NoteEditorViewModel :
 
     public void Receive(NoteSelectedMessage message)
     {
+        var node = message.Node;
+        if (node is not null
+            && node.Kind == NoteNodeKind.File
+            && _currentNote is not null
+            && node.RelativePath == _currentNote.RelativePath)
+        {
+            return;
+        }
+
         _scheduler.Flush();
 
-        var node = message.Node;
         if (node is null || node.Kind != NoteNodeKind.File || string.IsNullOrEmpty(_workspacePath))
         {
             _currentNote = null;
@@ -83,7 +91,21 @@ public sealed partial class NoteEditorViewModel :
 
         var relative = node.RelativePath.Replace('/', Path.DirectorySeparatorChar);
         var absolutePath = Path.Combine(_workspacePath, relative);
-        var content = _fileService.Read(absolutePath);
+        string content;
+        try
+        {
+            content = _fileService.Read(absolutePath);
+        }
+        catch (IOException ex)
+        {
+            Trace.WriteLine($"Note read failed for '{absolutePath}': {ex.Message}");
+            content = string.Empty;
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Trace.WriteLine($"Note read denied for '{absolutePath}': {ex.Message}");
+            content = string.Empty;
+        }
 
         _currentNote = node;
         _currentEditorText = content;
