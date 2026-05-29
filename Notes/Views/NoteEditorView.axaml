@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Notes.ViewModels"
+             xmlns:edit="https://github.com/avaloniaui/avaloniaedit"
+             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+             mc:Ignorable="d"
+             x:Class="Notes.Views.NoteEditorView"
+             x:DataType="vm:NoteEditorViewModel"
+             DataContext="{ReflectionBinding Editor, Source={StaticResource Locator}}">
+    <Grid>
+        <TextBlock Text="Select a note to edit"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Opacity="0.6"
+                   IsVisible="{Binding IsEmpty}" />
+        <edit:TextEditor x:Name="Editor"
+                         ShowLineNumbers="True"
+                         WordWrap="True"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         IsVisible="{Binding IsEditing}" />
+        <md:MarkdownScrollViewer Markdown="{Binding PreviewText}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 IsVisible="{Binding IsPreviewing}" />
+    </Grid>
+</UserControl>

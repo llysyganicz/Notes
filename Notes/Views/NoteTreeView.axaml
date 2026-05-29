@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Notes.ViewModels"
+             xmlns:models="using:Notes.Models"
+             mc:Ignorable="d"
+             x:Class="Notes.Views.NoteTreeView"
+             x:DataType="vm:NoteTreeViewModel"
+             DataContext="{ReflectionBinding Tree, Source={StaticResource Locator}}">
+    <TreeView ItemsSource="{Binding Root.Children}"
+              SelectedItem="{Binding SelectedNode, Mode=TwoWay}">
+        <TreeView.ItemTemplate>
+            <TreeDataTemplate ItemsSource="{Binding Children}" DataType="models:NoteTreeNode">
+                <TextBlock Text="{Binding Name}">
+                    <TextBlock.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete"
+                                      Command="{Binding $parent[TreeView].((vm:NoteTreeViewModel)DataContext).DeleteNoteCommand}"
+                                      CommandParameter="{Binding}" />
+                        </ContextMenu>
+                    </TextBlock.ContextMenu>
+                </TextBlock>
+            </TreeDataTemplate>
+        </TreeView.ItemTemplate>
+    </TreeView>
+</UserControl>

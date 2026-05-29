@@ -4,6 +4,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Notes.Messaging;
 using Notes.Models;
 using Notes.Services;
 
@@ -11,33 +13,52 @@ namespace Notes.ViewModels;
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {
+    private readonly IMessenger _messenger;
     private readonly ISettingsService _settingsService;
     private readonly IFolderPicker _folderPicker;
-    private readonly IWorkspaceScanner _scanner;
-    private readonly NoteTreeBuilder _treeBuilder;
-    private readonly INoteDeleter _noteDeleter;
-    private readonly IConfirmDialogService _confirmDialog;
 
     [ObservableProperty]
     private string? _workspacePath;
 
-    [ObservableProperty]
-    private NoteTreeNode? _root;
-
     public MainWindowViewModel(
+        IMessenger messenger,
         ISettingsService settingsService,
-        IFolderPicker folderPicker,
-        IWorkspaceScanner scanner,
-        NoteTreeBuilder treeBuilder,
-        INoteDeleter noteDeleter,
-        IConfirmDialogService confirmDialog)
+        IFolderPicker folderPicker)
     {
+        _messenger = messenger;
         _settingsService = settingsService;
         _folderPicker = folderPicker;
-        _scanner = scanner;
-        _treeBuilder = treeBuilder;
-        _noteDeleter = noteDeleter;
-        _confirmDialog = confirmDialog;
+    }
+
+    public async Task<bool> InitializeAsync()
+    {
+        var settings = _settingsService.Load();
+        if (!string.IsNullOrEmpty(settings.WorkspacePath) && !Directory.Exists(settings.WorkspacePath))
+        {
+            _settingsService.Save(AppSettings.Empty);
+            settings = AppSettings.Empty;
+        }
+
+        string workspace;
+        if (string.IsNullOrEmpty(settings.WorkspacePath))
+        {
+            var picked = await _folderPicker.PickFolder();
+            if (picked is null)
+            {
+                return false;
+            }
+
+            _settingsService.Save(new AppSettings(picked));
+            workspace = picked;
+        }
+        else
+        {
+            workspace = settings.WorkspacePath;
+        }
+
+        WorkspacePath = workspace;
+        _messenger.Send(new WorkspaceChangedMessage(workspace));
+        return true;
     }
 
     [RelayCommand]
@@ -51,7 +72,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         _settingsService.Save(new AppSettings(picked));
         WorkspacePath = picked;
-        await LoadTreeCommand.ExecuteAsync(null);
+        _messenger.Send(new WorkspaceChangedMessage(picked));
+    }
+
+    [RelayCommand]
+    private void NewNote()
+    {
+        _messenger.Send(new NewNoteRequestedMessage());
+    }
+
+    [RelayCommand]
+    private void TogglePreview()
+    {
+        _messenger.Send(new TogglePreviewRequestedMessage());
     }
 
     [RelayCommand]
@@ -59,44 +92,4 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
     }
-
-    [RelayCommand]
-    private Task LoadTree()
-    {
-        var workspace = WorkspacePath;
-        if (string.IsNullOrEmpty(workspace))
-        {
-            Root = null;
-            return Task.CompletedTask;
-        }
-
-        var paths = _scanner.ScanMarkdownFiles(workspace);
-        Root = _treeBuilder.Build(paths);
-        return Task.CompletedTask;
-    }
-
-    [RelayCommand(CanExecute = nameof(CanDeleteNote))]
-    private async Task DeleteNote(NoteTreeNode? node)
-    {
-        if (node is null || node.Kind != NoteNodeKind.File || string.IsNullOrEmpty(WorkspacePath))
-        {
-            return;
-        }
-
-        var confirmed = await _confirmDialog.Confirm(
-            "Delete note",
-            $"Are you sure you want to delete\n{node.RelativePath}?");
-        if (!confirmed)
-        {
-            return;
-        }
-
-        var relative = node.RelativePath.Replace('/', Path.DirectorySeparatorChar);
-        var absolutePath = Path.Combine(WorkspacePath, relative);
-        _noteDeleter.Delete(absolutePath);
-        await LoadTreeCommand.ExecuteAsync(null);
-    }
-
-    private static bool CanDeleteNote(NoteTreeNode? node) =>
-        node?.Kind == NoteNodeKind.File;
 }

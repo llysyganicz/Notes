@@ -1,12 +1,10 @@
 using System;
-using System.IO;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using Notes.Models;
-using Notes.Services;
 using Notes.ViewModels;
 
 namespace Notes;
@@ -28,45 +26,21 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var window = Services.GetRequiredService<MainWindow>();
-            var viewModel = Services.GetRequiredService<MainWindowViewModel>();
-            window.DataContext = viewModel;
             desktop.MainWindow = window;
             window.Show();
-            Start(desktop, viewModel);
+            _ = StartAsync(desktop);
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
-    private async void Start(IClassicDesktopStyleApplicationLifetime desktop, MainWindowViewModel viewModel)
+    private static async Task StartAsync(IClassicDesktopStyleApplicationLifetime desktop)
     {
-        var settingsService = Services.GetRequiredService<ISettingsService>();
-        var folderPicker = Services.GetRequiredService<IFolderPicker>();
-
-        var settings = settingsService.Load();
-        if (!string.IsNullOrEmpty(settings.WorkspacePath) && !Directory.Exists(settings.WorkspacePath))
+        var viewModel = Services.GetRequiredService<MainWindowViewModel>();
+        var ready = await viewModel.InitializeAsync();
+        if (!ready)
         {
-            settingsService.Save(AppSettings.Empty);
-            settings = AppSettings.Empty;
+            desktop.Shutdown(0);
         }
-
-        if (string.IsNullOrEmpty(settings.WorkspacePath))
-        {
-            var picked = await folderPicker.PickFolder();
-            if (picked is null)
-            {
-                desktop.Shutdown(0);
-                return;
-            }
-
-            settingsService.Save(new AppSettings(picked));
-            viewModel.WorkspacePath = picked;
-        }
-        else
-        {
-            viewModel.WorkspacePath = settings.WorkspacePath;
-        }
-
-        await viewModel.LoadTreeCommand.ExecuteAsync(null);
     }
 }
