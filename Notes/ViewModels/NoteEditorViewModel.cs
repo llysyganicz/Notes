@@ -13,7 +13,8 @@ public sealed partial class NoteEditorViewModel :
     ObservableObject,
     IRecipient<WorkspaceChangedMessage>,
     IRecipient<NoteSelectedMessage>,
-    IRecipient<NoteDeletedMessage>
+    IRecipient<NoteDeletedMessage>,
+    IRecipient<TogglePreviewRequestedMessage>
 {
     private readonly IMessenger _messenger;
     private readonly INoteFileService _fileService;
@@ -102,6 +103,20 @@ public sealed partial class NoteEditorViewModel :
         _currentEditorText = string.Empty;
         LoadedText = string.Empty;
         PaneState = EditorPaneState.Empty;
+    }
+
+    public void Receive(TogglePreviewRequestedMessage message)
+    {
+        switch (PaneState)
+        {
+            case EditorPaneState.Editing:
+                PreviewText = _currentEditorText;
+                PaneState = EditorPaneState.Previewing;
+                break;
+            case EditorPaneState.Previewing:
+                PaneState = EditorPaneState.Editing;
+                break;
+        }
     }
 
     public void OnEditorTextChanged(string text)

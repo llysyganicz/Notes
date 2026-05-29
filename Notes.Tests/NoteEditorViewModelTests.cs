@@ -140,6 +140,50 @@ public sealed class NoteEditorViewModelTests
         Assert.Empty(_fileService.FilesByPath);
     }
 
+    [Fact]
+    public void Receive_WhenTogglePreviewMessageInEditingState_CopiesTextToPreviewAndSwitches()
+    {
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage("/workspace"));
+        _fileService.FilesByPath[Path.Combine("/workspace", "a.md")] = "on-disk";
+        _messenger.Send(new NoteSelectedMessage(File("a.md", "a.md")));
+        sut.OnEditorTextChanged("# live edits");
+
+        _messenger.Send(new TogglePreviewRequestedMessage());
+
+        Assert.Equal(EditorPaneState.Previewing, sut.PaneState);
+        Assert.True(sut.IsPreviewing);
+        Assert.Equal("# live edits", sut.PreviewText);
+    }
+
+    [Fact]
+    public void Receive_WhenTogglePreviewMessageInPreviewingState_SwitchesBackToEditing()
+    {
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage("/workspace"));
+        _fileService.FilesByPath[Path.Combine("/workspace", "a.md")] = "hello";
+        _messenger.Send(new NoteSelectedMessage(File("a.md", "a.md")));
+        _messenger.Send(new TogglePreviewRequestedMessage());
+
+        _messenger.Send(new TogglePreviewRequestedMessage());
+
+        Assert.Equal(EditorPaneState.Editing, sut.PaneState);
+        Assert.True(sut.IsEditing);
+        Assert.Equal("hello", sut.LoadedText);
+    }
+
+    [Fact]
+    public void Receive_WhenTogglePreviewMessageInEmptyState_RemainsEmpty()
+    {
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage("/workspace"));
+
+        _messenger.Send(new TogglePreviewRequestedMessage());
+
+        Assert.Equal(EditorPaneState.Empty, sut.PaneState);
+        Assert.True(sut.IsEmpty);
+    }
+
     private sealed class StubAutoSaveScheduler : IAutoSaveScheduler
     {
         private Action? _onSave;

@@ -11,6 +11,7 @@
         Title="{Binding WorkspacePath, FallbackValue=Notes, TargetNullValue=Notes}">
     <Window.KeyBindings>
         <KeyBinding Gesture="Ctrl+N" Command="{Binding NewNoteCommand}" />
+        <KeyBinding Gesture="Ctrl+E" Command="{Binding TogglePreviewCommand}" />
     </Window.KeyBindings>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
@@ -19,6 +20,9 @@
                 <MenuItem Header="_Change Notes Folder…" Command="{Binding ChangeWorkspaceCommand}" />
                 <Separator />
                 <MenuItem Header="E_xit" Command="{Binding ExitCommand}" />
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Preview" Command="{Binding TogglePreviewCommand}" InputGesture="Ctrl+E" />
             </MenuItem>
         </Menu>
         <Grid ColumnDefinitions="*,Auto,2*">

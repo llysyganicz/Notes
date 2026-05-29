@@ -633,14 +633,14 @@ No data migration. Existing `.md` files in the workspace open in the editor as-i
 
 #### Automated
 
-- [ ] 3.1 `dotnet build` succeeds with no new warnings
-- [ ] 3.2 `dotnet test` remains green; new editor VM tests pass
+- [x] 3.1 `dotnet build` succeeds with no new warnings
+- [x] 3.2 `dotnet test` remains green; new editor VM tests pass
 
 #### Manual
 
-- [ ] 3.3 `View → Preview` (or Ctrl+E) on an open note replaces the editor with a rendered preview reflecting current edits
-- [ ] 3.4 Toggling back returns to the editor with document text intact
-- [ ] 3.5 Switching notes while in preview opens the new note in edit mode (preview state resets)
-- [ ] 3.6 With no note selected, View → Preview and Ctrl+E are no-ops (no error, no visible change)
-- [ ] 3.7 Mixed markdown (headings, lists, fenced code, links, image, table) renders with appropriate styling
-- [ ] 3.8 Editing is not possible while preview is showing (no editor visible)
+- [x] 3.3 `View → Preview` (or Ctrl+E) on an open note replaces the editor with a rendered preview reflecting current edits
+- [x] 3.4 Toggling back returns to the editor with document text intact
+- [x] 3.5 Switching notes while in preview opens the new note in edit mode (preview state resets)
+- [x] 3.6 With no note selected, View → Preview and Ctrl+E are no-ops (no error, no visible change)
+- [x] 3.7 Mixed markdown (headings, lists, fenced code, links, image, table) renders with appropriate styling
+- [x] 3.8 Editing is not possible while preview is showing (no editor visible)
