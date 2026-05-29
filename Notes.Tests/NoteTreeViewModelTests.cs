@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,16 +11,34 @@ using Xunit;
 
 namespace Notes.Tests;
 
-public sealed class NoteTreeViewModelTests
+public sealed class NoteTreeViewModelTests : IDisposable
 {
     private readonly StrongReferenceMessenger _messenger = new();
     private readonly StubWorkspaceScanner _scanner = new();
     private readonly NoteTreeBuilder _treeBuilder = new();
     private readonly StubNoteDeleter _deleter = new();
     private readonly StubConfirmDialogService _confirm = new();
+    private readonly NewNoteNameValidator _validator = new();
+    private readonly StubNewNoteDialogService _newNoteDialog = new();
+    private readonly StubNoteFileService _fileService = new();
+    private readonly string _workspace;
+
+    public NoteTreeViewModelTests()
+    {
+        _workspace = Path.Combine(Path.GetTempPath(), "notes-tree-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_workspace);
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_workspace))
+        {
+            Directory.Delete(_workspace, recursive: true);
+        }
+    }
 
     private NoteTreeViewModel BuildSut() =>
-        new(_messenger, _scanner, _treeBuilder, _deleter, _confirm);
+        new(_messenger, _scanner, _treeBuilder, _deleter, _confirm, _validator, _newNoteDialog, _fileService);
 
     [Fact]
     public void Receive_WhenWorkspaceChangedMessage_LoadsTree()
@@ -41,7 +60,7 @@ public sealed class NoteTreeViewModelTests
         NoteSelectedMessage? captured = null;
         _messenger.Register<NoteSelectedMessage>(this, (_, m) => captured = m);
 
-        var node = new NoteTreeNode("x.md", "x.md", NoteNodeKind.File, System.Array.Empty<NoteTreeNode>());
+        var node = new NoteTreeNode("x.md", "x.md", NoteNodeKind.File, Array.Empty<NoteTreeNode>());
         sut.SelectedNode = node;
 
         Assert.NotNull(captured);
@@ -58,7 +77,7 @@ public sealed class NoteTreeViewModelTests
         NoteDeletedMessage? captured = null;
         _messenger.Register<NoteDeletedMessage>(this, (_, m) => captured = m);
 
-        var node = new NoteTreeNode("x.md", "x.md", NoteNodeKind.File, System.Array.Empty<NoteTreeNode>());
+        var node = new NoteTreeNode("x.md", "x.md", NoteNodeKind.File, Array.Empty<NoteTreeNode>());
         await sut.DeleteNoteCommand.ExecuteAsync(node);
 
         Assert.NotNull(captured);
@@ -74,14 +93,58 @@ public sealed class NoteTreeViewModelTests
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage("/workspace"));
 
-        // After delete, the scanner returns only y.md
         _scanner.Paths = new List<string> { "y.md" };
-        var node = new NoteTreeNode("x.md", "x.md", NoteNodeKind.File, System.Array.Empty<NoteTreeNode>());
+        var node = new NoteTreeNode("x.md", "x.md", NoteNodeKind.File, Array.Empty<NoteTreeNode>());
         await sut.DeleteNoteCommand.ExecuteAsync(node);
 
         Assert.NotNull(sut.Root);
         var child = Assert.Single(sut.Root!.Children);
         Assert.Equal("y.md", child.Name);
+    }
+
+    public enum NewNoteSelection
+    {
+        NoSelection,
+        FolderSelected,
+        FileSelected,
+    }
+
+    [Theory]
+    [InlineData(NewNoteSelection.NoSelection, "", "untitled.md")]
+    [InlineData(NewNoteSelection.FolderSelected, "sub", "sub/untitled.md")]
+    [InlineData(NewNoteSelection.FileSelected, "sub/x.md", "sub/untitled.md")]
+    public async Task Receive_WhenNewNoteRequestedMessage_CreatesFileAtResolvedParent(
+        NewNoteSelection selection,
+        string selectedRelativePath,
+        string expectedRelativePath)
+    {
+        Directory.CreateDirectory(Path.Combine(_workspace, "sub"));
+        File.WriteAllText(Path.Combine(_workspace, "sub", "x.md"), string.Empty);
+
+        _scanner.Paths = selection == NewNoteSelection.NoSelection
+            ? new List<string>()
+            : new List<string> { "sub/x.md" };
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage(_workspace));
+
+        sut.SelectedNode = selection switch
+        {
+            NewNoteSelection.NoSelection => null,
+            NewNoteSelection.FolderSelected => new NoteTreeNode("sub", "sub", NoteNodeKind.Folder, Array.Empty<NoteTreeNode>()),
+            NewNoteSelection.FileSelected => new NoteTreeNode("x.md", selectedRelativePath, NoteNodeKind.File, Array.Empty<NoteTreeNode>()),
+            _ => null,
+        };
+
+        _newNoteDialog.Response = "untitled";
+        _scanner.Paths = selection == NewNoteSelection.NoSelection
+            ? new List<string> { "untitled.md" }
+            : new List<string> { "sub/x.md", "sub/untitled.md" };
+
+        await sut.HandleNewNote();
+
+        var expectedAbsolute = Path.Combine(_workspace, expectedRelativePath.Replace('/', Path.DirectorySeparatorChar));
+        Assert.Contains(expectedAbsolute, _fileService.SavedPaths);
+        Assert.Equal(expectedRelativePath, sut.SelectedNode?.RelativePath);
     }
 
     private sealed class StubWorkspaceScanner : IWorkspaceScanner
@@ -106,5 +169,26 @@ public sealed class NoteTreeViewModelTests
     {
         public bool Result { get; set; } = true;
         public Task<bool> Confirm(string title, string message) => Task.FromResult(Result);
+    }
+
+    private sealed class StubNewNoteDialogService : INewNoteDialogService
+    {
+        public string? Response { get; set; }
+        public string? LastParentDisplay { get; private set; }
+
+        public Task<string?> PromptForName(string parentFolderDisplay, Func<string, string?> validate)
+        {
+            LastParentDisplay = parentFolderDisplay;
+            return Task.FromResult(Response);
+        }
+    }
+
+    private sealed class StubNoteFileService : INoteFileService
+    {
+        public Dictionary<string, string> SavedPaths { get; } = new();
+
+        public string Read(string absolutePath) => string.Empty;
+
+        public void Save(string absolutePath, string text) => SavedPaths[absolutePath] = text;
     }
 }
