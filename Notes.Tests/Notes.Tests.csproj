@@ -16,6 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Notes.csproj" />
+    <ProjectReference Include="..\Notes\Notes.csproj" />
   </ItemGroup>
 </Project>

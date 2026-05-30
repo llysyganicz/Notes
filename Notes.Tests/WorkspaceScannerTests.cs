@@ -38,7 +38,7 @@ public sealed class WorkspaceScannerTests : IDisposable
     }
 
     [Fact]
-    public void Empty_directory_returns_empty_list()
+    public void ScanMarkdownFiles_WhenDirectoryEmpty_ReturnsEmptyList()
     {
         var result = _scanner.ScanMarkdownFiles(_tempDir);
 
@@ -46,7 +46,7 @@ public sealed class WorkspaceScannerTests : IDisposable
     }
 
     [Fact]
-    public void Returns_only_markdown_files_at_flat_level()
+    public void ScanMarkdownFiles_WhenFlatDirectory_ReturnsOnlyMarkdownFiles()
     {
         TouchFile("a.md");
         TouchFile("b.txt");
@@ -58,7 +58,7 @@ public sealed class WorkspaceScannerTests : IDisposable
     }
 
     [Fact]
-    public void Recurses_into_subdirectories()
+    public void ScanMarkdownFiles_WhenSubdirectoriesPresent_ReturnsFilesRecursively()
     {
         TouchFile("root.md");
         TouchFile("sub/inner.md");
@@ -72,7 +72,7 @@ public sealed class WorkspaceScannerTests : IDisposable
     }
 
     [Fact]
-    public void Uses_forward_slash_separator_regardless_of_os()
+    public void ScanMarkdownFiles_WhenCalled_ReturnsPathsWithForwardSlashSeparator()
     {
         TouchFile("sub/inner.md");
 
@@ -82,7 +82,7 @@ public sealed class WorkspaceScannerTests : IDisposable
     }
 
     [Fact]
-    public void Results_are_sorted_lexicographically()
+    public void ScanMarkdownFiles_WhenCalled_ReturnsResultsSortedLexicographically()
     {
         TouchFile("zebra.md");
         TouchFile("apple.md");
@@ -94,7 +94,7 @@ public sealed class WorkspaceScannerTests : IDisposable
     }
 
     [Fact]
-    public void Recurses_into_dotfolders_but_skips_dotfiles()
+    public void ScanMarkdownFiles_WhenDotfoldersAndDotfilesPresent_RecursesIntoDotfoldersAndSkipsDotfiles()
     {
         TouchFile(".templates/visible.md");
         TouchFile(".templates/.hidden.md");
@@ -106,7 +106,7 @@ public sealed class WorkspaceScannerTests : IDisposable
     }
 
     [Fact]
-    public void Returns_empty_when_root_does_not_exist()
+    public void ScanMarkdownFiles_WhenRootMissing_ReturnsEmptyList()
     {
         var result = _scanner.ScanMarkdownFiles(Path.Combine(_tempDir, "missing"));
 

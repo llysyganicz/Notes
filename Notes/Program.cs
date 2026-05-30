@@ -1,5 +1,6 @@
 using System;
 using Avalonia;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Notes.Services;
 using Notes.ViewModels;
@@ -32,15 +33,23 @@ class Program
     {
         var services = new ServiceCollection();
 
+        services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<IWorkspaceScanner, WorkspaceScanner>();
         services.AddSingleton<NoteTreeBuilder>();
         services.AddSingleton<INoteDeleter, NoteDeleter>();
         services.AddSingleton<IFolderPicker, AvaloniaFolderPicker>();
         services.AddSingleton<IConfirmDialogService, ConfirmDialogService>();
+        services.AddSingleton<INoteFileService, NoteFileService>();
+        services.AddSingleton<IAutoSaveScheduler, AutoSaveScheduler>();
+        services.AddSingleton<INewNoteNameValidator, NewNoteNameValidator>();
+        services.AddSingleton<INewNoteDialogService, NewNoteDialogService>();
+
+        services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<NoteTreeViewModel>();
+        services.AddSingleton<NoteEditorViewModel>();
 
         services.AddTransient<MainWindow>();
-        services.AddTransient<MainWindowViewModel>();
 
         return services.BuildServiceProvider();
     }

@@ -27,7 +27,7 @@ public sealed class SettingsServiceTests : IDisposable
     private string ConfigPath() => Path.Combine(_tempDir, "settings.json");
 
     [Fact]
-    public void Load_returns_Empty_when_file_missing()
+    public void Load_WhenFileMissing_ReturnsEmpty()
     {
         var service = new SettingsService(ConfigPath());
 
@@ -37,7 +37,7 @@ public sealed class SettingsServiceTests : IDisposable
     }
 
     [Fact]
-    public void Load_returns_Empty_when_json_is_malformed()
+    public void Load_WhenJsonMalformed_ReturnsEmpty()
     {
         File.WriteAllText(ConfigPath(), "{ this is not valid json");
         var service = new SettingsService(ConfigPath());
@@ -48,7 +48,7 @@ public sealed class SettingsServiceTests : IDisposable
     }
 
     [Fact]
-    public void Save_then_Load_round_trips_workspace_path()
+    public void Load_WhenCalledAfterSave_ReturnsSavedSettings()
     {
         var service = new SettingsService(ConfigPath());
         var original = new AppSettings(WorkspacePath: "/home/user/notes");
@@ -60,7 +60,7 @@ public sealed class SettingsServiceTests : IDisposable
     }
 
     [Fact]
-    public void Save_creates_parent_directory_when_missing()
+    public void Save_WhenParentDirectoryMissing_CreatesParentDirectory()
     {
         var nestedPath = Path.Combine(_tempDir, "deeply", "nested", "settings.json");
         var service = new SettingsService(nestedPath);
@@ -70,13 +70,4 @@ public sealed class SettingsServiceTests : IDisposable
         Assert.True(File.Exists(nestedPath));
     }
 
-    [Fact]
-    public void Save_leaves_no_tmp_file_on_success()
-    {
-        var service = new SettingsService(ConfigPath());
-
-        service.Save(new AppSettings("/x"));
-
-        Assert.False(File.Exists(ConfigPath() + ".tmp"));
-    }
 }

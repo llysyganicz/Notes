@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Notes.Views.NewNoteDialog"
+        Width="420"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        ShowInTaskbar="False"
+        Title="New Note">
+    <StackPanel Margin="20" Spacing="12">
+        <TextBlock x:Name="ParentText" />
+        <TextBox x:Name="NameInput" PlaceholderText="Filename (e.g. ideas.md)" />
+        <TextBlock x:Name="ErrorText" Foreground="OrangeRed" TextWrapping="Wrap" IsVisible="False" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button x:Name="CreateButton" Content="Create" Width="80" IsDefault="True" />
+            <Button x:Name="CancelButton" Content="Cancel" Width="80" IsCancel="True" />
+        </StackPanel>
+    </StackPanel>
+</Window>

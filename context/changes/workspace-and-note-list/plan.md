@@ -59,7 +59,7 @@ Three phases, each ending in a verifiable state:
 - **DI lifetime for services**: register `ISettingsService`, `IWorkspaceScanner`, `INoteDeleter`, `IFolderPicker` as singletons; ViewModels as transients. ViewModels that observe state should not be singletons — a new instance per window-open is the simpler contract.
 - **First-launch flow ordering**: show `MainWindow` first, then `await` the folder picker as a modal owned by that window. If the user cancels with no saved workspace, call `desktop.Shutdown(0)`. The main window is visible behind the picker (briefly empty); the picker cannot end up orphaned because it has a real owner.
 - **Tree refresh after delete or workspace change**: rebuild the entire tree from a fresh scan rather than mutating the tree in place. The dataset is small (PRD `data_volume: small`); simplicity beats micro-optimization.
-- **`SettingsService` write atomicity**: write to `settings.json.tmp` then `File.Move` to `settings.json` — prevents a half-written settings file on crash (honors the PRD "no data loss" guardrail at the settings layer too).
+- **`SettingsService` write**: `File.WriteAllText` directly to `settings.json`, creating the parent directory first. The payload is tiny (a single workspace path) and self-healing — the only loss window is a process crash mid-write, after which `Load()` returns `AppSettings.Empty` and the user re-picks the folder. The PRD's "no data loss" guardrail applies to notes, not settings.
 
 ## Phase 1: Foundation — MVVM, DI, services, and tests
 
@@ -109,13 +109,13 @@ public sealed record AppSettings(string? WorkspacePath)
 
 **File**: `Services/ISettingsService.cs` + `Services/SettingsService.cs` (new)
 
-**Intent**: Resolve the per-OS config file path, read and write `AppSettings` as JSON with atomic write, and expose the resolved path for tests. Pure logic except for the actual file I/O.
+**Intent**: Resolve the per-OS config file path, read and write `AppSettings` as JSON, and expose the resolved path for tests. Pure logic except for the actual file I/O.
 
 **Contract**:
 - `interface ISettingsService { AppSettings Load(); void Save(AppSettings settings); string ConfigFilePath { get; } }`
 - `ConfigFilePath` = `Path.Combine(Environment.GetFolderPath(SpecialFolder.ApplicationData), "Notes", "settings.json")`. Tests inject this path via a constructor overload that accepts an explicit path.
 - `Load()` returns `AppSettings.Empty` if the file does not exist or fails to parse (no exception leaks to callers).
-- `Save()` writes to `<path>.tmp` then `File.Move(tmp, final, overwrite: true)`; creates the parent directory if missing.
+- `Save()` writes JSON directly to `ConfigFilePath` via `File.WriteAllText`; creates the parent directory if missing.
 
 #### 5. Workspace scanner
 
@@ -182,7 +182,7 @@ public sealed record AppSettings(string? WorkspacePath)
 
 **File**: `Notes.Tests/SettingsServiceTests.cs` (new)
 
-**Intent**: Cover (a) missing file → `Empty`, (b) malformed JSON → `Empty` (no throw), (c) round-trip a populated `AppSettings`, (d) parent directory creation, (e) atomic write leaves no `.tmp` on success.
+**Intent**: Cover (a) missing file → `Empty`, (b) malformed JSON → `Empty` (no throw), (c) round-trip a populated `AppSettings`, (d) parent directory creation.
 
 **Contract**: Each test uses a per-test temp directory (`Path.GetTempPath()` + `Guid`) cleaned up in `IDisposable.Dispose`.
 
@@ -379,7 +379,7 @@ Bind the workspace's note tree to a `TreeView`, add a context-menu Delete action
 
 ### Unit Tests (Phase 1)
 
-- `SettingsServiceTests`: missing-file, malformed-JSON, round-trip, parent-dir creation, no stray `.tmp` files.
+- `SettingsServiceTests`: missing-file, malformed-JSON, round-trip, parent-dir creation.
 - `WorkspaceScannerTests`: empty dir, mixed extensions, nested recursion, `/` separator on both OSes, lexicographic sort.
 - `NoteTreeBuilderTests`: empty input, root-level files, nested paths, folder-before-file ordering, same-named folders at different depths, alphabetical order.
 
