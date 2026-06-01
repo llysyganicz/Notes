@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using Markdig;
 using Markdig.Extensions.Yaml;
 using Notes.Models;
-using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -24,7 +23,7 @@ public sealed class NoteMetadataParser : INoteMetadataParser
 
     private static readonly Regex CanonicalTagRegex = new(@"\A[a-z0-9-]+\z", RegexOptions.Compiled);
 
-    public NoteMetadata Parse(string noteText)
+    public NoteMetadata Parse(string? noteText)
     {
         if (string.IsNullOrEmpty(noteText))
         {
@@ -44,7 +43,7 @@ public sealed class NoteMetadataParser : INoteMetadataParser
             var shape = YamlDeserializer.Deserialize<FrontmatterShape?>(yamlBlock.Lines.ToString());
             return new NoteMetadata(NormalizeTags(shape?.Tags));
         }
-        catch (YamlException)
+        catch (Exception)
         {
             return NoteMetadata.Empty;
         }

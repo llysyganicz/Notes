@@ -10,7 +10,7 @@ public sealed class NoteMetadataParserTests
     [Fact]
     public void Parse_WhenInputIsNull_ReturnsEmpty()
     {
-        var result = _parser.Parse(null!);
+        var result = _parser.Parse(null);
 
         Assert.Empty(result.Tags);
     }

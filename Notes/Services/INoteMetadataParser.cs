@@ -4,5 +4,5 @@ namespace Notes.Services;
 
 public interface INoteMetadataParser
 {
-    NoteMetadata Parse(string noteText);
+    NoteMetadata Parse(string? noteText);
 }
