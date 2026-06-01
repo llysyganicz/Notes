@@ -600,15 +600,15 @@ None. Existing settings, notes, and tree state are untouched. Notes without `tag
 
 #### Automated
 
-- [x] 2.1 Build succeeds: `dotnet build`
-- [x] 2.2 All existing tests pass: `dotnet test`
-- [x] 2.3 New index tests pass: `dotnet test --filter FullyQualifiedName~NoteSearchIndexTests`
-- [x] 2.4 No-disk-read assertions in search tests pass (two-pass optimization verified)
-- [x] 2.5 Index is constructed at app startup (verified by temporary log)
+- [x] 2.1 Build succeeds: `dotnet build` — a618507
+- [x] 2.2 All existing tests pass: `dotnet test` — a618507
+- [x] 2.3 New index tests pass: `dotnet test --filter FullyQualifiedName~NoteSearchIndexTests` — a618507
+- [x] 2.4 No-disk-read assertions in search tests pass (two-pass optimization verified) — a618507
+- [x] 2.5 Index is constructed at app startup (verified by temporary log) — a618507
 
 #### Manual
 
-- [ ] 2.6 App launches with workspace containing notes; no exception thrown
+- [x] 2.6 App launches with workspace containing notes; no exception thrown — a618507
 - [ ] 2.7 (Optional) Dev-only Search probe returns expected counts
 
 ### Phase 3: Search Overlay UI

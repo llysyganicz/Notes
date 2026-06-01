@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -56,7 +57,6 @@ public sealed class NoteSearchIndex :
         lock (_gate)
         {
             _buildCts?.Cancel();
-            _buildCts?.Dispose();
             _buildCts = newCts;
             _pendingDuringBuild.Clear();
             _isReady = false;
@@ -156,7 +156,7 @@ public sealed class NoteSearchIndex :
             {
                 body = await _fileService.ReadAsync(absolute, cancellationToken).ConfigureAwait(false);
             }
-            catch (FileNotFoundException)
+            catch (IOException)
             {
                 continue;
             }
@@ -187,7 +187,16 @@ public sealed class NoteSearchIndex :
                 var absolute = Path.Combine(
                     workspacePath,
                     relativePath.Replace('/', Path.DirectorySeparatorChar));
-                var text = await _fileService.ReadAsync(absolute, token).ConfigureAwait(false);
+                string text;
+                try
+                {
+                    text = await _fileService.ReadAsync(absolute, token).ConfigureAwait(false);
+                }
+                catch (IOException ex)
+                {
+                    Trace.WriteLine($"Search index skipped '{absolute}' during build: {ex.Message}");
+                    continue;
+                }
                 var meta = _parser.Parse(text);
                 newEntries[relativePath] = new MetadataEntry(
                     Path.GetFileName(relativePath),
