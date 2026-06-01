@@ -587,14 +587,14 @@ None. Existing settings, notes, and tree state are untouched. Notes without `tag
 
 #### Automated
 
-- [ ] 1.1 Build succeeds: `dotnet build`
-- [ ] 1.2 All existing tests pass: `dotnet test`
-- [ ] 1.3 New parser tests pass: `dotnet test --filter FullyQualifiedName~NoteMetadataParserTests`
-- [ ] 1.4 YamlDotNet is the only dependency added in this phase
+- [x] 1.1 Build succeeds: `dotnet build`
+- [x] 1.2 All existing tests pass: `dotnet test`
+- [x] 1.3 New parser tests pass: `dotnet test --filter FullyQualifiedName~NoteMetadataParserTests`
+- [x] 1.4 YamlDotNet is the only dependency added in this phase
 
 #### Manual
 
-- [ ] 1.5 Markdig pipeline confirmed constructed once (static field), not per call
+- [x] 1.5 Markdig pipeline confirmed constructed once (static field), not per call
 
 ### Phase 2: Search Index and Message Integration
 

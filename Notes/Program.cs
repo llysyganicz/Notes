@@ -41,6 +41,7 @@ class Program
         services.AddSingleton<IFolderPicker, AvaloniaFolderPicker>();
         services.AddSingleton<IConfirmDialogService, ConfirmDialogService>();
         services.AddSingleton<INoteFileService, NoteFileService>();
+        services.AddSingleton<INoteMetadataParser, NoteMetadataParser>();
         services.AddSingleton<IAutoSaveScheduler, AutoSaveScheduler>();
         services.AddSingleton<INewNoteNameValidator, NewNoteNameValidator>();
         services.AddSingleton<INewNoteDialogService, NewNoteDialogService>();
