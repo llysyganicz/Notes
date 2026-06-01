@@ -12,11 +12,13 @@
     <Window.KeyBindings>
         <KeyBinding Gesture="Ctrl+N" Command="{Binding NewNoteCommand}" />
         <KeyBinding Gesture="Ctrl+E" Command="{Binding TogglePreviewCommand}" />
+        <KeyBinding Gesture="Ctrl+F" Command="{Binding SearchCommand}" />
     </Window.KeyBindings>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="_New Note…" Command="{Binding NewNoteCommand}" InputGesture="Ctrl+N" />
+                <MenuItem Header="_Search…" Command="{Binding SearchCommand}" InputGesture="Ctrl+F" />
                 <MenuItem Header="_Change Notes Folder…" Command="{Binding ChangeWorkspaceCommand}" />
                 <Separator />
                 <MenuItem Header="E_xit" Command="{Binding ExitCommand}" />
@@ -26,7 +28,9 @@
             </MenuItem>
         </Menu>
         <Grid ColumnDefinitions="*,Auto,2*">
-            <views:NoteTreeView Grid.Column="0" />
+            <views:NoteTreeView Grid.Column="0"
+                                IsVisible="{ReflectionBinding !Search.IsOpen, Source={StaticResource Locator}}" />
+            <views:SearchView Grid.Column="0" />
             <GridSplitter Grid.Column="1" Width="4" />
             <views:NoteEditorView Grid.Column="2" />
         </Grid>

@@ -50,6 +50,7 @@ class Program
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<NoteTreeViewModel>();
         services.AddSingleton<NoteEditorViewModel>();
+        services.AddSingleton<NoteSearchViewModel>();
 
         services.AddTransient<MainWindow>();
 

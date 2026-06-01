@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Notes.ViewModels"
+             xmlns:models="using:Notes.Models"
+             mc:Ignorable="d"
+             x:Class="Notes.Views.SearchView"
+             x:DataType="vm:NoteSearchViewModel"
+             DataContext="{ReflectionBinding Search, Source={StaticResource Locator}}"
+             IsVisible="{Binding IsOpen}">
+    <Grid RowDefinitions="Auto,Auto,*" Margin="8">
+        <TextBox x:Name="QueryBox"
+                 Grid.Row="0"
+                 Text="{Binding Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 PlaceholderText="Search…">
+            <TextBox.KeyBindings>
+                <KeyBinding Gesture="Escape" Command="{Binding CloseCommand}" />
+            </TextBox.KeyBindings>
+        </TextBox>
+        <CheckBox Grid.Row="1"
+                  Margin="0,4,0,4"
+                  Content="Include templates"
+                  IsChecked="{Binding IncludeTemplates, Mode=TwoWay}" />
+        <Grid Grid.Row="2">
+            <TextBlock Text="Indexing notes…"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Opacity="0.6"
+                       IsVisible="{Binding !IsIndexReady}" />
+            <ListBox x:Name="ResultsList"
+                     ItemsSource="{Binding Results}"
+                     SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
+                     IsVisible="{Binding IsIndexReady}">
+                <ListBox.KeyBindings>
+                    <KeyBinding Gesture="Enter"
+                                Command="{Binding OpenResultCommand}"
+                                CommandParameter="{Binding SelectedResult}" />
+                    <KeyBinding Gesture="Escape" Command="{Binding CloseCommand}" />
+                </ListBox.KeyBindings>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="models:NoteSearchResult">
+                        <StackPanel>
+                            <TextBlock Text="{Binding FileName}" />
+                            <TextBlock Text="{Binding RelativePath}"
+                                       Opacity="0.6"
+                                       FontSize="11" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+</UserControl>

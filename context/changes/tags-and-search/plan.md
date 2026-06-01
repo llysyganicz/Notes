@@ -615,24 +615,24 @@ None. Existing settings, notes, and tree state are untouched. Notes without `tag
 
 #### Automated
 
-- [ ] 3.1 Build succeeds: `dotnet build`
-- [ ] 3.2 All existing tests pass: `dotnet test`
-- [ ] 3.3 New ViewModel tests pass: `dotnet test --filter FullyQualifiedName~NoteSearchViewModelTests`
-- [ ] 3.4 No `Async` suffix violations introduced (matching project convention; `Task ReadAsync` on `INoteFileService` is allowed because its sync sibling `Read` exists)
+- [x] 3.1 Build succeeds: `dotnet build`
+- [x] 3.2 All existing tests pass: `dotnet test`
+- [x] 3.3 New ViewModel tests pass: `dotnet test --filter FullyQualifiedName~NoteSearchViewModelTests`
+- [x] 3.4 No `Async` suffix violations introduced (matching project convention; `Task ReadAsync` on `INoteFileService` is allowed because its sync sibling `Read` exists)
 
 #### Manual
 
-- [ ] 3.5 Ctrl+F opens overlay over the tree; textbox is focused; "Indexing notes…" hint shows briefly (or instantly disappears for tiny workspaces)
-- [ ] 3.6 Filename query returns matches within ~150 ms
-- [ ] 3.7 Tag-only query (no body match) returns matches
-- [ ] 3.8 Body-only query returns matches (lazy body read fires)
-- [ ] 3.9 Multi-word query enforces AND semantics across fields
-- [ ] 3.10 Rapid typing does not flicker stale partial results (search cancellation works)
-- [ ] 3.11 `.templates/` notes excluded by default; included after toggling checkbox
-- [ ] 3.12 Result click opens note in editor + closes overlay; next Ctrl+F starts with empty query
-- [ ] 3.13 Esc closes the overlay
-- [ ] 3.14 Edit a note → autosave → search for new body content returns hit
-- [ ] 3.15 Delete a note → search no longer returns it
-- [ ] 3.16 Workspace switch while overlay open closes overlay; next Ctrl+F shows "Indexing notes…" briefly; new workspace search works
-- [ ] 3.17 File menu shows `_Search…` item with Ctrl+F gesture hint
-- [ ] 3.18 Ctrl+F with focus inside the editor's `TextEditor` still opens the overlay (AvaloniaEdit doesn't swallow the gesture)
+- [x] 3.5 Ctrl+F opens overlay over the tree; textbox is focused; "Indexing notes…" hint shows briefly (or instantly disappears for tiny workspaces)
+- [x] 3.6 Filename query returns matches within ~150 ms
+- [x] 3.7 Tag-only query (no body match) returns matches
+- [x] 3.8 Body-only query returns matches (lazy body read fires)
+- [x] 3.9 Multi-word query enforces AND semantics across fields
+- [x] 3.10 Rapid typing does not flicker stale partial results (search cancellation works)
+- [x] 3.11 `.templates/` notes excluded by default; included after toggling checkbox
+- [x] 3.12 Result click opens note in editor + closes overlay; next Ctrl+F starts with empty query
+- [x] 3.13 Esc closes the overlay
+- [x] 3.14 Edit a note → autosave → search for new body content returns hit
+- [x] 3.15 Delete a note → search no longer returns it
+- [x] 3.16 Workspace switch while overlay open closes overlay; next Ctrl+F shows "Indexing notes…" briefly; new workspace search works
+- [x] 3.17 File menu shows `_Search…` item with Ctrl+F gesture hint
+- [x] 3.18 Ctrl+F with focus inside the editor's `TextEditor` still opens the overlay (AvaloniaEdit doesn't swallow the gesture)
