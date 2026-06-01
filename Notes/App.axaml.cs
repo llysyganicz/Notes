@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using Notes.Services;
 using Notes.ViewModels;
 
 namespace Notes;
@@ -25,6 +26,7 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            _ = Services.GetRequiredService<INoteSearchIndex>();
             var window = Services.GetRequiredService<MainWindow>();
             desktop.MainWindow = window;
             window.Show();

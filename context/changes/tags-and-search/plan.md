@@ -600,11 +600,11 @@ None. Existing settings, notes, and tree state are untouched. Notes without `tag
 
 #### Automated
 
-- [ ] 2.1 Build succeeds: `dotnet build`
-- [ ] 2.2 All existing tests pass: `dotnet test`
-- [ ] 2.3 New index tests pass: `dotnet test --filter FullyQualifiedName~NoteSearchIndexTests`
-- [ ] 2.4 No-disk-read assertions in search tests pass (two-pass optimization verified)
-- [ ] 2.5 Index is constructed at app startup (verified by temporary log)
+- [x] 2.1 Build succeeds: `dotnet build`
+- [x] 2.2 All existing tests pass: `dotnet test`
+- [x] 2.3 New index tests pass: `dotnet test --filter FullyQualifiedName~NoteSearchIndexTests`
+- [x] 2.4 No-disk-read assertions in search tests pass (two-pass optimization verified)
+- [x] 2.5 Index is constructed at app startup (verified by temporary log)
 
 #### Manual
 

@@ -42,6 +42,7 @@ class Program
         services.AddSingleton<IConfirmDialogService, ConfirmDialogService>();
         services.AddSingleton<INoteFileService, NoteFileService>();
         services.AddSingleton<INoteMetadataParser, NoteMetadataParser>();
+        services.AddSingleton<INoteSearchIndex, NoteSearchIndex>();
         services.AddSingleton<IAutoSaveScheduler, AutoSaveScheduler>();
         services.AddSingleton<INewNoteNameValidator, NewNoteNameValidator>();
         services.AddSingleton<INewNoteDialogService, NewNoteDialogService>();
