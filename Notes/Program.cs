@@ -41,6 +41,8 @@ class Program
         services.AddSingleton<IFolderPicker, AvaloniaFolderPicker>();
         services.AddSingleton<IConfirmDialogService, ConfirmDialogService>();
         services.AddSingleton<INoteFileService, NoteFileService>();
+        services.AddSingleton<INoteMetadataParser, NoteMetadataParser>();
+        services.AddSingleton<INoteSearchIndex, NoteSearchIndex>();
         services.AddSingleton<IAutoSaveScheduler, AutoSaveScheduler>();
         services.AddSingleton<INewNoteNameValidator, NewNoteNameValidator>();
         services.AddSingleton<INewNoteDialogService, NewNoteDialogService>();
@@ -48,6 +50,7 @@ class Program
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<NoteTreeViewModel>();
         services.AddSingleton<NoteEditorViewModel>();
+        services.AddSingleton<NoteSearchViewModel>();
 
         services.AddTransient<MainWindow>();
 

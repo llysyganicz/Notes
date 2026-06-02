@@ -11,3 +11,9 @@ public sealed record NoteDeletedMessage(string RelativePath);
 public sealed record NewNoteRequestedMessage;
 
 public sealed record TogglePreviewRequestedMessage;
+
+public sealed record NoteSavedMessage(string RelativePath, string Content);
+
+public sealed record SearchIndexStateChangedMessage(bool IsReady);
+
+public sealed record OpenSearchRequestedMessage;

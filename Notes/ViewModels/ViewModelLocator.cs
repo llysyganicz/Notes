@@ -11,6 +11,8 @@ public sealed class ViewModelLocator
 
     public NoteEditorViewModel? Editor => Resolve<NoteEditorViewModel>();
 
+    public NoteSearchViewModel? Search => Resolve<NoteSearchViewModel>();
+
     private static T? Resolve<T>() where T : class =>
         Design.IsDesignMode ? null : App.Services.GetRequiredService<T>();
 }

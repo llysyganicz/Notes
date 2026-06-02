@@ -162,6 +162,7 @@ public sealed partial class NoteEditorViewModel :
         try
         {
             _fileService.Save(absolutePath, _currentEditorText);
+            _messenger.Send(new NoteSavedMessage(_currentNote.RelativePath, _currentEditorText));
         }
         catch (IOException ex)
         {

@@ -88,6 +88,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void Search()
+    {
+        _messenger.Send(new OpenSearchRequestedMessage());
+    }
+
+    [RelayCommand]
     private void Exit()
     {
         (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();

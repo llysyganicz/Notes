@@ -103,13 +103,15 @@ public sealed partial class NoteTreeViewModel :
             return;
         }
 
-        _fileService.Save(success.AbsolutePath, string.Empty);
-
-        await LoadTreeCommand.ExecuteAsync(null);
-
         var newRelativePath = string.IsNullOrEmpty(parentRelative)
             ? success.FileName
             : parentRelative + "/" + success.FileName;
+
+        _fileService.Save(success.AbsolutePath, string.Empty);
+        _messenger.Send(new NoteSavedMessage(newRelativePath, string.Empty));
+
+        await LoadTreeCommand.ExecuteAsync(null);
+
         var match = FindNode(Root, newRelativePath);
         if (match is not null)
         {
