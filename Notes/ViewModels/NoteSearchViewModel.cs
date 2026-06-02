@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
@@ -115,6 +116,10 @@ public sealed partial class NoteSearchViewModel :
         catch (OperationCanceledException)
         {
             // Superseded by a newer query; ignore.
+        }
+        catch (Exception ex)
+        {
+            Trace.WriteLine($"Search failed: {ex.Message}");
         }
     }
 

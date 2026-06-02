@@ -1,9 +1,9 @@
 ---
 change_id: tags-and-search
 title: YAML frontmatter tags and Ctrl+F search across name, tags, and content
-status: implemented
+status: impl_reviewed
 created: 2026-05-31
-updated: 2026-06-01
+updated: 2026-06-02
 roadmap_ref: S-03
 prd_refs: [FR-005, FR-006, US-01]
 ---
