@@ -129,7 +129,7 @@ public sealed partial class NoteTreeViewModel :
         }
 
         var paths = _scanner.ScanMarkdownFiles(_workspacePath);
-        Root = _treeBuilder.Build(paths);
+        Root = _treeBuilder.Build(_workspacePath, paths);
         return Task.CompletedTask;
     }
 

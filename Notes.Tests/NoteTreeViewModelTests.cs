@@ -17,7 +17,7 @@ public sealed class NoteTreeViewModelTests : IDisposable
 {
     private readonly StrongReferenceMessenger _messenger = new();
     private readonly StubWorkspaceScanner _scanner = new();
-    private readonly NoteTreeBuilder _treeBuilder = new();
+    private readonly NoteTreeBuilder _treeBuilder = new(new FileSystem());
     private readonly StubNoteDeleter _deleter = new();
     private readonly StubConfirmDialogService _confirm = new();
     private readonly NewNoteNameValidator _validator = new(new FileSystem());

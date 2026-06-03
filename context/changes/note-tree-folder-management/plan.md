@@ -320,25 +320,25 @@ No data migration. The `System.IO.Abstractions` adoption is internal refactoring
 
 #### Automated
 
-- [x] 1.1 Build succeeds: `dotnet build`
-- [x] 1.2 Full suite passes unchanged: `dotnet test`
+- [x] 1.1 Build succeeds: `dotnet build` — d3e32a5
+- [x] 1.2 Full suite passes unchanged: `dotnet test` — d3e32a5
 
 #### Manual
 
-- [x] 1.3 App launches; open/save/delete a note and change workspace folder behave exactly as before
+- [x] 1.3 App launches; open/save/delete a note and change workspace folder behave exactly as before — d3e32a5
 
 ### Phase 2: Directory-aware Tree
 
 #### Automated
 
-- [ ] 2.1 Build succeeds: `dotnet build`
-- [ ] 2.2 New builder tests pass and full suite is green: `dotnet test`
+- [x] 2.1 Build succeeds: `dotnet build`
+- [x] 2.2 New builder tests pass and full suite is green: `dotnet test`
 
 #### Manual
 
-- [ ] 2.3 Empty folder on disk appears in the tree after reload
-- [ ] 2.4 `.templates/` (if present) appears in the tree
-- [ ] 2.5 Folder with notes shows once, nested correctly, same order as before
+- [x] 2.3 Empty folder on disk appears in the tree after reload
+- [x] 2.4 `.templates/` (if present) appears in the tree
+- [x] 2.5 Folder with notes shows once, nested correctly, same order as before
 
 ### Phase 3: Folder Delete
 

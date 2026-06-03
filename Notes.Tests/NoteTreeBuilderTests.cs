@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Notes.Models;
 using Notes.Services;
@@ -8,12 +9,17 @@ namespace Notes.Tests;
 
 public sealed class NoteTreeBuilderTests
 {
-    private readonly NoteTreeBuilder _builder = new();
+    // A root that is never created on the mock filesystem: directory enumeration
+    // contributes nothing, so these cases exercise the file-path logic in isolation.
+    private const string MissingRoot = "/workspace";
+
+    private readonly MockFileSystem _fileSystem = new();
+    private NoteTreeBuilder Builder => new(_fileSystem);
 
     [Fact]
     public void Build_WhenInputEmpty_ReturnsRootWithNoChildren()
     {
-        var tree = _builder.Build(new List<string>());
+        var tree = Builder.Build(MissingRoot, new List<string>());
 
         Assert.Equal(string.Empty, tree.Name);
         Assert.Equal(string.Empty, tree.RelativePath);
@@ -24,7 +30,7 @@ public sealed class NoteTreeBuilderTests
     [Fact]
     public void Build_WhenRootLevelFile_ReturnsFileChild()
     {
-        var tree = _builder.Build(new[] { "notes.md" });
+        var tree = Builder.Build(MissingRoot, new[] { "notes.md" });
 
         var child = Assert.Single(tree.Children);
         Assert.Equal(NoteNodeKind.File, child.Kind);
@@ -35,7 +41,7 @@ public sealed class NoteTreeBuilderTests
     [Fact]
     public void Build_WhenNestedFile_CreatesIntermediateFolderNodes()
     {
-        var tree = _builder.Build(new[] { "a/b/c.md" });
+        var tree = Builder.Build(MissingRoot, new[] { "a/b/c.md" });
 
         var a = Assert.Single(tree.Children);
         Assert.Equal(NoteNodeKind.Folder, a.Kind);
@@ -56,7 +62,7 @@ public sealed class NoteTreeBuilderTests
     [Fact]
     public void Build_WhenFoldersAndFilesAtSameLevel_SortsFoldersFirst()
     {
-        var tree = _builder.Build(new[] { "zzz.md", "aaa/file.md" });
+        var tree = Builder.Build(MissingRoot, new[] { "zzz.md", "aaa/file.md" });
 
         Assert.Equal(2, tree.Children.Count);
         Assert.Equal(NoteNodeKind.Folder, tree.Children[0].Kind);
@@ -68,7 +74,7 @@ public sealed class NoteTreeBuilderTests
     [Fact]
     public void Build_WhenSameFolderNameAtDifferentDepths_KeepsThemDistinct()
     {
-        var tree = _builder.Build(new[] { "sub/x.md", "outer/sub/y.md" });
+        var tree = Builder.Build(MissingRoot, new[] { "sub/x.md", "outer/sub/y.md" });
 
         var outer = tree.Children.Single(c => c.Name == "outer");
         var topSub = tree.Children.Single(c => c.Name == "sub");
@@ -82,7 +88,7 @@ public sealed class NoteTreeBuilderTests
     [Fact]
     public void Build_WhenCalled_SortsChildrenAlphabetically()
     {
-        var tree = _builder.Build(new[] { "delta.md", "alpha.md", "charlie.md", "bravo.md" });
+        var tree = Builder.Build(MissingRoot, new[] { "delta.md", "alpha.md", "charlie.md", "bravo.md" });
 
         var names = tree.Children.Select(c => c.Name).ToArray();
         Assert.Equal(new[] { "alpha.md", "bravo.md", "charlie.md", "delta.md" }, names);
@@ -91,9 +97,87 @@ public sealed class NoteTreeBuilderTests
     [Fact]
     public void Build_WhenMixedCase_SortsCaseInsensitively()
     {
-        var tree = _builder.Build(new[] { "Banana.md", "apple.md" });
+        var tree = Builder.Build(MissingRoot, new[] { "Banana.md", "apple.md" });
 
         var names = tree.Children.Select(c => c.Name).ToArray();
         Assert.Equal(new[] { "apple.md", "Banana.md" }, names);
+    }
+
+    [Fact]
+    public void Build_WhenEmptyDirectoryOnDisk_YieldsFolderNode()
+    {
+        _fileSystem.AddDirectory("/ws/empty");
+
+        var tree = Builder.Build("/ws", new List<string>());
+
+        var folder = Assert.Single(tree.Children);
+        Assert.Equal(NoteNodeKind.Folder, folder.Kind);
+        Assert.Equal("empty", folder.Name);
+        Assert.Equal("empty", folder.RelativePath);
+        Assert.Empty(folder.Children);
+    }
+
+    [Fact]
+    public void Build_WhenDirectoryHasFilesAndExistsOnDisk_YieldsSingleNode()
+    {
+        _fileSystem.AddDirectory("/ws/sub");
+
+        var tree = Builder.Build("/ws", new[] { "sub/note.md" });
+
+        var folder = Assert.Single(tree.Children);
+        Assert.Equal(NoteNodeKind.Folder, folder.Kind);
+        Assert.Equal("sub", folder.Name);
+
+        var file = Assert.Single(folder.Children);
+        Assert.Equal(NoteNodeKind.File, file.Kind);
+        Assert.Equal("note.md", file.Name);
+        Assert.Equal("sub/note.md", file.RelativePath);
+    }
+
+    [Fact]
+    public void Build_WhenDotDirectoryOnDisk_IncludesItAsFolder()
+    {
+        _fileSystem.AddDirectory("/ws/.templates");
+
+        var tree = Builder.Build("/ws", new List<string>());
+
+        var folder = Assert.Single(tree.Children);
+        Assert.Equal(NoteNodeKind.Folder, folder.Kind);
+        Assert.Equal(".templates", folder.Name);
+        Assert.Equal(".templates", folder.RelativePath);
+    }
+
+    [Fact]
+    public void Build_WhenNestedEmptyDirectoryOnDisk_YieldsNestedFolderNodes()
+    {
+        _fileSystem.AddDirectory("/ws/outer/inner");
+
+        var tree = Builder.Build("/ws", new List<string>());
+
+        var outer = Assert.Single(tree.Children);
+        Assert.Equal("outer", outer.Name);
+        Assert.Equal("outer", outer.RelativePath);
+
+        var inner = Assert.Single(outer.Children);
+        Assert.Equal(NoteNodeKind.Folder, inner.Kind);
+        Assert.Equal("inner", inner.Name);
+        Assert.Equal("outer/inner", inner.RelativePath);
+        Assert.Empty(inner.Children);
+    }
+
+    [Fact]
+    public void Build_WhenEmptyAndFileBearingFoldersMixed_SortsFoldersFirstThenFiles()
+    {
+        _fileSystem.AddDirectory("/ws/zfolder");
+
+        var tree = Builder.Build("/ws", new[] { "afolder/note.md", "root.md" });
+
+        Assert.Equal(3, tree.Children.Count);
+        Assert.Equal(NoteNodeKind.Folder, tree.Children[0].Kind);
+        Assert.Equal("afolder", tree.Children[0].Name);
+        Assert.Equal(NoteNodeKind.Folder, tree.Children[1].Kind);
+        Assert.Equal("zfolder", tree.Children[1].Name);
+        Assert.Equal(NoteNodeKind.File, tree.Children[2].Kind);
+        Assert.Equal("root.md", tree.Children[2].Name);
     }
 }
