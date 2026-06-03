@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Notes.Messaging;
@@ -19,7 +20,7 @@ public sealed class NoteTreeViewModelTests : IDisposable
     private readonly NoteTreeBuilder _treeBuilder = new();
     private readonly StubNoteDeleter _deleter = new();
     private readonly StubConfirmDialogService _confirm = new();
-    private readonly NewNoteNameValidator _validator = new();
+    private readonly NewNoteNameValidator _validator = new(new FileSystem());
     private readonly StubNewNoteDialogService _newNoteDialog = new();
     private readonly InMemoryNoteFileService _fileService = new();
     private readonly string _workspace;

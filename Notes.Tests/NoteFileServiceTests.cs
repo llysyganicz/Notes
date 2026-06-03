@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text;
 using Notes.Services;
 using Xunit;
@@ -9,7 +10,7 @@ namespace Notes.Tests;
 public sealed class NoteFileServiceTests : IDisposable
 {
     private readonly string _tempDir;
-    private readonly NoteFileService _service = new();
+    private readonly NoteFileService _service = new(new FileSystem());
 
     public NoteFileServiceTests()
     {

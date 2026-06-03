@@ -1,9 +1,9 @@
 ---
 change_id: note-tree-folder-management
 title: Note-tree folder management — create folder, delete folder, directory-aware tree
-status: preparing
+status: implementing
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-03
 roadmap_ref: S-01 (follow-up)
 prd_refs: [FR-007, FR-003]
 blocks: [templates]

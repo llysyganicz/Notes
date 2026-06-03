@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using Notes.Services;
 using Xunit;
@@ -9,7 +10,7 @@ namespace Notes.Tests;
 public sealed class WorkspaceScannerTests : IDisposable
 {
     private readonly string _tempDir;
-    private readonly WorkspaceScanner _scanner = new();
+    private readonly WorkspaceScanner _scanner = new(new FileSystem());
 
     public WorkspaceScannerTests()
     {

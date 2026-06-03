@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using Notes.Services;
 using Xunit;
 
@@ -8,7 +9,7 @@ namespace Notes.Tests;
 public sealed class NewNoteNameValidatorTests : IDisposable
 {
     private readonly string _workspace;
-    private readonly NewNoteNameValidator _sut = new();
+    private readonly NewNoteNameValidator _sut = new(new FileSystem());
 
     public NewNoteNameValidatorTests()
     {

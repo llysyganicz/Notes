@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text.Json;
 using Notes.Models;
 
@@ -7,28 +8,26 @@ namespace Notes.Services;
 
 public sealed class SettingsService : ISettingsService
 {
+    private readonly IFileSystem _fileSystem;
+
     public string ConfigFilePath { get; }
 
-    public SettingsService()
-        : this(DefaultConfigFilePath())
+    public SettingsService(IFileSystem fileSystem, string? configFilePath = null)
     {
-    }
-
-    public SettingsService(string configFilePath)
-    {
-        ConfigFilePath = configFilePath;
+        _fileSystem = fileSystem;
+        ConfigFilePath = configFilePath ?? DefaultConfigFilePath();
     }
 
     public AppSettings Load()
     {
-        if (!File.Exists(ConfigFilePath))
+        if (!_fileSystem.File.Exists(ConfigFilePath))
         {
             return AppSettings.Empty;
         }
 
         try
         {
-            var json = File.ReadAllText(ConfigFilePath);
+            var json = _fileSystem.File.ReadAllText(ConfigFilePath);
             return JsonSerializer.Deserialize<AppSettings>(json) ?? AppSettings.Empty;
         }
         catch
@@ -39,14 +38,14 @@ public sealed class SettingsService : ISettingsService
 
     public void Save(AppSettings settings)
     {
-        var directory = Path.GetDirectoryName(ConfigFilePath);
+        var directory = _fileSystem.Path.GetDirectoryName(ConfigFilePath);
         if (!string.IsNullOrEmpty(directory))
         {
-            Directory.CreateDirectory(directory);
+            _fileSystem.Directory.CreateDirectory(directory);
         }
 
         var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(ConfigFilePath, json);
+        _fileSystem.File.WriteAllText(ConfigFilePath, json);
     }
 
     private static string DefaultConfigFilePath() =>

@@ -1,4 +1,5 @@
 using System;
+using System.IO.Abstractions;
 using Avalonia;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +35,7 @@ class Program
         var services = new ServiceCollection();
 
         services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
+        services.AddSingleton<IFileSystem, FileSystem>();
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<IWorkspaceScanner, WorkspaceScanner>();
         services.AddSingleton<NoteTreeBuilder>();

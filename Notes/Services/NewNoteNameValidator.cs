@@ -1,11 +1,19 @@
 using System;
 using System.IO;
+using System.IO.Abstractions;
 
 namespace Notes.Services;
 
 public sealed class NewNoteNameValidator : INewNoteNameValidator
 {
     private const string MdExtension = ".md";
+
+    private readonly IFileSystem _fileSystem;
+
+    public NewNoteNameValidator(IFileSystem fileSystem)
+    {
+        _fileSystem = fileSystem;
+    }
 
     public NoteNameResult Validate(string rawInput, string workspaceAbsolutePath, string parentRelativePath)
     {
@@ -39,7 +47,7 @@ public sealed class NewNoteNameValidator : INewNoteNameValidator
             ? Path.Combine(workspaceAbsolutePath, fileName)
             : Path.Combine(workspaceAbsolutePath, parentSegment, fileName);
 
-        if (File.Exists(absolutePath))
+        if (_fileSystem.File.Exists(absolutePath))
         {
             return new NoteNameResult.Failure("A note with that name already exists");
         }
