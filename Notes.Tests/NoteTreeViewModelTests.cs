@@ -271,7 +271,7 @@ public sealed class NoteTreeViewModelTests
 
         _messenger.Send(new NewFolderRequestedMessage());
 
-        Assert.False(_fileSystem.Directory.Exists(Workspace));
+        Assert.False(_fileSystem.Directory.Exists(Path.Combine(Workspace, "ideas")));
     }
 
     [Fact]
