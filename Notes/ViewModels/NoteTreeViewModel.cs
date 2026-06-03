@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -136,8 +137,31 @@ public sealed partial class NoteTreeViewModel :
     [RelayCommand(CanExecute = nameof(CanDeleteNote))]
     private async Task DeleteNote(NoteTreeNode? node)
     {
-        if (node is null || node.Kind != NoteNodeKind.File || string.IsNullOrEmpty(_workspacePath))
+        if (node is null || !CanDeleteNote(node) || string.IsNullOrEmpty(_workspacePath))
         {
+            return;
+        }
+
+        var relative = node.RelativePath.Replace('/', Path.DirectorySeparatorChar);
+        var absolutePath = Path.Combine(_workspacePath, relative);
+
+        if (node.Kind == NoteNodeKind.Folder)
+        {
+            var confirmedFolder = await _confirmDialog.Confirm(
+                "Delete folder",
+                $"Are you sure you want to delete the folder\n{node.RelativePath}\nand all notes inside it?");
+            if (!confirmedFolder)
+            {
+                return;
+            }
+
+            _noteDeleter.DeleteFolder(absolutePath);
+            foreach (var file in DescendantFileNodes(node))
+            {
+                _messenger.Send(new NoteDeletedMessage(file.RelativePath));
+            }
+
+            await LoadTreeCommand.ExecuteAsync(null);
             return;
         }
 
@@ -149,15 +173,32 @@ public sealed partial class NoteTreeViewModel :
             return;
         }
 
-        var relative = node.RelativePath.Replace('/', Path.DirectorySeparatorChar);
-        var absolutePath = Path.Combine(_workspacePath, relative);
         _noteDeleter.Delete(absolutePath);
         _messenger.Send(new NoteDeletedMessage(node.RelativePath));
         await LoadTreeCommand.ExecuteAsync(null);
     }
 
+    // Deletable = anything but the synthetic root (the only node with an empty RelativePath).
     private static bool CanDeleteNote(NoteTreeNode? node) =>
-        node?.Kind == NoteNodeKind.File;
+        !string.IsNullOrEmpty(node?.RelativePath);
+
+    private static IEnumerable<NoteTreeNode> DescendantFileNodes(NoteTreeNode node)
+    {
+        foreach (var child in node.Children)
+        {
+            if (child.Kind == NoteNodeKind.File)
+            {
+                yield return child;
+            }
+            else
+            {
+                foreach (var descendant in DescendantFileNodes(child))
+                {
+                    yield return descendant;
+                }
+            }
+        }
+    }
 
     private static string ResolveParentRelativePath(NoteTreeNode? selected)
     {

@@ -331,28 +331,28 @@ No data migration. The `System.IO.Abstractions` adoption is internal refactoring
 
 #### Automated
 
-- [x] 2.1 Build succeeds: `dotnet build`
-- [x] 2.2 New builder tests pass and full suite is green: `dotnet test`
+- [x] 2.1 Build succeeds: `dotnet build` — 2b34711
+- [x] 2.2 New builder tests pass and full suite is green: `dotnet test` — 2b34711
 
 #### Manual
 
-- [x] 2.3 Empty folder on disk appears in the tree after reload
-- [x] 2.4 `.templates/` (if present) appears in the tree
-- [x] 2.5 Folder with notes shows once, nested correctly, same order as before
+- [x] 2.3 Empty folder on disk appears in the tree after reload — 2b34711
+- [x] 2.4 `.templates/` (if present) appears in the tree — 2b34711
+- [x] 2.5 Folder with notes shows once, nested correctly, same order as before — 2b34711
 
 ### Phase 3: Folder Delete
 
 #### Automated
 
-- [ ] 3.1 Build succeeds: `dotnet build`
-- [ ] 3.2 Suite passes: `dotnet test`
+- [x] 3.1 Build succeeds: `dotnet build`
+- [x] 3.2 Suite passes: `dotnet test`
 
 #### Manual
 
-- [ ] 3.3 Delete a folder with notes → recursive confirmation → folder and notes disappear
-- [ ] 3.4 Editor returns to empty state if a deleted note was open
-- [ ] 3.5 Search no longer returns the deleted notes
-- [ ] 3.6 Synthetic root is guarded (no delete); empty folder deletes with confirmation
+- [x] 3.3 Delete a folder with notes → recursive confirmation → folder and notes disappear
+- [x] 3.4 Editor returns to empty state if a deleted note was open
+- [x] 3.5 Search no longer returns the deleted notes
+- [x] 3.6 Synthetic root is guarded (no delete); empty folder deletes with confirmation
 
 ### Phase 4: New Folder
 

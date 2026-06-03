@@ -199,7 +199,9 @@ public sealed class NoteTreeViewModelTests : IDisposable
     private sealed class StubNoteDeleter : INoteDeleter
     {
         public List<string> DeletedPaths { get; } = new();
+        public List<string> DeletedFolders { get; } = new();
         public void Delete(string absolutePath) => DeletedPaths.Add(absolutePath);
+        public void DeleteFolder(string absolutePath) => DeletedFolders.Add(absolutePath);
     }
 
     private sealed class StubConfirmDialogService : IConfirmDialogService

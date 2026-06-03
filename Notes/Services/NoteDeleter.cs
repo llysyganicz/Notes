@@ -12,4 +12,6 @@ public sealed class NoteDeleter : INoteDeleter
     }
 
     public void Delete(string absolutePath) => _fileSystem.File.Delete(absolutePath);
+
+    public void DeleteFolder(string absolutePath) => _fileSystem.Directory.Delete(absolutePath, recursive: true);
 }
