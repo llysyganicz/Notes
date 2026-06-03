@@ -358,13 +358,13 @@ No data migration. The `System.IO.Abstractions` adoption is internal refactoring
 
 #### Automated
 
-- [x] 4.1 Build succeeds: `dotnet build`
-- [x] 4.2 Validator tests (valid, invalid chars, dir collision, file collision) pass and suite is green: `dotnet test`
+- [x] 4.1 Build succeeds: `dotnet build` — 96fdcae
+- [x] 4.2 Validator tests (valid, invalid chars, dir collision, file collision) pass and suite is green: `dotnet test` — 96fdcae
 
 #### Manual
 
-- [x] 4.3 `Ctrl+Shift+N` and File → New Folder… create at root (no selection) or inside selected folder
-- [x] 4.4 Right-click folder → New Folder creates a selected child folder
-- [x] 4.5 Created folder persists on reload and works as a New Note target
-- [x] 4.6 Invalid and colliding names rejected with a message; no directory created
-- [x] 4.7 Creating `.templates` works and the folder is visible
+- [x] 4.3 `Ctrl+Shift+N` and File → New Folder… create at root (no selection) or inside selected folder — 96fdcae
+- [x] 4.4 Right-click folder → New Folder creates a selected child folder — 96fdcae
+- [x] 4.5 Created folder persists on reload and works as a New Note target — 96fdcae
+- [x] 4.6 Invalid and colliding names rejected with a message; no directory created — 96fdcae
+- [x] 4.7 Creating `.templates` works and the folder is visible — 96fdcae
