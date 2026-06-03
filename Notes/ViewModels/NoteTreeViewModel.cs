@@ -13,16 +13,18 @@ namespace Notes.ViewModels;
 public sealed partial class NoteTreeViewModel :
     ObservableObject,
     IRecipient<WorkspaceChangedMessage>,
-    IRecipient<NewNoteRequestedMessage>
+    IRecipient<NewNoteRequestedMessage>,
+    IRecipient<NewFolderRequestedMessage>
 {
     private readonly IMessenger _messenger;
     private readonly IWorkspaceScanner _scanner;
     private readonly NoteTreeBuilder _treeBuilder;
     private readonly INoteDeleter _noteDeleter;
     private readonly IConfirmDialogService _confirmDialog;
-    private readonly INewNoteNameValidator _newNoteValidator;
+    private readonly INameValidator _nameValidator;
     private readonly INewNoteDialogService _newNoteDialog;
     private readonly INoteFileService _fileService;
+    private readonly INoteFolderService _folderService;
 
     private string? _workspacePath;
 
@@ -38,18 +40,20 @@ public sealed partial class NoteTreeViewModel :
         NoteTreeBuilder treeBuilder,
         INoteDeleter noteDeleter,
         IConfirmDialogService confirmDialog,
-        INewNoteNameValidator newNoteValidator,
+        INameValidator nameValidator,
         INewNoteDialogService newNoteDialog,
-        INoteFileService fileService)
+        INoteFileService fileService,
+        INoteFolderService folderService)
     {
         _messenger = messenger;
         _scanner = scanner;
         _treeBuilder = treeBuilder;
         _noteDeleter = noteDeleter;
         _confirmDialog = confirmDialog;
-        _newNoteValidator = newNoteValidator;
+        _nameValidator = nameValidator;
         _newNoteDialog = newNoteDialog;
         _fileService = fileService;
+        _folderService = folderService;
 
         _messenger.RegisterAll(this);
     }
@@ -78,6 +82,22 @@ public sealed partial class NoteTreeViewModel :
         }
     }
 
+    public async void Receive(NewFolderRequestedMessage message)
+    {
+        try
+        {
+            await HandleNewFolder(ResolveParentRelativePath(SelectedNode));
+        }
+        catch
+        {
+            // async void recipients must not throw onto the SynchronizationContext.
+        }
+    }
+
+    [RelayCommand]
+    private Task NewFolder(NoteTreeNode? node) =>
+        HandleNewFolder(ResolveParentRelativePath(node));
+
     private async Task HandleNewNote()
     {
         if (string.IsNullOrEmpty(_workspacePath))
@@ -91,7 +111,7 @@ public sealed partial class NoteTreeViewModel :
 
         var entered = await _newNoteDialog.PromptForName(
             display,
-            raw => _newNoteValidator.Validate(raw, workspace, parentRelative) is NoteNameResult.Failure failure
+            raw => _nameValidator.ValidateNoteName(raw, workspace, parentRelative) is NoteNameResult.Failure failure
                 ? failure.Error
                 : null);
         if (entered is null)
@@ -99,7 +119,7 @@ public sealed partial class NoteTreeViewModel :
             return;
         }
 
-        if (_newNoteValidator.Validate(entered, workspace, parentRelative) is not NoteNameResult.Success success)
+        if (_nameValidator.ValidateNoteName(entered, workspace, parentRelative) is not NoteNameResult.Success success)
         {
             return;
         }
@@ -110,6 +130,46 @@ public sealed partial class NoteTreeViewModel :
 
         _fileService.Save(success.AbsolutePath, string.Empty);
         _messenger.Send(new NoteSavedMessage(newRelativePath, string.Empty));
+
+        await LoadTreeCommand.ExecuteAsync(null);
+
+        var match = FindNode(Root, newRelativePath);
+        if (match is not null)
+        {
+            SelectedNode = match;
+        }
+    }
+
+    private async Task HandleNewFolder(string parentRelative)
+    {
+        if (string.IsNullOrEmpty(_workspacePath))
+        {
+            return;
+        }
+
+        var workspace = _workspacePath;
+        var display = string.IsNullOrEmpty(parentRelative) ? "workspace root" : parentRelative;
+
+        var entered = await _newNoteDialog.PromptForName(
+            display,
+            raw => _nameValidator.ValidateFolderName(raw, workspace, parentRelative) is NoteNameResult.Failure failure
+                ? failure.Error
+                : null);
+        if (entered is null)
+        {
+            return;
+        }
+
+        if (_nameValidator.ValidateFolderName(entered, workspace, parentRelative) is not NoteNameResult.Success success)
+        {
+            return;
+        }
+
+        var newRelativePath = string.IsNullOrEmpty(parentRelative)
+            ? success.FileName
+            : parentRelative + "/" + success.FileName;
+
+        _folderService.Create(success.AbsolutePath);
 
         await LoadTreeCommand.ExecuteAsync(null);
 

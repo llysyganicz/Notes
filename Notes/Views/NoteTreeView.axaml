@@ -15,6 +15,9 @@
                 <TextBlock Text="{Binding Name}">
                     <TextBlock.ContextMenu>
                         <ContextMenu>
+                            <MenuItem Header="New Folder"
+                                      Command="{Binding $parent[TreeView].((vm:NoteTreeViewModel)DataContext).NewFolderCommand}"
+                                      CommandParameter="{Binding}" />
                             <MenuItem Header="Delete"
                                       Command="{Binding $parent[TreeView].((vm:NoteTreeViewModel)DataContext).DeleteNoteCommand}"
                                       CommandParameter="{Binding}" />

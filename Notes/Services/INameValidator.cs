@@ -1,8 +1,10 @@
 namespace Notes.Services;
 
-public interface INewNoteNameValidator
+public interface INameValidator
 {
-    NoteNameResult Validate(string rawInput, string workspaceAbsolutePath, string parentRelativePath);
+    NoteNameResult ValidateNoteName(string rawInput, string workspaceAbsolutePath, string parentRelativePath);
+
+    NoteNameResult ValidateFolderName(string rawInput, string workspaceAbsolutePath, string parentRelativePath);
 }
 
 public abstract record NoteNameResult

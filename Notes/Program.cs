@@ -46,7 +46,8 @@ class Program
         services.AddSingleton<INoteMetadataParser, NoteMetadataParser>();
         services.AddSingleton<INoteSearchIndex, NoteSearchIndex>();
         services.AddSingleton<IAutoSaveScheduler, AutoSaveScheduler>();
-        services.AddSingleton<INewNoteNameValidator, NewNoteNameValidator>();
+        services.AddSingleton<INameValidator, NameValidator>();
+        services.AddSingleton<INoteFolderService, NoteFolderService>();
         services.AddSingleton<INewNoteDialogService, NewNoteDialogService>();
 
         services.AddSingleton<MainWindowViewModel>();

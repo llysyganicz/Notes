@@ -10,6 +10,8 @@ public sealed record NoteDeletedMessage(string RelativePath);
 
 public sealed record NewNoteRequestedMessage;
 
+public sealed record NewFolderRequestedMessage;
+
 public sealed record TogglePreviewRequestedMessage;
 
 public sealed record NoteSavedMessage(string RelativePath, string Content);

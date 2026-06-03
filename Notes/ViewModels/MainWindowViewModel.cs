@@ -82,6 +82,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void NewFolder()
+    {
+        _messenger.Send(new NewFolderRequestedMessage());
+    }
+
+    [RelayCommand]
     private void TogglePreview()
     {
         _messenger.Send(new TogglePreviewRequestedMessage());

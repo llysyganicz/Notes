@@ -344,27 +344,27 @@ No data migration. The `System.IO.Abstractions` adoption is internal refactoring
 
 #### Automated
 
-- [x] 3.1 Build succeeds: `dotnet build`
-- [x] 3.2 Suite passes: `dotnet test`
+- [x] 3.1 Build succeeds: `dotnet build` — bac88ca
+- [x] 3.2 Suite passes: `dotnet test` — bac88ca
 
 #### Manual
 
-- [x] 3.3 Delete a folder with notes → recursive confirmation → folder and notes disappear
-- [x] 3.4 Editor returns to empty state if a deleted note was open
-- [x] 3.5 Search no longer returns the deleted notes
-- [x] 3.6 Synthetic root is guarded (no delete); empty folder deletes with confirmation
+- [x] 3.3 Delete a folder with notes → recursive confirmation → folder and notes disappear — bac88ca
+- [x] 3.4 Editor returns to empty state if a deleted note was open — bac88ca
+- [x] 3.5 Search no longer returns the deleted notes — bac88ca
+- [x] 3.6 Synthetic root is guarded (no delete); empty folder deletes with confirmation — bac88ca
 
 ### Phase 4: New Folder
 
 #### Automated
 
-- [ ] 4.1 Build succeeds: `dotnet build`
-- [ ] 4.2 Validator tests (valid, invalid chars, dir collision, file collision) pass and suite is green: `dotnet test`
+- [x] 4.1 Build succeeds: `dotnet build`
+- [x] 4.2 Validator tests (valid, invalid chars, dir collision, file collision) pass and suite is green: `dotnet test`
 
 #### Manual
 
-- [ ] 4.3 `Ctrl+Shift+N` and File → New Folder… create at root (no selection) or inside selected folder
-- [ ] 4.4 Right-click folder → New Folder creates a selected child folder
-- [ ] 4.5 Created folder persists on reload and works as a New Note target
-- [ ] 4.6 Invalid and colliding names rejected with a message; no directory created
-- [ ] 4.7 Creating `.templates` works and the folder is visible
+- [x] 4.3 `Ctrl+Shift+N` and File → New Folder… create at root (no selection) or inside selected folder
+- [x] 4.4 Right-click folder → New Folder creates a selected child folder
+- [x] 4.5 Created folder persists on reload and works as a New Note target
+- [x] 4.6 Invalid and colliding names rejected with a message; no directory created
+- [x] 4.7 Creating `.templates` works and the folder is visible
