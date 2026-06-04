@@ -322,10 +322,10 @@ None — no schema/data migration. Existing notes and `.templates/` content are 
 
 #### Automated
 
-- [ ] 1.1 Build passes: `dotnet build`
-- [ ] 1.2 Unit tests pass: `dotnet test`
-- [ ] 1.3 Parser: ordered definition; missing/malformed/absent → empty; field order = document order; entries + format captured
-- [ ] 1.4 Renderer: body substitution; undeclared token verbatim; blank → empty; `form` removed; other keys verbatim; `form`-only → no fence; frontmatter tokens untouched
+- [x] 1.1 Build passes: `dotnet build`
+- [x] 1.2 Unit tests pass: `dotnet test`
+- [x] 1.3 Parser: ordered definition; missing/malformed/absent → empty; field order = document order; entries + format captured
+- [x] 1.4 Renderer: body substitution; undeclared token verbatim; blank → empty; `form` removed; other keys verbatim; `form`-only → no fence; frontmatter tokens untouched
 
 ### Phase 2: Dynamic Typed Form Dialog
 

@@ -1,7 +1,7 @@
 ---
 change_id: templates
 title: Template creation and note-from-template with a typed form
-status: planned
+status: implementing
 created: 2026-06-02
 updated: 2026-06-04
 roadmap_ref: S-04
