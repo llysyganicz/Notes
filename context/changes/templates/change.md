@@ -1,9 +1,9 @@
 ---
 change_id: templates
 title: Template creation and note-from-template with a typed form
-status: preparing
+status: planned
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-04
 roadmap_ref: S-04
 prd_refs: [FR-008, FR-009, US-02]
 blocked_by: [note-tree-folder-management]
