@@ -100,6 +100,18 @@ public sealed class TemplateParserTests
     }
 
     [Fact]
+    public void Parse_WhenNumberFieldWithFormat_CapturesTypeAndFormat()
+    {
+        var text =
+            "---\nform:\n  amount:\n    type: number\n    label: Amount\n    format: F2\n---\n";
+
+        var field = _parser.Parse(text).Fields.Single().Field;
+
+        Assert.Equal("number", field.Type);
+        Assert.Equal("F2", field.Format);
+    }
+
+    [Fact]
     public void Parse_WhenNonDropdownField_HasNullEntries()
     {
         var text = "---\nform:\n  name:\n    type: text\n    label: Name\n---\n";

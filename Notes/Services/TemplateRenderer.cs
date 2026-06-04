@@ -11,99 +11,114 @@ namespace Notes.Services;
 /// <c>---</c> fence if no keys remain), then substitutes declared <c>{{field}}</c>
 /// tokens in the body only. Other frontmatter keys pass through verbatim — no YAML
 /// deserialize/reserialize round-trip that would reorder, restyle, or drop comments.
+/// Each line carries its original terminator (<c>\n</c> or <c>\r\n</c>) through the whole
+/// pipeline, so a CRLF template emerges as CRLF, not a mixed-ending file.
 /// </summary>
 public sealed class TemplateRenderer : ITemplateRenderer
 {
     private static readonly Regex PlaceholderRegex = new(@"\{\{(.*?)\}\}", RegexOptions.Compiled);
 
+    /// <summary>One source line: its content (sans terminator) and the terminator that followed it.</summary>
+    private readonly record struct Line(string Content, string Ending);
+
     public string Render(string templateText, FormDefinition definition, IReadOnlyDictionary<string, string> values)
     {
         templateText ??= string.Empty;
 
-        if (!TrySplitFrontmatter(templateText, out var inner, out var body))
+        var lines = SplitLines(templateText);
+
+        // No leading `---` fence → the whole text is body.
+        if (lines.Count == 0 || lines[0].Content != "---")
         {
-            // No frontmatter fence — the whole text is body.
             return SubstituteBody(templateText, definition, values);
         }
 
-        var keptLines = StripFormBlock(inner);
-        var substitutedBody = SubstituteBody(body, definition, values);
+        var closing = -1;
+        for (var i = 1; i < lines.Count; i++)
+        {
+            if (lines[i].Content == "---")
+            {
+                closing = i;
+                break;
+            }
+        }
 
-        if (keptLines.Count == 0)
+        // No closing fence → not a frontmatter block; treat the whole text as body.
+        if (closing < 0)
+        {
+            return SubstituteBody(templateText, definition, values);
+        }
+
+        var keptFrontmatter = StripFormBlock(lines.GetRange(1, closing - 1));
+        var body = SubstituteBody(Join(lines, closing + 1, lines.Count), definition, values);
+
+        if (keptFrontmatter.Count == 0)
         {
             // The form block was the only key — drop the fence entirely.
-            return substitutedBody;
+            return body;
         }
 
         var builder = new StringBuilder();
-        builder.Append("---\n");
-        foreach (var line in keptLines)
+        Append(builder, lines[0]);                  // opening fence, verbatim
+        foreach (var line in keptFrontmatter)
         {
-            builder.Append(line).Append('\n');
+            Append(builder, line);
         }
-        builder.Append("---\n");
-        builder.Append(substitutedBody);
+        Append(builder, lines[closing]);            // closing fence, verbatim
+        builder.Append(body);
         return builder.ToString();
     }
 
     /// <summary>
-    /// Splits a leading <c>---</c>…<c>---</c> frontmatter fence from the body.
-    /// <paramref name="inner"/> receives the lines between the fences (no trailing newline);
-    /// <paramref name="body"/> receives everything after the closing fence line.
+    /// Splits text into lines, keeping each line's terminator so that concatenating every
+    /// <see cref="Line.Content"/> + <see cref="Line.Ending"/> reproduces the input exactly.
     /// </summary>
-    private static bool TrySplitFrontmatter(string text, out string inner, out string body)
+    private static List<Line> SplitLines(string text)
     {
-        inner = string.Empty;
-        body = text;
-
-        var firstNewline = text.IndexOf('\n');
-        if (firstNewline < 0 || text.Substring(0, firstNewline).TrimEnd('\r') != "---")
-        {
-            return false;
-        }
-
-        var innerStart = firstNewline + 1;
-        var cursor = innerStart;
+        var lines = new List<Line>();
+        var cursor = 0;
         while (cursor < text.Length)
         {
             var newline = text.IndexOf('\n', cursor);
-            var lineEnd = newline < 0 ? text.Length : newline;
-            var line = text.Substring(cursor, lineEnd - cursor).TrimEnd('\r');
-            if (line == "---")
-            {
-                inner = text.Substring(innerStart, cursor - innerStart).TrimEnd('\r', '\n');
-                body = newline < 0 ? string.Empty : text.Substring(newline + 1);
-                return true;
-            }
-
             if (newline < 0)
             {
+                lines.Add(new Line(text.Substring(cursor), string.Empty));
                 break;
             }
 
+            var contentEnd = newline;
+            var ending = "\n";
+            if (contentEnd > cursor && text[contentEnd - 1] == '\r')
+            {
+                contentEnd--;
+                ending = "\r\n";
+            }
+
+            lines.Add(new Line(text.Substring(cursor, contentEnd - cursor), ending));
             cursor = newline + 1;
         }
 
-        return false;
+        return lines;
     }
 
     /// <summary>
     /// Removes the <c>form:</c> line and its more-indented continuation lines from the
-    /// frontmatter, returning the surviving lines verbatim.
+    /// frontmatter, returning the surviving lines verbatim (terminators intact).
     /// </summary>
-    private static List<string> StripFormBlock(string inner)
+    private static List<Line> StripFormBlock(List<Line> lines)
     {
-        var lines = inner.Split('\n');
-        var kept = new List<string>(lines.Length);
+        var kept = new List<Line>(lines.Count);
 
-        for (var i = 0; i < lines.Length; i++)
+        for (var i = 0; i < lines.Count; i++)
         {
-            if (IsFormKeyLine(lines[i]))
+            if (IsFormKeyLine(lines[i].Content))
             {
                 // Skip the form: line plus every following indented continuation line,
                 // stopping at the next top-level key (column 0) or the end of the block.
+                // Blank lines inside the block are continuations, not terminators —
+                // otherwise a blank between fields would leak the rest of the block.
                 i++;
-                while (i < lines.Length && IsIndented(lines[i]))
+                while (i < lines.Count && (IsIndented(lines[i].Content) || string.IsNullOrWhiteSpace(lines[i].Content)))
                 {
                     i++;
                 }
@@ -118,11 +133,25 @@ public sealed class TemplateRenderer : ITemplateRenderer
         return kept;
     }
 
-    private static bool IsFormKeyLine(string line) =>
-        line.TrimEnd('\r').StartsWith("form:");
+    private static bool IsFormKeyLine(string content) =>
+        content.StartsWith("form:");
 
-    private static bool IsIndented(string line) =>
-        line.Length > 0 && (line[0] == ' ' || line[0] == '\t');
+    private static bool IsIndented(string content) =>
+        content.Length > 0 && (content[0] == ' ' || content[0] == '\t');
+
+    private static string Join(List<Line> lines, int start, int end)
+    {
+        var builder = new StringBuilder();
+        for (var i = start; i < end; i++)
+        {
+            Append(builder, lines[i]);
+        }
+
+        return builder.ToString();
+    }
+
+    private static void Append(StringBuilder builder, Line line) =>
+        builder.Append(line.Content).Append(line.Ending);
 
     private static string SubstituteBody(string body, FormDefinition definition, IReadOnlyDictionary<string, string> values) =>
         PlaceholderRegex.Replace(body, match =>

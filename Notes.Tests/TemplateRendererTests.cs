@@ -136,6 +136,42 @@ public sealed class TemplateRendererTests
     }
 
     [Fact]
+    public void Render_WhenFormBlockContainsBlankLine_StripsEntireBlock()
+    {
+        var template =
+            "---\nform:\n  a:\n    type: text\n    label: A\n\n  b:\n    type: text\n    label: B\ntitle: Kept\n---\nBody {{a}}\n";
+        var values = new Dictionary<string, string> { ["a"] = "X", ["b"] = "Y" };
+
+        var result = _renderer.Render(template, Definition("a", "b"), values);
+
+        Assert.Equal("---\ntitle: Kept\n---\nBody X\n", result);
+    }
+
+    [Fact]
+    public void Render_WhenSiblingKeyStartsWithForm_PreservesIt()
+    {
+        var template =
+            "---\nform:\n  name:\n    type: text\n    label: Name\nformat: pretty\n---\nBody {{name}}\n";
+        var values = new Dictionary<string, string> { ["name"] = "X" };
+
+        var result = _renderer.Render(template, Definition("name"), values);
+
+        Assert.Equal("---\nformat: pretty\n---\nBody X\n", result);
+    }
+
+    [Fact]
+    public void Render_WhenTemplateUsesCrlf_PreservesCrlfEndings()
+    {
+        var template =
+            "---\r\ntitle: My Note\r\nform:\r\n  name:\r\n    type: text\r\n    label: Name\r\n---\r\nBody {{name}}\r\nNext line\r\n";
+        var values = new Dictionary<string, string> { ["name"] = "X" };
+
+        var result = _renderer.Render(template, Definition("name"), values);
+
+        Assert.Equal("---\r\ntitle: My Note\r\n---\r\nBody X\r\nNext line\r\n", result);
+    }
+
+    [Fact]
     public void Render_WhenMultipleDeclaredTokens_SubstitutesEachInOrder()
     {
         var template =
