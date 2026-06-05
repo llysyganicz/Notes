@@ -153,7 +153,7 @@ public sealed partial class NoteTreeViewModel :
             picked.RelativePath.Replace('/', Path.DirectorySeparatorChar));
         var templateText = _fileService.Read(templateAbsolute);
 
-        var definition = _templateParser.Parse(templateText) ?? FormDefinition.Empty;
+        var definition = _templateParser.Parse(templateText);
 
         IReadOnlyDictionary<string, string> values;
         if (definition.Fields.Count > 0)
