@@ -346,14 +346,14 @@ None — no schema/data migration. Existing notes and `.templates/` content are 
 
 #### Automated
 
-- [x] 3.1 Build passes: `dotnet build`
-- [x] 3.2 Unit tests pass: `dotnet test`
-- [x] 3.3 `TemplateCatalog.List` returns only top-level `.templates/*.md`; `HasAny` false when none
-- [x] 3.4 `NewFromTemplateCommand` `CanExecute` reflects `HasTemplates`, recomputed on workspace/save/delete
+- [x] 3.1 Build passes: `dotnet build` — 062994c
+- [x] 3.2 Unit tests pass: `dotnet test` — 062994c
+- [x] 3.3 `TemplateCatalog.List` returns only top-level `.templates/*.md`; `HasAny` false when none — 062994c
+- [x] 3.4 `NewFromTemplateCommand` `CanExecute` reflects `HasTemplates`, recomputed on workspace/save/delete — 062994c
 
 #### Manual
 
-- [x] 3.5 Menu item + Ctrl+T open picker when templates exist; disabled / no-op when none
-- [x] 3.6 End-to-end: pick → form → name → note in selected folder, opened, `form` stripped, body substituted, undeclared intact, blank empty
-- [x] 3.7 `form`-only template → output has no frontmatter fence
-- [x] 3.8 Cancel at picker / form / name prompt creates no note
+- [x] 3.5 Menu item + Ctrl+T open picker when templates exist; disabled / no-op when none — 062994c
+- [x] 3.6 End-to-end: pick → form → name → note in selected folder, opened, `form` stripped, body substituted, undeclared intact, blank empty — 062994c
+- [x] 3.7 `form`-only template → output has no frontmatter fence — 062994c
+- [x] 3.8 Cancel at picker / form / name prompt creates no note — 062994c
