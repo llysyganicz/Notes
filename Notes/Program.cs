@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Notes.Services;
 using Notes.ViewModels;
+using Notes.Views;
 
 namespace Notes;
 
@@ -49,6 +50,7 @@ class Program
         services.AddSingleton<INameValidator, NameValidator>();
         services.AddSingleton<INoteFolderService, NoteFolderService>();
         services.AddSingleton<INewNoteDialogService, NewNoteDialogService>();
+        services.AddSingleton<ITemplateFormDialogService, TemplateFormDialogService>();
 
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<NoteTreeViewModel>();
@@ -56,6 +58,8 @@ class Program
         services.AddSingleton<NoteSearchViewModel>();
 
         services.AddTransient<MainWindow>();
+        services.AddTransient<TemplateFormViewModel>();
+        services.AddTransient<TemplateFormDialog>();
 
         return services.BuildServiceProvider();
     }

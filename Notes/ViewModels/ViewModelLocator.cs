@@ -13,6 +13,8 @@ public sealed class ViewModelLocator
 
     public NoteSearchViewModel? Search => Resolve<NoteSearchViewModel>();
 
+    public TemplateFormViewModel? Form => Resolve<TemplateFormViewModel>();
+
     private static T? Resolve<T>() where T : class =>
         Design.IsDesignMode ? null : App.Services.GetRequiredService<T>();
 }
