@@ -11,24 +11,38 @@ using Notes.Services;
 
 namespace Notes.ViewModels;
 
-public sealed partial class MainWindowViewModel : ObservableObject
+public sealed partial class MainWindowViewModel :
+    ObservableObject,
+    IRecipient<TemplatesChangedMessage>
 {
     private readonly IMessenger _messenger;
     private readonly ISettingsService _settingsService;
     private readonly IFolderPicker _folderPicker;
+    private readonly ITemplateCatalog _templateCatalog;
 
     [ObservableProperty]
     private string? _workspacePath;
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(NewFromTemplateCommand))]
+    private bool _hasTemplates;
+
     public MainWindowViewModel(
         IMessenger messenger,
         ISettingsService settingsService,
-        IFolderPicker folderPicker)
+        IFolderPicker folderPicker,
+        ITemplateCatalog templateCatalog)
     {
         _messenger = messenger;
         _settingsService = settingsService;
         _folderPicker = folderPicker;
+        _templateCatalog = templateCatalog;
+
+        _messenger.RegisterAll(this);
     }
+
+    public void Receive(TemplatesChangedMessage message) =>
+        HasTemplates = _templateCatalog.HasAny();
 
     public async Task<bool> InitializeAsync()
     {
@@ -79,6 +93,18 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private void NewNote()
     {
         _messenger.Send(new NewNoteRequestedMessage());
+    }
+
+    [RelayCommand]
+    private void NewFolder()
+    {
+        _messenger.Send(new NewFolderRequestedMessage());
+    }
+
+    [RelayCommand(CanExecute = nameof(HasTemplates))]
+    private void NewFromTemplate()
+    {
+        _messenger.Send(new NewFromTemplateRequestedMessage());
     }
 
     [RelayCommand]

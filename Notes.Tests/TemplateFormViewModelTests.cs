@@ -1,0 +1,160 @@
+using System;
+using Notes.Models;
+using Notes.ViewModels;
+using Notes.ViewModels.Fields;
+using Xunit;
+
+namespace Notes.Tests;
+
+public sealed class TemplateFormViewModelTests
+{
+    private static FormDefinition Definition(params FormFieldEntry[] fields) => new(fields);
+
+    private static TemplateFormViewModel BuildSut(FormDefinition definition)
+    {
+        var vm = new TemplateFormViewModel();
+        vm.Load(definition);
+        return vm;
+    }
+
+    [Fact]
+    public void Load_WhenDefinitionHasFields_BuildsOneVmPerFieldInDocumentOrder()
+    {
+        var definition = Definition(
+            new FormFieldEntry("project", new FormField("text", "Project")),
+            new FormFieldEntry("due", new FormField("date", "Due")),
+            new FormFieldEntry("count", new FormField("number", "Count")));
+
+        var sut = BuildSut(definition);
+
+        Assert.Collection(
+            sut.Fields,
+            f => Assert.Equal("project", f.Name),
+            f => Assert.Equal("due", f.Name),
+            f => Assert.Equal("count", f.Name));
+    }
+
+    [Fact]
+    public void Load_WhenFieldTypesVary_MapsEachToItsConcreteVm()
+    {
+        var definition = Definition(
+            new FormFieldEntry("a", new FormField("text", "A")),
+            new FormFieldEntry("b", new FormField("date", "B")),
+            new FormFieldEntry("c", new FormField("number", "C")),
+            new FormFieldEntry("d", new FormField("dropdown", "D", new[] { "x", "y" })));
+
+        var sut = BuildSut(definition);
+
+        Assert.IsType<TextFieldVm>(sut.Fields[0]);
+        Assert.IsType<DateFieldVm>(sut.Fields[1]);
+        Assert.IsType<NumberFieldVm>(sut.Fields[2]);
+        Assert.IsType<SelectFieldVm>(sut.Fields[3]);
+    }
+
+    [Fact]
+    public void Load_WhenTypeCasingVaries_MatchesCaseInsensitively()
+    {
+        var definition = Definition(
+            new FormFieldEntry("a", new FormField("DATE", "A")),
+            new FormFieldEntry("b", new FormField("Dropdown", "B", new[] { "x" })));
+
+        var sut = BuildSut(definition);
+
+        Assert.IsType<DateFieldVm>(sut.Fields[0]);
+        Assert.IsType<SelectFieldVm>(sut.Fields[1]);
+    }
+
+    [Fact]
+    public void Load_WhenTypeUnknown_FallsBackToTextField()
+    {
+        var definition = Definition(new FormFieldEntry("a", new FormField("mystery", "A")));
+
+        var sut = BuildSut(definition);
+
+        Assert.IsType<TextFieldVm>(sut.Fields[0]);
+    }
+
+    [Fact]
+    public void Load_WhenDropdown_PassesEntriesThrough()
+    {
+        var definition = Definition(
+            new FormFieldEntry("p", new FormField("dropdown", "P", new[] { "low", "high" })));
+
+        var sut = BuildSut(definition);
+
+        var select = Assert.IsType<SelectFieldVm>(sut.Fields[0]);
+        Assert.Equal(new[] { "low", "high" }, select.Entries);
+    }
+
+    [Fact]
+    public void Submit_WhenExecuted_YieldsNameToRenderValueMap()
+    {
+        var definition = Definition(
+            new FormFieldEntry("project", new FormField("text", "Project")),
+            new FormFieldEntry("due", new FormField("date", "Due")),
+            new FormFieldEntry("count", new FormField("number", "Count")));
+        var sut = BuildSut(definition);
+        ((TextFieldVm)sut.Fields[0]).Value = "Apollo";
+        ((DateFieldVm)sut.Fields[1]).Value = new DateTimeOffset(2026, 3, 7, 0, 0, 0, TimeSpan.Zero);
+        ((NumberFieldVm)sut.Fields[2]).Value = 42m;
+
+        sut.SubmitCommand.Execute(null);
+
+        Assert.NotNull(sut.Result);
+        Assert.Equal("Apollo", sut.Result!["project"]);
+        Assert.Equal("2026-03-07", sut.Result["due"]);
+        Assert.Equal("42", sut.Result["count"]);
+    }
+
+    [Fact]
+    public void Submit_WhenFieldUntouched_YieldsEmptyString()
+    {
+        var definition = Definition(
+            new FormFieldEntry("project", new FormField("text", "Project")),
+            new FormFieldEntry("due", new FormField("date", "Due")));
+        var sut = BuildSut(definition);
+
+        sut.SubmitCommand.Execute(null);
+
+        Assert.NotNull(sut.Result);
+        Assert.Equal(string.Empty, sut.Result!["project"]);
+        Assert.Equal(string.Empty, sut.Result["due"]);
+    }
+
+    [Fact]
+    public void Submit_WhenDefinitionEmpty_YieldsEmptyMap()
+    {
+        var sut = BuildSut(FormDefinition.Empty);
+
+        sut.SubmitCommand.Execute(null);
+
+        Assert.NotNull(sut.Result);
+        Assert.Empty(sut.Result!);
+    }
+
+    [Fact]
+    public void Submit_WhenExecuted_RaisesCloseRequested()
+    {
+        var sut = BuildSut(FormDefinition.Empty);
+        var closed = false;
+        sut.CloseRequested += () => closed = true;
+
+        sut.SubmitCommand.Execute(null);
+
+        Assert.True(closed);
+    }
+
+    [Fact]
+    public void Cancel_WhenExecuted_LeavesResultNullAndRaisesCloseRequested()
+    {
+        var sut = BuildSut(
+            Definition(new FormFieldEntry("project", new FormField("text", "Project"))));
+        var closed = false;
+        sut.CloseRequested += () => closed = true;
+
+        sut.CancelCommand.Execute(null);
+
+        Assert.Null(sut.Result);
+        Assert.True(closed);
+    }
+}

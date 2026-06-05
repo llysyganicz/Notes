@@ -1,14 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 
 namespace Notes.Services;
 
 public sealed class WorkspaceScanner : IWorkspaceScanner
 {
+    private readonly IFileSystem _fileSystem;
+
+    public WorkspaceScanner(IFileSystem fileSystem)
+    {
+        _fileSystem = fileSystem;
+    }
+
     public IReadOnlyList<string> ScanMarkdownFiles(string rootDirectory)
     {
-        if (!Directory.Exists(rootDirectory))
+        if (!_fileSystem.Directory.Exists(rootDirectory))
         {
             return Array.Empty<string>();
         }
@@ -21,15 +29,15 @@ public sealed class WorkspaceScanner : IWorkspaceScanner
         };
 
         var results = new List<string>();
-        foreach (var path in Directory.EnumerateFiles(rootDirectory, "*.md", enumerationOptions))
+        foreach (var path in _fileSystem.Directory.EnumerateFiles(rootDirectory, "*.md", enumerationOptions))
         {
-            var fileName = Path.GetFileName(path);
+            var fileName = _fileSystem.Path.GetFileName(path);
             if (fileName.StartsWith('.'))
             {
                 continue;
             }
 
-            var relative = Path.GetRelativePath(rootDirectory, path).Replace('\\', '/');
+            var relative = _fileSystem.Path.GetRelativePath(rootDirectory, path).Replace('\\', '/');
             results.Add(relative);
         }
 

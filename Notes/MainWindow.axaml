@@ -11,6 +11,8 @@
         Title="{Binding WorkspacePath, FallbackValue=Notes, TargetNullValue=Notes}">
     <Window.KeyBindings>
         <KeyBinding Gesture="Ctrl+N" Command="{Binding NewNoteCommand}" />
+        <KeyBinding Gesture="Ctrl+Shift+N" Command="{Binding NewFolderCommand}" />
+        <KeyBinding Gesture="Ctrl+T" Command="{Binding NewFromTemplateCommand}" />
         <KeyBinding Gesture="Ctrl+E" Command="{Binding TogglePreviewCommand}" />
         <KeyBinding Gesture="Ctrl+F" Command="{Binding SearchCommand}" />
     </Window.KeyBindings>
@@ -18,6 +20,8 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="_New Note…" Command="{Binding NewNoteCommand}" InputGesture="Ctrl+N" />
+                <MenuItem Header="New _Folder…" Command="{Binding NewFolderCommand}" InputGesture="Ctrl+Shift+N" />
+                <MenuItem Header="New from _Template…" Command="{Binding NewFromTemplateCommand}" InputGesture="Ctrl+T" />
                 <MenuItem Header="_Search…" Command="{Binding SearchCommand}" InputGesture="Ctrl+F" />
                 <MenuItem Header="_Change Notes Folder…" Command="{Binding ChangeWorkspaceCommand}" />
                 <Separator />

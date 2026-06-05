@@ -1,8 +1,17 @@
-using System.IO;
+using System.IO.Abstractions;
 
 namespace Notes.Services;
 
 public sealed class NoteDeleter : INoteDeleter
 {
-    public void Delete(string absolutePath) => File.Delete(absolutePath);
+    private readonly IFileSystem _fileSystem;
+
+    public NoteDeleter(IFileSystem fileSystem)
+    {
+        _fileSystem = fileSystem;
+    }
+
+    public void Delete(string absolutePath) => _fileSystem.File.Delete(absolutePath);
+
+    public void DeleteFolder(string absolutePath) => _fileSystem.Directory.Delete(absolutePath, recursive: true);
 }

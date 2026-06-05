@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Notes.ViewModels"
+        xmlns:fields="using:Notes.ViewModels.Fields"
+        x:Class="Notes.Views.TemplateFormDialog"
+        x:DataType="vm:TemplateFormViewModel"
+        DataContext="{ReflectionBinding Form, Source={StaticResource Locator}}"
+        Width="420"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        ShowInTaskbar="False"
+        Title="New from Template">
+    <StackPanel Margin="20" Spacing="12">
+        <ItemsControl ItemsSource="{Binding Fields}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="12" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.DataTemplates>
+                <DataTemplate DataType="fields:TextFieldVm">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{Binding Label}" />
+                        <TextBox Text="{Binding Value, Mode=TwoWay}" />
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="fields:NumberFieldVm">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{Binding Label}" />
+                        <NumericUpDown Value="{Binding Value, Mode=TwoWay}"
+                                       FormatString="{Binding FormatString}"
+                                       ParsingNumberStyle="{Binding ParsingNumberStyle}"
+                                       Increment="1"
+                                       HorizontalAlignment="Stretch" />
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="fields:DateFieldVm">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{Binding Label}" />
+                        <DatePicker SelectedDate="{Binding Value, Mode=TwoWay}" />
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate DataType="fields:SelectFieldVm">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{Binding Label}" />
+                        <ComboBox ItemsSource="{Binding Entries}"
+                                  SelectedItem="{Binding SelectedEntry, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.DataTemplates>
+        </ItemsControl>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Content="Create" Width="80" IsDefault="True" Command="{Binding SubmitCommand}" />
+            <Button Content="Cancel" Width="80" IsCancel="True" Command="{Binding CancelCommand}" />
+        </StackPanel>
+    </StackPanel>
+</Window>

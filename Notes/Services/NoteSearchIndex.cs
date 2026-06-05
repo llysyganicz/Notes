@@ -236,10 +236,6 @@ public sealed class NoteSearchIndex :
         {
             // Cancelled by a newer WorkspaceChangedMessage; discard partial work silently.
         }
-        finally
-        {
-            cts.Dispose();
-        }
     }
 
     private sealed record MetadataEntry(string FileName, IReadOnlyList<string> Tags);
