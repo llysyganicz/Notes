@@ -50,6 +50,10 @@ class Program
         services.AddSingleton<INameValidator, NameValidator>();
         services.AddSingleton<INoteFolderService, NoteFolderService>();
         services.AddSingleton<INewNoteDialogService, NewNoteDialogService>();
+        services.AddSingleton<ITemplateParser, TemplateParser>();
+        services.AddSingleton<ITemplateRenderer, TemplateRenderer>();
+        services.AddSingleton<ITemplateCatalog, TemplateCatalog>();
+        services.AddSingleton<ITemplatePickerDialogService, TemplatePickerDialogService>();
         services.AddSingleton<ITemplateFormDialogService, TemplateFormDialogService>();
 
         services.AddSingleton<MainWindowViewModel>();
@@ -60,6 +64,8 @@ class Program
         services.AddTransient<MainWindow>();
         services.AddTransient<TemplateFormViewModel>();
         services.AddTransient<TemplateFormDialog>();
+        services.AddTransient<TemplatePickerViewModel>();
+        services.AddTransient<TemplatePickerDialog>();
 
         return services.BuildServiceProvider();
     }

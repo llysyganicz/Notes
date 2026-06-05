@@ -338,22 +338,22 @@ None — no schema/data migration. Existing notes and `.templates/` content are 
 
 #### Manual
 
-- [ ] 2.5 Form renders all four control types in template order
-- [ ] 2.6 Dropdown lists entries; date/dropdown start empty; untouched field → empty token
-- [ ] 2.7 Cancel returns no values
+- [x] 2.5 Form renders all four control types in template order
+- [x] 2.6 Dropdown lists entries; date/dropdown start empty; untouched field → empty token
+- [x] 2.7 Cancel returns no values
 
 ### Phase 3: Template Catalog, Picker, Entry Point & Orchestration
 
 #### Automated
 
-- [ ] 3.1 Build passes: `dotnet build`
-- [ ] 3.2 Unit tests pass: `dotnet test`
-- [ ] 3.3 `TemplateCatalog.List` returns only top-level `.templates/*.md`; `HasAny` false when none
-- [ ] 3.4 `NewFromTemplateCommand` `CanExecute` reflects `HasTemplates`, recomputed on workspace/save/delete
+- [x] 3.1 Build passes: `dotnet build`
+- [x] 3.2 Unit tests pass: `dotnet test`
+- [x] 3.3 `TemplateCatalog.List` returns only top-level `.templates/*.md`; `HasAny` false when none
+- [x] 3.4 `NewFromTemplateCommand` `CanExecute` reflects `HasTemplates`, recomputed on workspace/save/delete
 
 #### Manual
 
-- [ ] 3.5 Menu item + Ctrl+T open picker when templates exist; disabled / no-op when none
-- [ ] 3.6 End-to-end: pick → form → name → note in selected folder, opened, `form` stripped, body substituted, undeclared intact, blank empty
-- [ ] 3.7 `form`-only template → output has no frontmatter fence
-- [ ] 3.8 Cancel at picker / form / name prompt creates no note
+- [x] 3.5 Menu item + Ctrl+T open picker when templates exist; disabled / no-op when none
+- [x] 3.6 End-to-end: pick → form → name → note in selected folder, opened, `form` stripped, body substituted, undeclared intact, blank empty
+- [x] 3.7 `form`-only template → output has no frontmatter fence
+- [x] 3.8 Cancel at picker / form / name prompt creates no note

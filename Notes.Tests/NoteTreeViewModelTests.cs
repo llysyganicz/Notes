@@ -29,6 +29,11 @@ public sealed class NoteTreeViewModelTests
     private readonly INewNoteDialogService _newNoteDialog = Substitute.For<INewNoteDialogService>();
     private readonly InMemoryNoteFileService _fileService = new();
     private readonly NoteFolderService _folderService;
+    private readonly ITemplateCatalog _templateCatalog = Substitute.For<ITemplateCatalog>();
+    private readonly ITemplatePickerDialogService _templatePicker = Substitute.For<ITemplatePickerDialogService>();
+    private readonly TemplateParser _templateParser = new();
+    private readonly ITemplateFormDialogService _templateForm = Substitute.For<ITemplateFormDialogService>();
+    private readonly TemplateRenderer _templateRenderer = new();
 
     public NoteTreeViewModelTests()
     {
@@ -38,7 +43,8 @@ public sealed class NoteTreeViewModelTests
     }
 
     private NoteTreeViewModel BuildSut() =>
-        new(_messenger, _scanner, _treeBuilder, _deleter, _confirm, _nameValidator, _newNoteDialog, _fileService, _folderService);
+        new(_messenger, _scanner, _treeBuilder, _deleter, _confirm, _nameValidator, _newNoteDialog, _fileService, _folderService,
+            _templateCatalog, _templatePicker, _templateParser, _templateForm, _templateRenderer);
 
     private void StubPrompt(string? response) =>
         _newNoteDialog.PromptForName(Arg.Any<string>(), Arg.Any<Func<string, string?>>())
@@ -296,6 +302,66 @@ public sealed class NoteTreeViewModelTests
         _messenger.Send(new NewFolderRequestedMessage());
 
         Assert.False(_fileSystem.Directory.Exists(Workspace));
+    }
+
+    [Fact]
+    public void Receive_WhenNewFromTemplateRequested_RendersTemplateAndSavesNote()
+    {
+        const string templateText = "---\nform:\n  topic:\n    type: text\n    label: Topic\nkeep: yes\n---\n# {{topic}}\n";
+        _scanner.Paths = new List<string> { ".templates/meeting.md" };
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage(Workspace));
+
+        var templateInfo = new TemplateInfo(".templates/meeting.md", "meeting.md");
+        _templateCatalog.List().Returns(new[] { templateInfo });
+        _templatePicker.PickTemplate(Arg.Any<IReadOnlyList<TemplateInfo>>())
+            .Returns(Task.FromResult<TemplateInfo?>(templateInfo));
+        _fileService.FilesByPath[Path.Combine(Workspace, ".templates", "meeting.md")] = templateText;
+        _templateForm.CollectValues(Arg.Any<FormDefinition>())
+            .Returns(Task.FromResult<IReadOnlyDictionary<string, string>?>(
+                new Dictionary<string, string> { ["topic"] = "Standup" }));
+        StubPrompt("notes");
+        _scanner.Paths = new List<string> { ".templates/meeting.md", "notes.md" };
+
+        _messenger.Send(new NewFromTemplateRequestedMessage());
+
+        var savedPath = Path.Combine(Workspace, "notes.md");
+        Assert.True(_fileService.FilesByPath.ContainsKey(savedPath));
+        var saved = _fileService.FilesByPath[savedPath];
+        Assert.Contains("# Standup", saved);
+        Assert.Contains("keep: yes", saved);
+        Assert.DoesNotContain("form:", saved);
+    }
+
+    [Fact]
+    public void Receive_WhenTemplatePickerCancelled_CreatesNoNote()
+    {
+        _scanner.Paths = new List<string> { ".templates/meeting.md" };
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage(Workspace));
+
+        var templateInfo = new TemplateInfo(".templates/meeting.md", "meeting.md");
+        _templateCatalog.List().Returns(new[] { templateInfo });
+        _templatePicker.PickTemplate(Arg.Any<IReadOnlyList<TemplateInfo>>())
+            .Returns(Task.FromResult<TemplateInfo?>(null));
+        StubPrompt("notes");
+
+        _messenger.Send(new NewFromTemplateRequestedMessage());
+
+        Assert.False(_fileService.FilesByPath.ContainsKey(Path.Combine(Workspace, "notes.md")));
+    }
+
+    [Fact]
+    public void Receive_WhenNoTemplatesAvailable_CreatesNoNote()
+    {
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage(Workspace));
+        _templateCatalog.List().Returns(Array.Empty<TemplateInfo>());
+        StubPrompt("notes");
+
+        _messenger.Send(new NewFromTemplateRequestedMessage());
+
+        Assert.Empty(_fileService.FilesByPath);
     }
 
     private sealed class StubWorkspaceScanner : IWorkspaceScanner

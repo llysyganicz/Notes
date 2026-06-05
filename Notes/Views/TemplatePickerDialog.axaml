@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Notes.ViewModels"
+        xmlns:models="using:Notes.Models"
+        x:Class="Notes.Views.TemplatePickerDialog"
+        x:DataType="vm:TemplatePickerViewModel"
+        DataContext="{ReflectionBinding Picker, Source={StaticResource Locator}}"
+        Width="420"
+        Height="360"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        ShowInTaskbar="False"
+        Title="New from Template">
+    <DockPanel Margin="20" LastChildFill="True">
+        <TextBlock DockPanel.Dock="Top" Text="Choose a template:" Margin="0,0,0,8" />
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,12,0,0">
+            <Button Content="Create" Width="80" IsDefault="True" Command="{Binding SubmitCommand}" />
+            <Button Content="Cancel" Width="80" IsCancel="True" Command="{Binding CancelCommand}" />
+        </StackPanel>
+        <ListBox ItemsSource="{Binding Templates}"
+                 SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="models:TemplateInfo">
+                    <TextBlock Text="{Binding DisplayName}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</Window>

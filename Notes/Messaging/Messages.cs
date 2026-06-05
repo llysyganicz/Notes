@@ -12,6 +12,10 @@ public sealed record NewNoteRequestedMessage;
 
 public sealed record NewFolderRequestedMessage;
 
+public sealed record NewFromTemplateRequestedMessage;
+
+public sealed record TemplatesChangedMessage;
+
 public sealed record TogglePreviewRequestedMessage;
 
 public sealed record NoteSavedMessage(string RelativePath, string Content);

@@ -15,6 +15,8 @@ public sealed class ViewModelLocator
 
     public TemplateFormViewModel? Form => Resolve<TemplateFormViewModel>();
 
+    public TemplatePickerViewModel? Picker => Resolve<TemplatePickerViewModel>();
+
     private static T? Resolve<T>() where T : class =>
         Design.IsDesignMode ? null : App.Services.GetRequiredService<T>();
 }

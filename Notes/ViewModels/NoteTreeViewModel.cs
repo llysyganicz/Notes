@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,7 +15,8 @@ public sealed partial class NoteTreeViewModel :
     ObservableObject,
     IRecipient<WorkspaceChangedMessage>,
     IRecipient<NewNoteRequestedMessage>,
-    IRecipient<NewFolderRequestedMessage>
+    IRecipient<NewFolderRequestedMessage>,
+    IRecipient<NewFromTemplateRequestedMessage>
 {
     private readonly IMessenger _messenger;
     private readonly IWorkspaceScanner _scanner;
@@ -25,6 +27,11 @@ public sealed partial class NoteTreeViewModel :
     private readonly INewNoteDialogService _newNoteDialog;
     private readonly INoteFileService _fileService;
     private readonly INoteFolderService _folderService;
+    private readonly ITemplateCatalog _templateCatalog;
+    private readonly ITemplatePickerDialogService _templatePickerDialog;
+    private readonly ITemplateParser _templateParser;
+    private readonly ITemplateFormDialogService _templateFormDialog;
+    private readonly ITemplateRenderer _templateRenderer;
 
     private string? _workspacePath;
 
@@ -43,7 +50,12 @@ public sealed partial class NoteTreeViewModel :
         INameValidator nameValidator,
         INewNoteDialogService newNoteDialog,
         INoteFileService fileService,
-        INoteFolderService folderService)
+        INoteFolderService folderService,
+        ITemplateCatalog templateCatalog,
+        ITemplatePickerDialogService templatePickerDialog,
+        ITemplateParser templateParser,
+        ITemplateFormDialogService templateFormDialog,
+        ITemplateRenderer templateRenderer)
     {
         _messenger = messenger;
         _scanner = scanner;
@@ -54,6 +66,11 @@ public sealed partial class NoteTreeViewModel :
         _newNoteDialog = newNoteDialog;
         _fileService = fileService;
         _folderService = folderService;
+        _templateCatalog = templateCatalog;
+        _templatePickerDialog = templatePickerDialog;
+        _templateParser = templateParser;
+        _templateFormDialog = templateFormDialog;
+        _templateRenderer = templateRenderer;
 
         _messenger.RegisterAll(this);
     }
@@ -94,11 +111,72 @@ public sealed partial class NoteTreeViewModel :
         }
     }
 
+    public async void Receive(NewFromTemplateRequestedMessage message)
+    {
+        try
+        {
+            await HandleNewFromTemplate();
+        }
+        catch
+        {
+            // async void recipients must not throw onto the SynchronizationContext.
+        }
+    }
+
     [RelayCommand]
     private Task NewFolder(NoteTreeNode? node) =>
         HandleNewFolder(ResolveParentRelativePath(node));
 
-    private async Task HandleNewNote()
+    private Task HandleNewNote() => PromptNameAndSave(string.Empty);
+
+    private async Task HandleNewFromTemplate()
+    {
+        if (string.IsNullOrEmpty(_workspacePath))
+        {
+            return;
+        }
+
+        var templates = _templateCatalog.List();
+        if (templates.Count == 0)
+        {
+            return;
+        }
+
+        var picked = await _templatePickerDialog.PickTemplate(templates);
+        if (picked is null)
+        {
+            return;
+        }
+
+        var templateAbsolute = Path.Combine(
+            _workspacePath,
+            picked.RelativePath.Replace('/', Path.DirectorySeparatorChar));
+        var templateText = _fileService.Read(templateAbsolute);
+
+        var definition = _templateParser.Parse(templateText) ?? FormDefinition.Empty;
+
+        IReadOnlyDictionary<string, string> values;
+        if (definition.Fields.Count > 0)
+        {
+            var collected = await _templateFormDialog.CollectValues(definition);
+            if (collected is null)
+            {
+                return;
+            }
+
+            values = collected;
+        }
+        else
+        {
+            values = new Dictionary<string, string>();
+        }
+
+        var rendered = _templateRenderer.Render(templateText, definition, values);
+
+        await PromptNameAndSave(rendered);
+    }
+
+    private async Task PromptNameAndSave(string content)
     {
         if (string.IsNullOrEmpty(_workspacePath))
         {
@@ -128,8 +206,8 @@ public sealed partial class NoteTreeViewModel :
             ? success.FileName
             : parentRelative + "/" + success.FileName;
 
-        _fileService.Save(success.AbsolutePath, string.Empty);
-        _messenger.Send(new NoteSavedMessage(newRelativePath, string.Empty));
+        _fileService.Save(success.AbsolutePath, content);
+        _messenger.Send(new NoteSavedMessage(newRelativePath, content));
 
         await LoadTreeCommand.ExecuteAsync(null);
 
@@ -186,12 +264,24 @@ public sealed partial class NoteTreeViewModel :
         if (string.IsNullOrEmpty(_workspacePath))
         {
             Root = null;
+            RefreshTemplateCatalog(Array.Empty<string>());
             return Task.CompletedTask;
         }
 
         var paths = _scanner.ScanMarkdownFiles(_workspacePath);
         Root = _treeBuilder.Build(_workspacePath, paths);
+        RefreshTemplateCatalog(paths);
         return Task.CompletedTask;
+    }
+
+    // The tree reload is the single place the markdown file-set changes (workspace switch, note/
+    // folder create, delete) — never autosave — so it is the natural point to refresh the template
+    // cache, reusing the scan just performed. The catalog is updated before the notification fires,
+    // so MainWindowViewModel reads a fresh HasAny() when it handles TemplatesChangedMessage.
+    private void RefreshTemplateCatalog(IReadOnlyList<string> paths)
+    {
+        _templateCatalog.Load(paths);
+        _messenger.Send(new TemplatesChangedMessage());
     }
 
     [RelayCommand(CanExecute = nameof(CanDeleteNote))]
