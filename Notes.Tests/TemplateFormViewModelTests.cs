@@ -18,7 +18,7 @@ public sealed class TemplateFormViewModelTests
     }
 
     [Fact]
-    public void Construct_WhenDefinitionHasFields_BuildsOneVmPerFieldInDocumentOrder()
+    public void Load_WhenDefinitionHasFields_BuildsOneVmPerFieldInDocumentOrder()
     {
         var definition = Definition(
             new FormFieldEntry("project", new FormField("text", "Project")),
@@ -35,7 +35,7 @@ public sealed class TemplateFormViewModelTests
     }
 
     [Fact]
-    public void Construct_WhenFieldTypesVary_MapsEachToItsConcreteVm()
+    public void Load_WhenFieldTypesVary_MapsEachToItsConcreteVm()
     {
         var definition = Definition(
             new FormFieldEntry("a", new FormField("text", "A")),
@@ -52,7 +52,7 @@ public sealed class TemplateFormViewModelTests
     }
 
     [Fact]
-    public void Construct_WhenTypeCasingVaries_MatchesCaseInsensitively()
+    public void Load_WhenTypeCasingVaries_MatchesCaseInsensitively()
     {
         var definition = Definition(
             new FormFieldEntry("a", new FormField("DATE", "A")),
@@ -65,7 +65,7 @@ public sealed class TemplateFormViewModelTests
     }
 
     [Fact]
-    public void Construct_WhenTypeUnknown_FallsBackToTextField()
+    public void Load_WhenTypeUnknown_FallsBackToTextField()
     {
         var definition = Definition(new FormFieldEntry("a", new FormField("mystery", "A")));
 
@@ -75,7 +75,7 @@ public sealed class TemplateFormViewModelTests
     }
 
     [Fact]
-    public void Construct_WhenDropdown_PassesEntriesThrough()
+    public void Load_WhenDropdown_PassesEntriesThrough()
     {
         var definition = Definition(
             new FormFieldEntry("p", new FormField("dropdown", "P", new[] { "low", "high" })));

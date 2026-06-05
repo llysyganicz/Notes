@@ -331,10 +331,10 @@ None — no schema/data migration. Existing notes and `.templates/` content are 
 
 #### Automated
 
-- [x] 2.1 Build passes: `dotnet build`
-- [x] 2.2 Unit tests pass: `dotnet test`
-- [x] 2.3 Field VMs: date ISO/format-override + null→empty; number locale + blank→empty; select unselected→empty; text verbatim
-- [x] 2.4 `TemplateFormViewModel` builds one field VM per field in document order; yields correct value map
+- [x] 2.1 Build passes: `dotnet build` — 2e670e7
+- [x] 2.2 Unit tests pass: `dotnet test` — 2e670e7
+- [x] 2.3 Field VMs: date ISO/format-override + null→empty; number locale + blank→empty; select unselected→empty; text verbatim — 2e670e7
+- [x] 2.4 `TemplateFormViewModel` builds one field VM per field in document order; yields correct value map — 2e670e7
 
 #### Manual
 
