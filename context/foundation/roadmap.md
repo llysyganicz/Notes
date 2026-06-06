@@ -32,7 +32,7 @@ Existing markdown note-taking apps force a choice between abandoned simplicity (
 | S-01 | workspace-and-note-list | select a notes folder, browse notes with folder grouping, and delete a note | — | FR-010, FR-007, FR-003, US-01 | done |
 | S-02 | note-editor-and-preview | create a note, edit with syntax highlighting, and preview as HTML | S-01 | FR-001, FR-002, FR-004, US-01 | done |
 | S-03 | tags-and-search | tag notes via YAML frontmatter and search/filter by name, tags, content | S-02 | FR-005, FR-006, US-01 | done |
-| S-04 | templates | create a template and generate a note from it via a typed form | S-02 | FR-008, FR-009, US-02 | proposed |
+| S-04 | templates | create a template and generate a note from it via a typed form | S-02 | FR-008, FR-009, US-02 | done |
 
 ## Streams
 
@@ -107,7 +107,7 @@ No foundations. The MVVM scaffold, file I/O, YAML parsing, and markdown renderin
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The template engine — YAML field parsing, typed form generation, placeholder replacement — is custom domain logic with no off-the-shelf solution. This is the differentiator and the area where the "invest deeply in data/domain logic" decision applies. Sequenced after S-02; parallel with S-03.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -134,3 +134,4 @@ None. All PRD open questions are resolved; no new cross-cutting questions surfac
 - **S-01: select a notes folder, browse notes with folder grouping, and delete a note** — Archived 2026-06-06 → `context/archive/2026-05-25-workspace-and-note-list/`. Lesson: —.
 - **S-02: create a note, edit with syntax highlighting, and preview as HTML** — Archived 2026-06-06 → `context/archive/2026-05-28-note-editor-and-preview/`. Lesson: —.
 - **S-03: tag notes via YAML frontmatter and search/filter by name, tags, content** — Archived 2026-06-06 → `context/archive/2026-05-31-tags-and-search/`. Lesson: —.
+- **S-04: create a template and generate a note from it via a typed form** — Archived 2026-06-06 → `context/archive/2026-06-02-templates/`. Lesson: —.
