@@ -3,7 +3,7 @@ project: "Notes"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-05-25
+updated: 2026-06-06
 prd_version: 1
 main_goal: low-complexity
 top_blocker: capacity
@@ -29,7 +29,7 @@ Existing markdown note-taking apps force a choice between abandoned simplicity (
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| S-01 | workspace-and-note-list | select a notes folder, browse notes with folder grouping, and delete a note | — | FR-010, FR-007, FR-003, US-01 | ready |
+| S-01 | workspace-and-note-list | select a notes folder, browse notes with folder grouping, and delete a note | — | FR-010, FR-007, FR-003, US-01 | done |
 | S-02 | note-editor-and-preview | create a note, edit with syntax highlighting, and preview as HTML | S-01 | FR-001, FR-002, FR-004, US-01 | proposed |
 | S-03 | tags-and-search | tag notes via YAML frontmatter and search/filter by name, tags, content | S-02 | FR-005, FR-006, US-01 | proposed |
 | S-04 | templates | create a template and generate a note from it via a typed form | S-02 | FR-008, FR-009, US-02 | proposed |
@@ -71,7 +71,7 @@ No foundations. The MVVM scaffold, file I/O, YAML parsing, and markdown renderin
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Lowest-risk slice — standard file system browsing and Avalonia folder picker. Sequenced first because every subsequent slice needs a selected workspace and visible note list.
-- **Status:** ready
+- **Status:** done
 
 ### S-02: Create, edit, and preview a note
 
@@ -131,4 +131,4 @@ None. All PRD open questions are resolved; no new cross-cutting questions surfac
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends entries here when a change is archived.)
+- **S-01: select a notes folder, browse notes with folder grouping, and delete a note** — Archived 2026-06-06 → `context/archive/2026-05-25-workspace-and-note-list/`. Lesson: —.
