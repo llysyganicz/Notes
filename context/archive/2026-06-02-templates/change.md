@@ -1,10 +1,11 @@
 ---
 change_id: templates
 title: Template creation and note-from-template with a typed form
-status: impl_reviewed
+status: archived
 created: 2026-06-02
-updated: 2026-06-05
+updated: 2026-06-06
 roadmap_ref: S-04
+archived_at: 2026-06-06T00:00:00Z
 prd_refs: [FR-008, FR-009, US-02]
 blocked_by: [note-tree-folder-management]
 ---

@@ -3,7 +3,7 @@ project: "Notes"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-05-25
+updated: 2026-06-06
 prd_version: 1
 main_goal: low-complexity
 top_blocker: capacity
@@ -29,10 +29,10 @@ Existing markdown note-taking apps force a choice between abandoned simplicity (
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| S-01 | workspace-and-note-list | select a notes folder, browse notes with folder grouping, and delete a note | — | FR-010, FR-007, FR-003, US-01 | ready |
-| S-02 | note-editor-and-preview | create a note, edit with syntax highlighting, and preview as HTML | S-01 | FR-001, FR-002, FR-004, US-01 | proposed |
-| S-03 | tags-and-search | tag notes via YAML frontmatter and search/filter by name, tags, content | S-02 | FR-005, FR-006, US-01 | proposed |
-| S-04 | templates | create a template and generate a note from it via a typed form | S-02 | FR-008, FR-009, US-02 | proposed |
+| S-01 | workspace-and-note-list | select a notes folder, browse notes with folder grouping, and delete a note | — | FR-010, FR-007, FR-003, US-01 | done |
+| S-02 | note-editor-and-preview | create a note, edit with syntax highlighting, and preview as HTML | S-01 | FR-001, FR-002, FR-004, US-01 | done |
+| S-03 | tags-and-search | tag notes via YAML frontmatter and search/filter by name, tags, content | S-02 | FR-005, FR-006, US-01 | done |
+| S-04 | templates | create a template and generate a note from it via a typed form | S-02 | FR-008, FR-009, US-02 | done |
 
 ## Streams
 
@@ -71,7 +71,7 @@ No foundations. The MVVM scaffold, file I/O, YAML parsing, and markdown renderin
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Lowest-risk slice — standard file system browsing and Avalonia folder picker. Sequenced first because every subsequent slice needs a selected workspace and visible note list.
-- **Status:** ready
+- **Status:** done
 
 ### S-02: Create, edit, and preview a note
 
@@ -83,7 +83,7 @@ No foundations. The MVVM scaffold, file I/O, YAML parsing, and markdown renderin
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The editor component choice (syntax highlighting quality, performance) directly affects the PRD's NFR ("feel instant"). If the chosen editor control underperforms, it impacts every downstream slice. Sequenced immediately after S-01 because both S-03 and S-04 need a working editor.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Tags and search/filter
 
@@ -95,7 +95,7 @@ No foundations. The MVVM scaffold, file I/O, YAML parsing, and markdown renderin
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Low risk — YAML frontmatter parsing and in-memory full-text search are well-understood at small data volumes. Sequenced after S-02; parallel with S-04 because neither depends on the other.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Templates — create and use
 
@@ -107,7 +107,7 @@ No foundations. The MVVM scaffold, file I/O, YAML parsing, and markdown renderin
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The template engine — YAML field parsing, typed form generation, placeholder replacement — is custom domain logic with no off-the-shelf solution. This is the differentiator and the area where the "invest deeply in data/domain logic" decision applies. Sequenced after S-02; parallel with S-03.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -131,4 +131,7 @@ None. All PRD open questions are resolved; no new cross-cutting questions surfac
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends entries here when a change is archived.)
+- **S-01: select a notes folder, browse notes with folder grouping, and delete a note** — Archived 2026-06-06 → `context/archive/2026-05-25-workspace-and-note-list/`. Lesson: —.
+- **S-02: create a note, edit with syntax highlighting, and preview as HTML** — Archived 2026-06-06 → `context/archive/2026-05-28-note-editor-and-preview/`. Lesson: —.
+- **S-03: tag notes via YAML frontmatter and search/filter by name, tags, content** — Archived 2026-06-06 → `context/archive/2026-05-31-tags-and-search/`. Lesson: —.
+- **S-04: create a template and generate a note from it via a typed form** — Archived 2026-06-06 → `context/archive/2026-06-02-templates/`. Lesson: —.

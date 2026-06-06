@@ -1,9 +1,10 @@
 ---
 change_id: note-editor-and-preview
 title: Create, edit (syntax highlighting), and preview markdown notes
-status: impl_reviewed
+status: archived
 created: 2026-05-28
-updated: 2026-05-29
+updated: 2026-06-06
+archived_at: 2026-06-06T00:00:00Z
 roadmap_ref: S-02
 prd_refs: [FR-001, FR-002, FR-004, US-01]
 ---
