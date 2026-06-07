@@ -508,27 +508,27 @@ red, revert the simplification.
 
 #### Automated
 
-- [x] 3.1 Build passes: `dotnet build`
-- [x] 3.2 New round-trip tests pass: `dotnet test`
-- [x] 3.3 Existing real-FS no-BOM / non-ASCII / overwrite / emoji tests still pass after simplification
+- [x] 3.1 Build passes: `dotnet build` — df90aebe
+- [x] 3.2 New round-trip tests pass: `dotnet test` — df90aebe
+- [x] 3.3 Existing real-FS no-BOM / non-ASCII / overwrite / emoji tests still pass after simplification — df90aebe
 
 #### Manual
 
-- [x] 3.4 Removing explicit encoding produced no behavior change (no-BOM test green)
-- [x] 3.5 Line-ending test asserts on raw bytes (would fail on LF/CRLF normalization)
+- [x] 3.4 Removing explicit encoding produced no behavior change (no-BOM test green) — df90aebe
+- [x] 3.5 Line-ending test asserts on raw bytes (would fail on LF/CRLF normalization) — df90aebe
 
 ### Phase 4: Risk #1 end-to-end — create-from-template reaches disk intact
 
 #### Automated
 
-- [ ] 4.1 Build passes: `dotnet build`
-- [ ] 4.2 New orchestration tests pass: `dotnet test`
-- [ ] 4.3 Existing NoteTreeViewModel tests still pass
+- [x] 4.1 Build passes: `dotnet build`
+- [x] 4.2 New orchestration tests pass: `dotnet test`
+- [x] 4.3 Existing NoteTreeViewModel tests still pass
 
 #### Manual
 
-- [ ] 4.4 Malformed-template test fails if the form dialog is unexpectedly invoked
-- [ ] 4.5 Saved content read back from the mock FS (proves note reached disk)
+- [x] 4.4 Malformed-template test fails if the form dialog is unexpectedly invoked
+- [x] 4.5 Saved content read back from the mock FS (proves note reached disk)
 
 ### Phase 5: Cookbook update
 
