@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Notes.Models;
 using Notes.Services;
 using Xunit;
@@ -19,6 +20,44 @@ public sealed class TemplateRendererTests
 
         return new FormDefinition(fields);
     }
+
+    public sealed record RenderCase(
+        string Template,
+        string[] FieldNames,
+        Dictionary<string, string> Values,
+        string Expected);
+
+    // Phase 2 — §2.1: token substitution rules.
+    // Expected is built from (template + definition + values), never copied from renderer output.
+    // Covers: zero leftover declared tokens, mis-cased token stays verbatim, undeclared verbatim, slot fidelity.
+    public static TheoryData<RenderCase> TokenSubstitutionCases =>
+        new()
+        {
+            // All declared tokens substituted → zero leftover declared tokens in body
+            new RenderCase(
+                "---\nform:\n  title:\n    type: text\n    label: Title\n  author:\n    type: text\n    label: Author\n---\n# {{title}}\nBy {{author}}\n",
+                new[] { "title", "author" },
+                new Dictionary<string, string> { ["title"] = "My Note", ["author"] = "Alice" },
+                "# My Note\nBy Alice\n"),
+            // Mis-cased {{Title}} is not declared 'title' (ordinal comparison) → stays verbatim; {{title}} IS substituted
+            new RenderCase(
+                "---\nform:\n  title:\n    type: text\n    label: Title\n---\n{{Title}}-{{title}}\n",
+                new[] { "title" },
+                new Dictionary<string, string> { ["title"] = "Sub" },
+                "{{Title}}-Sub\n"),
+            // Undeclared token stays verbatim alongside declared substitution
+            new RenderCase(
+                "---\nform:\n  name:\n    type: text\n    label: Name\n---\nHello {{name}} and {{extra}}\n",
+                new[] { "name" },
+                new Dictionary<string, string> { ["name"] = "World" },
+                "Hello World and {{extra}}\n"),
+            // Slot fidelity: two distinct values land only in their own slots; duplicate occurrence consistent
+            new RenderCase(
+                "---\nform:\n  a:\n    type: text\n    label: A\n  b:\n    type: text\n    label: B\n---\n{{b}}-{{a}}-{{b}}-{{a}}\n",
+                new[] { "a", "b" },
+                new Dictionary<string, string> { ["a"] = "ALPHA", ["b"] = "BETA" },
+                "BETA-ALPHA-BETA-ALPHA\n")
+        };
 
     [Fact]
     public void Render_WhenDeclaredTokenInBody_SubstitutesValue()
@@ -181,5 +220,33 @@ public sealed class TemplateRendererTests
         var result = _renderer.Render(template, Definition("a", "b"), values);
 
         Assert.Equal("1-2-1\n", result);
+    }
+
+    // DoesNotContain loop is the belt-and-suspenders proof: each declared token that received a value must leave
+    // zero literal survivors in the output, independent of the Equal assertion.
+    [Theory]
+    [MemberData(nameof(TokenSubstitutionCases))]
+    public void Render_WhenBodyContainsMixedTokens_OnlyDeclaredNamesAreSubstituted(RenderCase c)
+    {
+        var result = _renderer.Render(c.Template, Definition(c.FieldNames), c.Values);
+
+        Assert.Equal(c.Expected, result);
+        foreach (var name in c.FieldNames.Where(n => c.Values.ContainsKey(n)))
+            Assert.DoesNotContain($"{{{{{name}}}}}", result);
+    }
+
+    // Phase 2 — §2.2: Odd-bracing grammar boundaries (optional / cut-first set).
+    // Pins the documented grammar for edge inputs; unrelated to business logic.
+    [Theory]
+    [InlineData("{{  name  }}\n", "name", "Trimmed", "Trimmed\n")]
+    [InlineData("{{{name}}}\n", "name", "X", "{{{name}}}\n")]
+    [InlineData("no closing {{name\n", "name", "X", "no closing {{name\n")]
+    [InlineData("{{a}}{{b}}\n", "a", "1", "1{{b}}\n")]
+    public void Render_WhenOddBracingGrammarBoundary_AppliesDocumentedBehavior(
+        string template, string fieldName, string value, string expected)
+    {
+        var values = new Dictionary<string, string> { [fieldName] = value };
+        var result = _renderer.Render(template, Definition(fieldName), values);
+        Assert.Equal(expected, result);
     }
 }

@@ -140,4 +140,14 @@ public sealed class NoteMetadataParserTests
 
         Assert.Equal(new[] { "foo", "bar" }, result.Tags);
     }
+
+    [Fact]
+    public void Parse_WhenFrontmatterContainsUnknownKeys_ParsesTagsNormally()
+    {
+        var text = "---\nauthor: Alice\ndate: 2026-01-01\ntags: [project, urgent]\ncustom-field: value\n---\n\n# Body\n";
+
+        var result = _parser.Parse(text);
+
+        Assert.Equal(new[] { "project", "urgent" }, result.Tags);
+    }
 }

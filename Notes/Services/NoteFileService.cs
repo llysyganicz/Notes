@@ -1,5 +1,4 @@
 using System.IO.Abstractions;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,8 +6,6 @@ namespace Notes.Services;
 
 public sealed class NoteFileService : INoteFileService
 {
-    private static readonly UTF8Encoding Utf8NoBom = new(encoderShouldEmitUTF8Identifier: false);
-
     private readonly IFileSystem _fileSystem;
 
     public NoteFileService(IFileSystem fileSystem)
@@ -33,11 +30,11 @@ public sealed class NoteFileService : INoteFileService
             return Task.FromResult(string.Empty);
         }
 
-        return _fileSystem.File.ReadAllTextAsync(absolutePath, Utf8NoBom, cancellationToken);
+        return _fileSystem.File.ReadAllTextAsync(absolutePath, cancellationToken);
     }
 
     public void Save(string absolutePath, string text)
     {
-        _fileSystem.File.WriteAllText(absolutePath, text, Utf8NoBom);
+        _fileSystem.File.WriteAllText(absolutePath, text);
     }
 }

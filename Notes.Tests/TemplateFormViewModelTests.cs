@@ -41,7 +41,7 @@ public sealed class TemplateFormViewModelTests
             new FormFieldEntry("a", new FormField("text", "A")),
             new FormFieldEntry("b", new FormField("date", "B")),
             new FormFieldEntry("c", new FormField("number", "C")),
-            new FormFieldEntry("d", new FormField("dropdown", "D", new[] { "x", "y" })));
+            new FormFieldEntry("d", new FormField("select", "D", new[] { "x", "y" })));
 
         var sut = BuildSut(definition);
 
@@ -56,7 +56,7 @@ public sealed class TemplateFormViewModelTests
     {
         var definition = Definition(
             new FormFieldEntry("a", new FormField("DATE", "A")),
-            new FormFieldEntry("b", new FormField("Dropdown", "B", new[] { "x" })));
+            new FormFieldEntry("b", new FormField("Select", "B", new[] { "x" })));
 
         var sut = BuildSut(definition);
 
@@ -75,10 +75,10 @@ public sealed class TemplateFormViewModelTests
     }
 
     [Fact]
-    public void Load_WhenDropdown_PassesEntriesThrough()
+    public void Load_WhenSelect_PassesEntriesThrough()
     {
         var definition = Definition(
-            new FormFieldEntry("p", new FormField("dropdown", "P", new[] { "low", "high" })));
+            new FormFieldEntry("p", new FormField("select", "P", new[] { "low", "high" })));
 
         var sut = BuildSut(definition);
 
@@ -156,5 +156,18 @@ public sealed class TemplateFormViewModelTests
 
         Assert.Null(sut.Result);
         Assert.True(closed);
+    }
+
+    [Fact]
+    public void Load_WhenSelectHasNoEntries_CreatesSelectVmWithEmptyChoicesAndEmptyRenderValue()
+    {
+        var definition = Definition(
+            new FormFieldEntry("priority", new FormField("select", "Priority", Array.Empty<string>())));
+
+        var sut = BuildSut(definition);
+
+        var select = Assert.IsType<SelectFieldVm>(sut.Fields[0]);
+        Assert.Empty(select.Entries);
+        Assert.Equal(string.Empty, select.RenderValue());
     }
 }

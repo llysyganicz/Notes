@@ -52,7 +52,7 @@ public sealed class TemplateParserTests
             "    type: text\n" +
             "    label: Project name\n" +
             "  priority:\n" +
-            "    type: dropdown\n" +
+            "    type: select\n" +
             "    label: Priority\n" +
             "    entries: [low, medium, high]\n" +
             "  due:\n" +
@@ -78,10 +78,10 @@ public sealed class TemplateParserTests
     }
 
     [Fact]
-    public void Parse_WhenDropdownField_CapturesEntries()
+    public void Parse_WhenSelectField_CapturesEntries()
     {
         var text =
-            "---\nform:\n  priority:\n    type: dropdown\n    label: Priority\n    entries: [low, medium, high]\n---\n";
+            "---\nform:\n  priority:\n    type: select\n    label: Priority\n    entries: [low, medium, high]\n---\n";
 
         var field = _parser.Parse(text).Fields.Single().Field;
 
@@ -163,5 +163,55 @@ public sealed class TemplateParserTests
         Assert.True(result.Names.Contains("a"));
         Assert.True(result.Names.Contains("b"));
         Assert.False(result.Names.Contains("c"));
+    }
+
+    [Fact]
+    public void Parse_WhenFormIsSequenceNotMap_ReturnsEmpty()
+    {
+        var text = "---\nform:\n  - item1\n  - item2\n---\n# Body\n";
+
+        var result = _parser.Parse(text);
+
+        Assert.Empty(result.Fields);
+    }
+
+    [Fact]
+    public void Parse_WhenFormIsTabIndented_ReturnsEmpty()
+    {
+        var text = "---\nform:\n\tfield1:\n\t\ttype: text\n---\n# Body\n";
+
+        var result = _parser.Parse(text);
+
+        Assert.Empty(result.Fields);
+    }
+
+    [Fact]
+    public void Parse_WhenFieldMissingType_HasEmptyType()
+    {
+        var text = "---\nform:\n  name:\n    label: Name\n---\n";
+
+        var field = _parser.Parse(text).Fields.Single().Field;
+
+        Assert.Equal(string.Empty, field.Type);
+    }
+
+    [Fact]
+    public void Parse_WhenFieldMissingLabel_HasEmptyLabel()
+    {
+        var text = "---\nform:\n  name:\n    type: text\n---\n";
+
+        var field = _parser.Parse(text).Fields.Single().Field;
+
+        Assert.Equal(string.Empty, field.Label);
+    }
+
+    [Fact]
+    public void Parse_WhenSelectFieldHasNoEntries_EntriesIsNullOrEmpty()
+    {
+        var text = "---\nform:\n  priority:\n    type: select\n    label: Priority\n---\n";
+
+        var field = _parser.Parse(text).Fields.Single().Field;
+
+        Assert.True(field.Entries is null || field.Entries.Count == 0);
     }
 }
