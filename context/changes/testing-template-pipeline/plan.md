@@ -474,6 +474,33 @@ red, revert the simplification.
 - Substitution: `Notes/Services/TemplateRenderer.cs:156-169`
 - Save path: `Notes/Services/NoteFileService.cs:10,:26,:36,:39-42`
 
+## Implementation Addenda
+
+- **Phase 1 — `dropdown`→`select` production fix superseded the "pin the trap"
+  intent.** The plan's Key Discoveries claimed the recognized field-type keyword
+  was `dropdown` and that `type: select` silently degraded to `TextFieldVm`
+  ("highest-value case"). Implementation found the reverse: `TemplateParser`
+  passes `type:` through verbatim and every template/test uses `select`, so the
+  old `"dropdown"` switch arm could never match and select fields silently fell
+  through to free text. Phase 1 therefore *fixed* `CreateField`
+  (`Notes/ViewModels/TemplateFormViewModel.cs:65`, `"dropdown"` → `"select"`) and
+  the tests pin the corrected behavior (`select` → `SelectFieldVm`). This is an
+  intentional, in-scope production change beyond the encoding simplification; see
+  also test-plan §6.6. A future `type: dropdown` still degrades to text (no
+  alias) — tracked as a follow-up.
+
+- **Phase 3 — real-FS no-BOM guard intentionally dropped; MockFileSystem-only.**
+  The plan called for keeping the *existing real-FS* no-BOM test untouched as the
+  authoritative guard that the simplified default still writes UTF-8 no-BOM. Per
+  the project's durable "never touch real disk in tests" rule (CLAUDE.md +
+  memory), the whole `NoteFileServiceTests` file was instead migrated to
+  `MockFileSystem`, including `Save_WhenCalled_WritesUtf8WithoutBom`. The
+  production no-BOM default is treated as a verified .NET 10 platform guarantee
+  (`File.WriteAllText`), documented in a comment on that test rather than
+  re-asserted against real disk. Trade-off accepted (impl-review F2, Fix A): the
+  suite stays hermetic; no automated test now catches a regression where the
+  production write path reintroduces an explicit BOM-emitting encoding.
+
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.

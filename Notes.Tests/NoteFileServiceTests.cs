@@ -34,6 +34,11 @@ public sealed class NoteFileServiceTests
         Assert.Equal("# Hello\n\nWorld with łódź 漢字", result);
     }
 
+    // Production writes UTF-8 no-BOM by .NET 10 platform default (File.WriteAllText), relied on
+    // after the NoteFileService encoding simplification. We assert no-BOM on MockFileSystem rather
+    // than re-running it against the real disk: per the project's "never touch real disk in tests"
+    // rule this stays hermetic, and the platform default is a documented .NET guarantee — not
+    // re-proven here. ASCII "hello" makes the expected bytes encoder-independent literals.
     [Fact]
     public void Save_WhenCalled_WritesUtf8WithoutBom()
     {
