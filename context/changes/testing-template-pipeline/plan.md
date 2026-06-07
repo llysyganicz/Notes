@@ -482,22 +482,22 @@ red, revert the simplification.
 
 #### Automated
 
-- [x] 1.1 Build passes: `dotnet build`
-- [x] 1.2 New parser/form tests pass: `dotnet test`
-- [x] 1.3 No existing TemplateParser/TemplateFormViewModel/NoteMetadataParser test regressed
+- [x] 1.1 Build passes: `dotnet build` — f647c957
+- [x] 1.2 New parser/form tests pass: `dotnet test` — f647c957
+- [x] 1.3 No existing TemplateParser/TemplateFormViewModel/NoteMetadataParser test regressed — f647c957
 
 #### Manual
 
-- [x] 1.4 `type: select` test fails if `SelectFieldVm` is asserted instead of `TextFieldVm`
-- [x] 1.5 No new test uses `Assert.Throws` for a malformed/edge-case scenario
+- [x] 1.4 `type: select` test fails if `SelectFieldVm` is asserted instead of `TextFieldVm` — f647c957
+- [x] 1.5 No new test uses `Assert.Throws` for a malformed/edge-case scenario — f647c957
 
 ### Phase 2: Risk #1 — Render correctness & leftover-placeholder oracle
 
 #### Automated
 
-- [ ] 2.1 Build passes: `dotnet build`
-- [ ] 2.2 New render theory passes: `dotnet test`
-- [ ] 2.3 No existing TemplateRenderer test regressed
+- [x] 2.1 Build passes: `dotnet build`
+- [x] 2.2 New render theory passes: `dotnet test`
+- [x] 2.3 No existing TemplateRenderer test regressed
 
 #### Manual
 
