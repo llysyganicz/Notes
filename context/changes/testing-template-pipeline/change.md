@@ -1,7 +1,7 @@
 ---
 change_id: testing-template-pipeline
 title: Template pipeline correctness tests (rollout Phase 1)
-status: implementing
+status: implemented
 created: 2026-06-06
 updated: 2026-06-07
 archived_at: null

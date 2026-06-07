@@ -534,10 +534,10 @@ red, revert the simplification.
 
 #### Automated
 
-- [x] 5.1 §6.1, §6.3, §6.4 no longer contain "TBD"
-- [x] 5.2 Full suite still green: `dotnet test`
+- [x] 5.1 §6.1, §6.3, §6.4 no longer contain "TBD" — 8afba184
+- [x] 5.2 Full suite still green: `dotnet test` — 8afba184
 
 #### Manual
 
-- [x] 5.3 Each cookbook entry names a real test method that exists in the suite
-- [x] 5.4 A reader could add a test of each kind from the entry alone
+- [x] 5.3 Each cookbook entry names a real test method that exists in the suite — 8afba184
+- [x] 5.4 A reader could add a test of each kind from the entry alone — 8afba184
