@@ -62,7 +62,7 @@ public sealed partial class TemplateFormViewModel : ObservableObject
         {
             "date" => new DateFieldVm(entry.Name, field.Label, field.Format),
             "number" => new NumberFieldVm(entry.Name, field.Label, field.Format),
-            "dropdown" => new SelectFieldVm(entry.Name, field.Label, field.Entries ?? Array.Empty<string>()),
+            "select" => new SelectFieldVm(entry.Name, field.Label, field.Entries ?? Array.Empty<string>()),
             _ => new TextFieldVm(entry.Name, field.Label),
         };
     }
