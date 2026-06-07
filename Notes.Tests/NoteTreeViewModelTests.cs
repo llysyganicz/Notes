@@ -383,7 +383,7 @@ public sealed class NoteTreeViewModelTests
 
         _messenger.Send(new NewFromTemplateRequestedMessage());
 
-        _templateForm.Received().CollectValues(Arg.Any<FormDefinition>());
+        _templateForm.DidNotReceive().CollectValues(Arg.Any<FormDefinition>());
         var savedPath = Path.Combine(Workspace, "broken-note.md");
         Assert.True(_fileService.FilesByPath.ContainsKey(savedPath));
         Assert.Equal("# Static Body\n", _fileService.FilesByPath[savedPath]);

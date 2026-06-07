@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-06 (Phase 1 change opened)
+> Last updated: 2026-06-07 (Phase 1 cookbook §6.1/§6.3/§6.4 filled)
 
 ## 1. Strategy
 
@@ -146,7 +146,25 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.1 Adding a unit test
 
-- TBD — see §3 Phase 1 (template parse/render correctness pattern).
+- **Location:** one test file per SUT under `Notes.Tests/`, named `<Sut>Tests.cs`
+  (e.g. `TemplateRendererTests.cs`, `TemplateParserTests.cs`). Extend the
+  existing file for the SUT — do not add a parallel file.
+- **Construction:** pure-engine SUTs (`TemplateParser`, `TemplateRenderer`,
+  `NameValidator`) are `new`-ed directly in the test — there is no DI container
+  in tests.
+- **Naming:** `Method_WhenScenario_ExpectedBehaviour` — three PascalCase
+  segments, the expected-behaviour segment leading with a verb (`Returns`,
+  `Substitutes`, `Throws`). Use `WhenCalled` when asserting a general property.
+- **Oracle rule:** build the expected value *independently* from the inputs
+  (template + definition + values); never paste the SUT's own output back as the
+  assertion ("it returned a string ⇒ it's correct" is the anti-pattern). Drive
+  multi-case checks with `[Theory]` + `[InlineData]`/`[MemberData]`.
+- **Reference test:**
+  `TemplateRendererTests.Render_WhenBodyContainsMixedTokens_OnlyDeclaredNamesAreSubstituted`
+  — a `[MemberData]` theory whose `Expected` string is constructed from the
+  inputs, plus a `DoesNotContain` loop over every declared token proving zero
+  leftover `{{name}}` survivors.
+- **Run:** `dotnet test`.
 
 ### 6.2 Adding an integration test (service touching disk)
 
@@ -154,11 +172,48 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.3 Adding a test for a new template field type
 
-- TBD — see §3 Phase 1 (parser field-type coverage + render-slot oracle pattern).
+The field-type decision spans two boundaries; test both.
+
+- **Parse boundary (`TemplateParser`):** the parser keeps the raw `type:` string
+  and `entries:` verbatim on `FormField` and does **not** validate the type — a
+  missing type stays an empty string, an unknown type passes through. Reference:
+  `TemplateParserTests.Parse_WhenFieldMissingType_HasEmptyType` and
+  `Parse_WhenSelectFieldHasNoEntries_EntriesIsNullOrEmpty`.
+- **Form boundary (`TemplateFormViewModel.CreateField`,
+  `Notes/ViewModels/TemplateFormViewModel.cs:58-68`):** the lower-cased `type:`
+  string is `switch`-mapped to a `FieldVm` subtype. The recognized keywords are
+  `date`, `number`, and **`select`**; everything else — including an empty or
+  missing type — falls through to `TextFieldVm`. Adding a field type means a new
+  `switch` arm here plus a `FieldVm` subclass. Reference:
+  `TemplateFormViewModelTests.Load_WhenSelect_PassesEntriesThrough` (recognized
+  keyword → `SelectFieldVm`, entries passed through),
+  `Load_WhenTypeUnknown_FallsBackToTextField` (unknown keyword → `TextFieldVm`),
+  and `Load_WhenSelectHasNoEntries_CreatesSelectVmWithEmptyChoicesAndEmptyRenderValue`.
+- **Always pin both** the recognized-keyword happy path *and* the unknown/missing
+  fallback, so a typo'd keyword cannot silently degrade to free text unnoticed.
+- **Run:** `dotnet test`.
 
 ### 6.4 Adding a view-model test
 
-- TBD — see §3 Phase 1/2 (xUnit + `TestApp.cs` bootstrap, NSubstitute doubles).
+- **Default shape:** `new` the VM directly under a plain `[Fact]`. Wire
+  collaborators as: a **fresh `StrongReferenceMessenger` per test** (never the
+  static `WeakReferenceMessenger.Default`), **NSubstitute** doubles for
+  dialog/service interfaces (`Substitute.For<I…>()`), and **`MockFileSystem`** (or
+  an in-process fake such as `InMemoryNoteFileService`) for anything touching
+  disk — never the real file system.
+- **Drive through the real entry point:** send a message or execute a
+  `RelayCommand`, then assert on observable output (a published message, the mock
+  FS's stored file content) — not on internal VM state.
+- **Avalonia escalation:** use `[AvaloniaFact]` + the `TestApp.cs` bootstrap
+  **only** when the VM (or a child VM) touches Avalonia primitives; reference for
+  that path is `NoteSearchViewModelTests.cs`. The template-pipeline VMs do not, so
+  they stay on plain `[Fact]`.
+- **Reference tests:**
+  `NoteTreeViewModelTests.Receive_WhenMalformedTemplate_SkipsFormDialogAndSavesStaticBody`
+  and `Receive_WhenFormSubmittedBlank_SavesNoteWithNoLeftoverDeclaredTokens` —
+  message-driven, NSubstitute dialog doubles, asserting the content actually
+  written to the mock file service.
+- **Run:** `dotnet test`.
 
 ### 6.5 Validating that a test actually catches regressions
 
@@ -168,6 +223,12 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 (Optional. After each phase lands, `/10x-implement` appends a 2–3 line note
 here capturing anything surprising the rollout phase taught.)
+
+- **Phase 1 (template pipeline correctness):** the field-type keyword recognized
+  by `TemplateFormViewModel.CreateField` is **`select`**, not `dropdown` — an
+  early plan note had it backwards. Every other `type:` (including missing/empty)
+  silently resolves to `TextFieldVm`, so each new field type needs both a
+  recognized-keyword test and an unknown-type fallback test (see §6.3).
 
 ## 7. What We Deliberately Don't Test
 

@@ -521,23 +521,23 @@ red, revert the simplification.
 
 #### Automated
 
-- [x] 4.1 Build passes: `dotnet build`
-- [x] 4.2 New orchestration tests pass: `dotnet test`
-- [x] 4.3 Existing NoteTreeViewModel tests still pass
+- [x] 4.1 Build passes: `dotnet build` — b5209f90
+- [x] 4.2 New orchestration tests pass: `dotnet test` — b5209f90
+- [x] 4.3 Existing NoteTreeViewModel tests still pass — b5209f90
 
 #### Manual
 
-- [x] 4.4 Malformed-template test fails if the form dialog is unexpectedly invoked
-- [x] 4.5 Saved content read back from the mock FS (proves note reached disk)
+- [x] 4.4 Malformed-template test fails if the form dialog is unexpectedly invoked — b5209f90
+- [x] 4.5 Saved content read back from the mock FS (proves note reached disk) — b5209f90
 
 ### Phase 5: Cookbook update
 
 #### Automated
 
-- [ ] 5.1 §6.1, §6.3, §6.4 no longer contain "TBD"
-- [ ] 5.2 Full suite still green: `dotnet test`
+- [x] 5.1 §6.1, §6.3, §6.4 no longer contain "TBD"
+- [x] 5.2 Full suite still green: `dotnet test`
 
 #### Manual
 
-- [ ] 5.3 Each cookbook entry names a real test method that exists in the suite
-- [ ] 5.4 A reader could add a test of each kind from the entry alone
+- [x] 5.3 Each cookbook entry names a real test method that exists in the suite
+- [x] 5.4 A reader could add a test of each kind from the entry alone
