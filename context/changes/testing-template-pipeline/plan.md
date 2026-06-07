@@ -495,27 +495,27 @@ red, revert the simplification.
 
 #### Automated
 
-- [x] 2.1 Build passes: `dotnet build`
-- [x] 2.2 New render theory passes: `dotnet test`
-- [x] 2.3 No existing TemplateRenderer test regressed
+- [x] 2.1 Build passes: `dotnet build` — c6267ee7
+- [x] 2.2 New render theory passes: `dotnet test` — c6267ee7
+- [x] 2.3 No existing TemplateRenderer test regressed — c6267ee7
 
 #### Manual
 
-- [ ] 2.4 Oracle fails if a declared token is left unsubstituted in the expected string
-- [ ] 2.5 Expected strings are constructed from inputs, not pasted from a render run
+- [x] 2.4 Oracle fails if a declared token is left unsubstituted in the expected string — c6267ee7
+- [x] 2.5 Expected strings are constructed from inputs, not pasted from a render run — c6267ee7
 
 ### Phase 3: Risk #6 — Round-trip portability + encoding simplification
 
 #### Automated
 
-- [ ] 3.1 Build passes: `dotnet build`
-- [ ] 3.2 New round-trip tests pass: `dotnet test`
-- [ ] 3.3 Existing real-FS no-BOM / non-ASCII / overwrite / emoji tests still pass after simplification
+- [x] 3.1 Build passes: `dotnet build`
+- [x] 3.2 New round-trip tests pass: `dotnet test`
+- [x] 3.3 Existing real-FS no-BOM / non-ASCII / overwrite / emoji tests still pass after simplification
 
 #### Manual
 
-- [ ] 3.4 Removing explicit encoding produced no behavior change (no-BOM test green)
-- [ ] 3.5 Line-ending test asserts on raw bytes (would fail on LF/CRLF normalization)
+- [x] 3.4 Removing explicit encoding produced no behavior change (no-BOM test green)
+- [x] 3.5 Line-ending test asserts on raw bytes (would fail on LF/CRLF normalization)
 
 ### Phase 4: Risk #1 end-to-end — create-from-template reaches disk intact
 
