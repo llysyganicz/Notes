@@ -17,6 +17,7 @@ public sealed class NoteFileService : INoteFileService
 
     public string Read(string absolutePath)
     {
+        _pathGuard.EnsureWithinWorkspace(absolutePath);
         if (!_fileSystem.File.Exists(absolutePath))
         {
             return string.Empty;
@@ -27,6 +28,7 @@ public sealed class NoteFileService : INoteFileService
 
     public Task<string> ReadAsync(string absolutePath, CancellationToken cancellationToken = default)
     {
+        _pathGuard.EnsureWithinWorkspace(absolutePath);
         if (!_fileSystem.File.Exists(absolutePath))
         {
             return Task.FromResult(string.Empty);

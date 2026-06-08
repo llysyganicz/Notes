@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.IO.Abstractions;
 using CommunityToolkit.Mvvm.Messaging;
 using Notes.Messaging;
@@ -5,7 +7,6 @@ using Notes.Messaging;
 namespace Notes.Services;
 
 public sealed class OrphanedTempCleaner :
-    IOrphanedTempCleaner,
     IRecipient<WorkspaceChangedMessage>
 {
     private readonly IFileSystem _fileSystem;
@@ -26,7 +27,8 @@ public sealed class OrphanedTempCleaner :
 
         foreach (var tmpFile in _fileSystem.Directory.GetFiles(root, "*" + NoteFileService.TempSuffix, System.IO.SearchOption.AllDirectories))
         {
-            try { _fileSystem.File.Delete(tmpFile); } catch { /* best-effort; one locked file must not abort the sweep */ }
+            try { _fileSystem.File.Delete(tmpFile); }
+            catch (Exception ex) { Trace.WriteLine($"OrphanedTempCleaner: could not delete '{tmpFile}': {ex.Message}"); }
         }
     }
 }

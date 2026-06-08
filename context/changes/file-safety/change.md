@@ -1,9 +1,9 @@
 ---
 change_id: file-safety
 title: File-safety & data-loss guardrails (rollout Phase 2)
-status: implemented
+status: impl_reviewed
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-06-08 (impl-review)
 archived_at: null
 ---
 

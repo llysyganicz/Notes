@@ -27,7 +27,7 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             _ = Services.GetRequiredService<INoteSearchIndex>();
-            _ = Services.GetRequiredService<IOrphanedTempCleaner>();
+            _ = Services.GetRequiredService<OrphanedTempCleaner>();
             var window = Services.GetRequiredService<MainWindow>();
             desktop.MainWindow = window;
             window.Show();

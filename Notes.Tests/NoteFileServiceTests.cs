@@ -183,5 +183,59 @@ public sealed class NoteFileServiceTests
         Assert.Equal("hello", svc.Read(root + "/note.md"));
     }
 
+    [Theory]
+    [InlineData("/etc/passwd")]
+    [InlineData("/workspace-evil/note.md")]
+    [InlineData("/workspace/../etc/shadow")]
+    public void Read_WhenPathOutsideWorkspace_ThrowsPathContainmentException(string outsidePath)
+    {
+        const string root = "/workspace";
+        var settings = Substitute.For<ISettingsService>();
+        settings.CurrentWorkspacePath.Returns(root);
+        var svc = new NoteFileService(_mockFs, new PathGuard(settings));
+
+        Assert.Throws<PathContainmentException>(() => svc.Read(outsidePath));
+    }
+
+    [Fact]
+    public void Read_WhenPathInsideWorkspace_ReturnsContent()
+    {
+        const string root = "/workspace";
+        const string notePath = root + "/note.md";
+        _mockFs.AddFile(notePath, new MockFileData("hello"));
+        var settings = Substitute.For<ISettingsService>();
+        settings.CurrentWorkspacePath.Returns(root);
+        var svc = new NoteFileService(_mockFs, new PathGuard(settings));
+
+        Assert.Equal("hello", svc.Read(notePath));
+    }
+
+    [Theory]
+    [InlineData("/etc/passwd")]
+    [InlineData("/workspace-evil/note.md")]
+    [InlineData("/workspace/../etc/shadow")]
+    public async System.Threading.Tasks.Task ReadAsync_WhenPathOutsideWorkspace_ThrowsPathContainmentException(string outsidePath)
+    {
+        const string root = "/workspace";
+        var settings = Substitute.For<ISettingsService>();
+        settings.CurrentWorkspacePath.Returns(root);
+        var svc = new NoteFileService(_mockFs, new PathGuard(settings));
+
+        await Assert.ThrowsAsync<PathContainmentException>(() => svc.ReadAsync(outsidePath));
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task ReadAsync_WhenPathInsideWorkspace_ReturnsContent()
+    {
+        const string root = "/workspace";
+        const string notePath = root + "/note.md";
+        _mockFs.AddFile(notePath, new MockFileData("hello async"));
+        var settings = Substitute.For<ISettingsService>();
+        settings.CurrentWorkspacePath.Returns(root);
+        var svc = new NoteFileService(_mockFs, new PathGuard(settings));
+
+        Assert.Equal("hello async", await svc.ReadAsync(notePath));
+    }
+
     #endregion
 }
