@@ -9,7 +9,7 @@ namespace Notes.Tests;
 public sealed class OrphanedTempCleanerTests
 {
     [Fact]
-    public void Receive_WhenWorkspaceContainsOrphanedTemps_DeletesTempFilesAndPreservesNotes()
+    public void Receive_WhenWorkspaceContainsOrphanedTemps_DeletesTempFiles()
     {
         const string root = "/workspace";
         var mockFs = new MockFileSystem();

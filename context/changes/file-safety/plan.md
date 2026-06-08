@@ -495,17 +495,17 @@ are additive.
 
 #### Automated
 
-- [x] 2.1 Build passes: `dotnet build`
-- [x] 2.2 New durable-write + sweep tests pass: `dotnet test`
-- [x] 2.3 Fault test fails if `Save` reverted to plain `WriteAllText` (spike + restore)
-- [x] 2.4 Sweep test confirms `*.md` notes never deleted and sweep stays under the root
-- [x] 2.5 Existing round-trip + overwrite tests still pass
+- [x] 2.1 Build passes: `dotnet build` — 6144c92f
+- [x] 2.2 New durable-write + sweep tests pass: `dotnet test` — 6144c92f
+- [x] 2.3 Fault test fails if `Save` reverted to plain `WriteAllText` (spike + restore) — 6144c92f
+- [x] 2.4 Sweep test confirms `*.md` notes never deleted and sweep stays under the root — 6144c92f
+- [x] 2.5 Existing round-trip + overwrite tests still pass — 6144c92f
 
 #### Manual
 
-- [x] 2.6 App saves/reloads correctly end-to-end; no stray `.tmp` files
-- [x] 2.7 Hand-made `orphan.md.tmp` removed on next app start; real notes intact
-- [x] 2.8 No perceptible regression saving a large note
+- [x] 2.6 App saves/reloads correctly end-to-end; no stray `.tmp` files — 6144c92f
+- [x] 2.7 Hand-made `orphan.md.tmp` removed on next app start; real notes intact — 6144c92f
+- [x] 2.8 No perceptible regression saving a large note — 6144c92f
 
 ### Phase 3: #5 — Service-layer path containment
 
