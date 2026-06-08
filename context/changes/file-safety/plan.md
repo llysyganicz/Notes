@@ -482,9 +482,9 @@ are additive.
 
 #### Automated
 
-- [ ] 1.1 Build passes: `dotnet build`
-- [ ] 1.2 New collision test passes: `dotnet test`
-- [ ] 1.3 Collision test fails if the guard at `NoteTreeViewModel.cs:200` is removed (spike + restore)
+- [x] 1.1 Build passes: `dotnet build`
+- [x] 1.2 New collision test passes: `dotnet test`
+- [x] 1.3 Collision test fails if the guard at `NoteTreeViewModel.cs:200` is removed (spike + restore)
 
 #### Manual
 

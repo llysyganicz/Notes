@@ -390,6 +390,28 @@ public sealed class NoteTreeViewModelTests
     }
 
     [Fact]
+    public void Receive_WhenNewNoteNameCollidesWithExisting_DoesNotOverwriteOriginal()
+    {
+        // Fixed oracle — not derived from the renderer or from the dialog input
+        const string OriginalContent = "# Original Note\n\nThis content must survive a collision.\n";
+        var collidingPath = Path.Combine(Workspace, "existing.md");
+
+        // Pre-seed MockFileSystem so NameValidator.ValidateNoteName sees the file exists
+        _fileSystem.AddFile(collidingPath, new MockFileData(OriginalContent));
+        // Mirror in the service fake as the stable assertion source
+        _fileService.FilesByPath[collidingPath] = OriginalContent;
+
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage(Workspace));
+
+        // Dialog returns the colliding name; the guard at NoteTreeViewModel:200 must block the write
+        StubPrompt("existing");
+        _messenger.Send(new NewNoteRequestedMessage());
+
+        Assert.Equal(OriginalContent, _fileService.FilesByPath[collidingPath]);
+    }
+
+    [Fact]
     public void Receive_WhenFormSubmittedBlank_SavesNoteWithNoLeftoverDeclaredTokens()
     {
         const string templateText = "---\nform:\n  topic:\n    type: text\n    label: Topic\n---\n# {{topic}}\n";

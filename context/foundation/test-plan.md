@@ -168,7 +168,33 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.2 Adding an integration test (service touching disk)
 
-- TBD — see §3 Phase 2 (MockFileSystem-backed file-safety pattern: collision, durable write, path containment).
+**Pattern:** Drive a real service (or the VM → service path) through a `MockFileSystem` pre-seeded
+with known state, assert the stored FS content as the oracle — never re-derive the expected value
+from the SUT's own output.
+
+**Shape (collision guard / file-safety tests):**
+
+1. Declare expected content as a fixed constant before the test body — not derived from renderer
+   output, not read back from the SUT.
+2. Pre-seed `MockFileSystem` with the existing file:
+   `_fileSystem.AddFile(path, new MockFileData(expectedContent))` — so real services (e.g.
+   `NameValidator`) see the file exists via `IFileSystem.File.Exists`.
+3. Where an `InMemoryNoteFileService` or other fake tracks written content separately, mirror the
+   pre-seeded value there too; it is the post-assertion source of truth for the "was it overwritten?"
+   check.
+4. Drive through the real entry point (message or `RelayCommand`) — never call the service directly.
+5. Assert the stored content equals the pre-seeded constant (unchanged) or the expected new value.
+
+**Accepted residual — #3 TOCTOU window:** The collision guard (`NameValidator.ValidateNoteName` →
+`File.Exists` at `NameValidator.cs:31`, enforced at `NoteTreeViewModel.cs:200`) is a
+check-then-write. A concurrent rename between the check and the `Save` call could still overwrite an
+existing note. This window is accepted as residual for a single-user desktop app: closing it would
+require an atomic create-if-not-exists OS primitive not available through `IFileSystem`, and the
+product has no concurrent writers in normal usage. The test pins the guard on the happy path; the
+TOCTOU gap is documented here, not fixed.
+
+**Reference test:**
+`NoteTreeViewModelTests.Receive_WhenNewNoteNameCollidesWithExisting_DoesNotOverwriteOriginal`
 
 ### 6.3 Adding a test for a new template field type
 
