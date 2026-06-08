@@ -7,10 +7,12 @@ namespace Notes.Services;
 public sealed class NoteFileService : INoteFileService
 {
     private readonly IFileSystem _fileSystem;
+    private readonly IPathGuard _pathGuard;
 
-    public NoteFileService(IFileSystem fileSystem)
+    public NoteFileService(IFileSystem fileSystem, IPathGuard pathGuard)
     {
         _fileSystem = fileSystem;
+        _pathGuard = pathGuard;
     }
 
     public string Read(string absolutePath)
@@ -37,6 +39,7 @@ public sealed class NoteFileService : INoteFileService
 
     public void Save(string absolutePath, string text)
     {
+        _pathGuard.EnsureWithinWorkspace(absolutePath);
         var dir = _fileSystem.Path.GetDirectoryName(absolutePath)!;
         var temp = _fileSystem.Path.Combine(dir, _fileSystem.Path.GetFileName(absolutePath) + TempSuffix);
         try

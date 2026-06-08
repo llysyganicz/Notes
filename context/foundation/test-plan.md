@@ -196,6 +196,34 @@ TOCTOU gap is documented here, not fixed.
 **Reference test:**
 `NoteTreeViewModelTests.Receive_WhenNewNoteNameCollidesWithExisting_DoesNotOverwriteOriginal`
 
+**Shape (durability / fault injection):**
+
+When `MockFileSystem` cannot reproduce the failure mode (e.g. its in-memory `WriteAllText` is atomic),
+use `ThrowingFileSystem` (`Notes.Tests/Fakes/ThrowingFileSystem.cs`): a thin NSubstitute-backed
+`IFileSystem` decorator that wraps `MockFileSystem` and throws `IOException` on a configurable
+operation (`WriteAllText` or `Move`). The wrapped inner `MockFileSystem` reflects all writes that
+succeeded before the fault, so post-fault assertions read real FS state rather than mocked returns.
+
+Reference: `NoteFileServiceTests.Save_WhenWriteFaultsBeforeRename_LeavesOriginalIntact`
+
+**Shape (service-layer path containment):**
+
+Containment tests use a real `PathGuard` fed via a stubbed `ISettingsService`:
+
+```csharp
+var settings = Substitute.For<ISettingsService>();
+settings.CurrentWorkspacePath.Returns("/workspace");
+var guard = new PathGuard(settings);
+var svc = new NoteFileService(mockFs, guard);
+```
+
+Assert that crafted out-of-root paths (`/etc/passwd`, `/workspace-evil/…`, traversal `/../…`) throw
+`PathContainmentException` and leave the filesystem unchanged (independent oracle: re-read the path).
+Always include an in-root happy-path case to catch false positives.
+
+Reference: `NoteFileServiceTests.Save_WhenPathOutsideWorkspace_ThrowsPathContainmentException`,
+`NoteDeleterTests.Delete_WhenPathOutsideWorkspace_ThrowsAndLeavesFilesUntouched`
+
 ### 6.3 Adding a test for a new template field type
 
 The field-type decision spans two boundaries; test both.
@@ -255,6 +283,13 @@ here capturing anything surprising the rollout phase taught.)
   early plan note had it backwards. Every other `type:` (including missing/empty)
   silently resolves to `TextFieldVm`, so each new field type needs both a
   recognized-keyword test and an unknown-type fallback test (see §6.3).
+- **Phase 2 (file-safety guardrails):** the delete path (`NoteDeleter`) is the
+  sharpest edge of #5 — it bypasses `NameValidator` entirely and was completely
+  unguarded before `PathGuard`. The `PathContainmentException` must derive from
+  `IOException` so the existing `NoteEditorViewModel.DoSave` catch absorbs a
+  guard rejection rather than letting it escape the `DispatcherTimer` callback.
+  When adding guard tests, always include the delete-path case explicitly — it is
+  the most likely spot where a future refactor re-opens the gap.
 
 ## 7. What We Deliberately Don't Test
 

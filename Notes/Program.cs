@@ -38,6 +38,7 @@ class Program
         services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
         services.AddSingleton<IFileSystem, FileSystem>();
         services.AddSingleton<ISettingsService, SettingsService>();
+        services.AddSingleton<IPathGuard, PathGuard>();
         services.AddSingleton<IWorkspaceScanner, WorkspaceScanner>();
         services.AddSingleton<NoteTreeBuilder>();
         services.AddSingleton<INoteDeleter, NoteDeleter>();

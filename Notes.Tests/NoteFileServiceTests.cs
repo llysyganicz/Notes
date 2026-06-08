@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Notes.Services;
 using Notes.Tests.Fakes;
+using NSubstitute;
 using Xunit;
 
 namespace Notes.Tests;
@@ -15,7 +16,7 @@ public sealed class NoteFileServiceTests
 
     public NoteFileServiceTests()
     {
-        _service = new NoteFileService(_mockFs);
+        _service = new NoteFileService(_mockFs, Substitute.For<IPathGuard>());
     }
 
     [Fact]
@@ -129,7 +130,7 @@ public sealed class NoteFileServiceTests
         inner.AddDirectory("/workspace");
         inner.AddFile(notePath, new MockFileData(original));
 
-        var svc = new NoteFileService(fs);
+        var svc = new NoteFileService(fs, Substitute.For<IPathGuard>());
 
         Assert.Throws<IOException>(() => svc.Save(notePath, "replacement that must not land"));
 
@@ -151,4 +152,36 @@ public sealed class NoteFileServiceTests
 
         Assert.Equal(textContent, result);
     }
+
+    #region Containment guard
+
+    [Theory]
+    [InlineData("/etc/passwd")]
+    [InlineData("/workspace-evil/note.md")]
+    [InlineData("/workspace/../etc/shadow")]
+    public void Save_WhenPathOutsideWorkspace_ThrowsPathContainmentException(string outsidePath)
+    {
+        const string root = "/workspace";
+        var settings = Substitute.For<ISettingsService>();
+        settings.CurrentWorkspacePath.Returns(root);
+        var svc = new NoteFileService(_mockFs, new PathGuard(settings));
+
+        Assert.Throws<PathContainmentException>(() => svc.Save(outsidePath, "content"));
+    }
+
+    [Fact]
+    public void Save_WhenPathInsideWorkspace_SavesSuccessfully()
+    {
+        const string root = "/workspace";
+        _mockFs.AddDirectory(root);
+        var settings = Substitute.For<ISettingsService>();
+        settings.CurrentWorkspacePath.Returns(root);
+        var svc = new NoteFileService(_mockFs, new PathGuard(settings));
+
+        svc.Save(root + "/note.md", "hello");
+
+        Assert.Equal("hello", svc.Read(root + "/note.md"));
+    }
+
+    #endregion
 }

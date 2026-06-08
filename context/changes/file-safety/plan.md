@@ -511,13 +511,13 @@ are additive.
 
 #### Automated
 
-- [ ] 3.1 Build passes: `dotnet build`
-- [ ] 3.2 All new containment + parity tests pass: `dotnet test`
-- [ ] 3.3 Removing the guard call from any disk service fails its parity test (spike + restore)
-- [ ] 3.4 Full suite green, no regressions
+- [x] 3.1 Build passes: `dotnet build`
+- [x] 3.2 All new containment + parity tests pass: `dotnet test`
+- [x] 3.3 Removing the guard call from any disk service fails its parity test (spike + restore)
+- [x] 3.4 Full suite green, no regressions
 
 #### Manual
 
-- [ ] 3.5 Normal in-workspace create/delete/switch operations work; no false rejections
-- [ ] 3.6 Crafted name (`..`, reserved) shows inline dialog validation error
-- [ ] 3.7 After workspace switch, save/delete confine against the new root
+- [x] 3.5 Normal in-workspace create/delete/switch operations work; no false rejections
+- [x] 3.6 Crafted name (`..`, reserved) shows inline dialog validation error
+- [x] 3.7 After workspace switch, save/delete confine against the new root

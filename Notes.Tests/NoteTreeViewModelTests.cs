@@ -39,7 +39,7 @@ public sealed class NoteTreeViewModelTests
     {
         _treeBuilder = new NoteTreeBuilder(_fileSystem);
         _nameValidator = new NameValidator(_fileSystem);
-        _folderService = new NoteFolderService(_fileSystem);
+        _folderService = new NoteFolderService(_fileSystem, Substitute.For<IPathGuard>());
     }
 
     private NoteTreeViewModel BuildSut() =>

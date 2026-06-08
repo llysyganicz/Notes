@@ -11,7 +11,7 @@ public sealed class NameValidatorTests
 
     private static NameValidator BuildSut(MockFileSystem fileSystem) => new(fileSystem);
 
-    // --- Note name validation ---
+    #region Note name validation
 
     [Fact]
     public void ValidateNoteName_WhenInputIsEmpty_ReturnsError()
@@ -124,7 +124,9 @@ public sealed class NameValidatorTests
         Assert.Equal(Path.Combine(Workspace, "sub", "fresh.md"), success.AbsolutePath);
     }
 
-    // --- Folder name validation ---
+    #endregion
+
+    #region Folder name validation
 
     [Fact]
     public void ValidateFolderName_WhenInputIsEmpty_ReturnsError()
@@ -212,4 +214,89 @@ public sealed class NameValidatorTests
         Assert.Equal("fresh", success.FileName);
         Assert.Equal(Path.Combine(Workspace, "sub", "fresh"), success.AbsolutePath);
     }
+
+    #endregion
+
+    #region Dot / double-dot rejection
+
+    [Fact]
+    public void ValidateNoteName_WhenNameIsSingleDot_ReturnsError()
+    {
+        var result = BuildSut(new MockFileSystem()).ValidateNoteName(".", Workspace, "");
+
+        var failure = Assert.IsType<NoteNameResult.Failure>(result);
+        Assert.Equal("Name contains an invalid character", failure.Error);
+    }
+
+    [Fact]
+    public void ValidateNoteName_WhenNameIsDoubleDot_ReturnsError()
+    {
+        var result = BuildSut(new MockFileSystem()).ValidateNoteName("..", Workspace, "");
+
+        var failure = Assert.IsType<NoteNameResult.Failure>(result);
+        Assert.Equal("Name contains an invalid character", failure.Error);
+    }
+
+    [Fact]
+    public void ValidateFolderName_WhenNameIsDoubleDot_ReturnsError()
+    {
+        var result = BuildSut(new MockFileSystem()).ValidateFolderName("..", Workspace, "");
+
+        var failure = Assert.IsType<NoteNameResult.Failure>(result);
+        Assert.Equal("Name contains an invalid character", failure.Error);
+    }
+
+    #endregion
+
+    #region Reserved device name rejection
+
+    [Theory]
+    [InlineData("CON")]
+    [InlineData("con")]
+    [InlineData("PRN")]
+    [InlineData("AUX")]
+    [InlineData("NUL")]
+    [InlineData("COM1")]
+    [InlineData("LPT9")]
+    public void ValidateNoteName_WhenNameIsReservedDeviceName_ReturnsError(string reserved)
+    {
+        var result = BuildSut(new MockFileSystem()).ValidateNoteName(reserved, Workspace, "");
+
+        var failure = Assert.IsType<NoteNameResult.Failure>(result);
+        Assert.Equal("Name is reserved and cannot be used", failure.Error);
+    }
+
+    [Theory]
+    [InlineData("CON.md")]
+    [InlineData("NUL.md")]
+    [InlineData("COM3.md")]
+    public void ValidateNoteName_WhenNameIsReservedDeviceNameWithMdExtension_ReturnsError(string reserved)
+    {
+        var result = BuildSut(new MockFileSystem()).ValidateNoteName(reserved, Workspace, "");
+
+        var failure = Assert.IsType<NoteNameResult.Failure>(result);
+        Assert.Equal("Name is reserved and cannot be used", failure.Error);
+    }
+
+    [Theory]
+    [InlineData("CON")]
+    [InlineData("NUL")]
+    [InlineData("LPT1")]
+    public void ValidateFolderName_WhenNameIsReservedDeviceName_ReturnsError(string reserved)
+    {
+        var result = BuildSut(new MockFileSystem()).ValidateFolderName(reserved, Workspace, "");
+
+        var failure = Assert.IsType<NoteNameResult.Failure>(result);
+        Assert.Equal("Name is reserved and cannot be used", failure.Error);
+    }
+
+    [Fact]
+    public void ValidateNoteName_WhenNameIsNormalWord_StillPassesAfterReservedCheck()
+    {
+        var result = BuildSut(new MockFileSystem()).ValidateNoteName("console", Workspace, "");
+
+        Assert.IsType<NoteNameResult.Success>(result);
+    }
+
+    #endregion
 }
