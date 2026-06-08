@@ -9,8 +9,11 @@ namespace Notes.Services;
 public sealed class SettingsService : ISettingsService
 {
     private readonly IFileSystem _fileSystem;
+    private string? _currentWorkspacePath;
 
     public string ConfigFilePath { get; }
+
+    public string? CurrentWorkspacePath => _currentWorkspacePath;
 
     public SettingsService(IFileSystem fileSystem, string? configFilePath = null)
     {
@@ -28,7 +31,9 @@ public sealed class SettingsService : ISettingsService
         try
         {
             var json = _fileSystem.File.ReadAllText(ConfigFilePath);
-            return JsonSerializer.Deserialize<AppSettings>(json) ?? AppSettings.Empty;
+            var settings = JsonSerializer.Deserialize<AppSettings>(json) ?? AppSettings.Empty;
+            _currentWorkspacePath = settings.WorkspacePath;
+            return settings;
         }
         catch
         {
@@ -38,6 +43,7 @@ public sealed class SettingsService : ISettingsService
 
     public void Save(AppSettings settings)
     {
+        _currentWorkspacePath = settings.WorkspacePath;
         var directory = _fileSystem.Path.GetDirectoryName(ConfigFilePath);
         if (!string.IsNullOrEmpty(directory))
         {

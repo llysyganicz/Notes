@@ -8,6 +8,13 @@ public sealed class NameValidator : INameValidator
 {
     private const string MdExtension = ".md";
 
+    private static readonly string[] ReservedNames =
+    {
+        "CON", "PRN", "AUX", "NUL",
+        "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+        "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
+    };
+
     private readonly IFileSystem _fileSystem;
 
     public NameValidator(IFileSystem fileSystem)
@@ -59,6 +66,17 @@ public sealed class NameValidator : INameValidator
         if (trimmed.Length == 0)
         {
             return new NoteNameResult.Failure("Name cannot be empty");
+        }
+
+        if (trimmed == "." || trimmed == "..")
+        {
+            return new NoteNameResult.Failure("Name contains an invalid character");
+        }
+
+        var nameWithoutExt = Path.GetFileNameWithoutExtension(trimmed);
+        if (Array.Exists(ReservedNames, r => r.Equals(nameWithoutExt, StringComparison.OrdinalIgnoreCase)))
+        {
+            return new NoteNameResult.Failure("Name is reserved and cannot be used");
         }
 
         if (trimmed.Contains('/') || trimmed.Contains('\\'))
