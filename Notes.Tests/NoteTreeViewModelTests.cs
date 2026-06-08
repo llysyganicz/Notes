@@ -404,11 +404,15 @@ public sealed class NoteTreeViewModelTests
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
 
+        NoteSavedMessage? saved = null;
+        _messenger.Register<NoteSavedMessage>(this, (_, m) => saved = m);
+
         // Dialog returns the colliding name; the guard at NoteTreeViewModel:200 must block the write
         StubPrompt("existing");
         _messenger.Send(new NewNoteRequestedMessage());
 
         Assert.Equal(OriginalContent, _fileService.FilesByPath[collidingPath]);
+        Assert.Null(saved); // guard short-circuited before any save was published
     }
 
     [Fact]

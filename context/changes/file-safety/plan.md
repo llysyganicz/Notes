@@ -482,14 +482,14 @@ are additive.
 
 #### Automated
 
-- [x] 1.1 Build passes: `dotnet build`
-- [x] 1.2 New collision test passes: `dotnet test`
-- [x] 1.3 Collision test fails if the guard at `NoteTreeViewModel.cs:200` is removed (spike + restore)
+- [x] 1.1 Build passes: `dotnet build` — 975fc75c
+- [x] 1.2 New collision test passes: `dotnet test` — 975fc75c
+- [x] 1.3 Collision test fails if the guard at `NoteTreeViewModel.cs:200` is removed (spike + restore) — 975fc75c
 
 #### Manual
 
-- [ ] 1.4 Test pins real behavior with an independent oracle (pre-seeded original content)
-- [ ] 1.5 §6.2 cookbook entry accurate; TOCTOU acceptance stated
+- [x] 1.4 Test pins real behavior with an independent oracle (pre-seeded original content)
+- [x] 1.5 §6.2 cookbook entry accurate; TOCTOU acceptance stated
 
 ### Phase 2: #4 — Atomic durable write
 
