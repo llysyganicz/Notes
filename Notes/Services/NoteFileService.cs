@@ -33,8 +33,21 @@ public sealed class NoteFileService : INoteFileService
         return _fileSystem.File.ReadAllTextAsync(absolutePath, cancellationToken);
     }
 
+    public const string TempSuffix = ".tmp";
+
     public void Save(string absolutePath, string text)
     {
-        _fileSystem.File.WriteAllText(absolutePath, text);
+        var dir = _fileSystem.Path.GetDirectoryName(absolutePath)!;
+        var temp = _fileSystem.Path.Combine(dir, _fileSystem.Path.GetFileName(absolutePath) + TempSuffix);
+        try
+        {
+            _fileSystem.File.WriteAllText(temp, text);
+            _fileSystem.File.Move(temp, absolutePath, overwrite: true);
+        }
+        catch
+        {
+            try { _fileSystem.File.Delete(temp); } catch { /* don't mask the real error */ }
+            throw;
+        }
     }
 }

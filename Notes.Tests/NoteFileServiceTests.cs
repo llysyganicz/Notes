@@ -1,7 +1,9 @@
+using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Text;
 using Notes.Services;
+using Notes.Tests.Fakes;
 using Xunit;
 
 namespace Notes.Tests;
@@ -98,6 +100,43 @@ public sealed class NoteFileServiceTests
         for (var i = 0; i < storedBytes.Length - 1; i++)
             if (storedBytes[i] == '\r' && storedBytes[i + 1] == '\n') crlfCount++;
         Assert.Equal(2, crlfCount);
+    }
+
+    [Fact]
+    public void Save_WhenCalled_WritesViaTempThenRenamesOntoTarget()
+    {
+        const string notePath = "/workspace/note.md";
+        const string tempPath = "/workspace/note.md" + NoteFileService.TempSuffix;
+        _mockFs.AddDirectory("/workspace");
+
+        _service.Save(notePath, "final content");
+
+        // Target has the expected content; temp was consumed by Move (no longer present)
+        Assert.Equal("final content", _service.Read(notePath));
+        Assert.False(_mockFs.File.Exists(tempPath));
+    }
+
+    [Theory]
+    [InlineData(true, false)]   // WriteAllText throws
+    [InlineData(false, true)]   // Move throws
+    public void Save_WhenWriteFaultsBeforeRename_LeavesOriginalIntact(bool throwOnWrite, bool throwOnMove)
+    {
+        const string notePath = "/workspace/note.md";
+        const string tempPath = "/workspace/note.md" + NoteFileService.TempSuffix;
+        const string original = "original content — must survive fault";
+
+        var (fs, inner) = ThrowingFileSystem.Create(throwOnWriteAllText: throwOnWrite, throwOnMove: throwOnMove);
+        inner.AddDirectory("/workspace");
+        inner.AddFile(notePath, new MockFileData(original));
+
+        var svc = new NoteFileService(fs);
+
+        Assert.Throws<IOException>(() => svc.Save(notePath, "replacement that must not land"));
+
+        // Original is byte-for-byte intact (independent oracle — not derived from the replacement string)
+        Assert.Equal(original, inner.File.ReadAllText(notePath));
+        // Temp sibling was cleaned up
+        Assert.False(inner.File.Exists(tempPath));
     }
 
     [Fact]

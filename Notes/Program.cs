@@ -55,6 +55,7 @@ class Program
         services.AddSingleton<ITemplateCatalog, TemplateCatalog>();
         services.AddSingleton<ITemplatePickerDialogService, TemplatePickerDialogService>();
         services.AddSingleton<ITemplateFormDialogService, TemplateFormDialogService>();
+        services.AddSingleton<IOrphanedTempCleaner, OrphanedTempCleaner>();
 
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<NoteTreeViewModel>();
