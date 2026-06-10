@@ -29,4 +29,8 @@
     <PackageReference Include="System.IO.Abstractions" Version="22.1.1" />
     <PackageReference Include="YamlDotNet" Version="18.*" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Notes.Core\Notes.Core.csproj" />
+  </ItemGroup>
 </Project>

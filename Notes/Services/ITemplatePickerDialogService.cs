@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Notes.Models;
+using Notes.Core.Models;
 
 namespace Notes.Services;
 

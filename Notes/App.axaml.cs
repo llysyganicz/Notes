@@ -6,7 +6,9 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Notes.Services;
+using Notes.Core.Services;
 using Notes.ViewModels;
+using Notes.Core.ViewModels;
 
 namespace Notes;
 

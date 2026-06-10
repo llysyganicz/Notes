@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using AvaloniaEdit.Highlighting;
 using Notes.ViewModels;
+using Notes.Core.ViewModels;
 
 namespace Notes.Views;
 

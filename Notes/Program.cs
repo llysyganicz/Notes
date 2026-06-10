@@ -4,7 +4,9 @@ using Avalonia;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Notes.Services;
+using Notes.Core.Services;
 using Notes.ViewModels;
+using Notes.Core.ViewModels;
 using Notes.Views;
 
 namespace Notes;

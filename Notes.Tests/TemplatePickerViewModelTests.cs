@@ -1,6 +1,7 @@
 using System;
-using Notes.Models;
+using Notes.Core.Models;
 using Notes.ViewModels;
+using Notes.Core.ViewModels;
 using Xunit;
 
 namespace Notes.Tests;

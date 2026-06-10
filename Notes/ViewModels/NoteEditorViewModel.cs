@@ -3,9 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Notes.Messaging;
-using Notes.Models;
+using Notes.Core.Messaging;
+using Notes.Core.Models;
 using Notes.Services;
+using Notes.Core.Services;
 
 namespace Notes.ViewModels;
 

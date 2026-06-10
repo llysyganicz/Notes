@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using CommunityToolkit.Mvvm.Messaging;
-using Notes.Messaging;
-using Notes.Models;
+using Notes.Core.Messaging;
+using Notes.Core.Models;
 using Notes.Services;
+using Notes.Core.Services;
 using Notes.ViewModels;
+using Notes.Core.ViewModels;
 using Xunit;
 
 namespace Notes.Tests;

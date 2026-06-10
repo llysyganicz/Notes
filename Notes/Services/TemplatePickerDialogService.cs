@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
-using Notes.Models;
+using Notes.Core.Models;
 using Notes.ViewModels;
+using Notes.Core.ViewModels;
 using Notes.Views;
 
 namespace Notes.Services;
