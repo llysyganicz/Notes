@@ -53,12 +53,18 @@ public sealed class OrphanedTempCleanerTests
         Assert.True(mockFs.File.Exists(outsideTemp));
     }
 
-    [Fact]
-    public void Receive_WhenWorkspaceIsEmpty_DoesNotThrow()
+    // No orphans to delete — the workspace dir either exists but is empty, or is missing entirely.
+    // Both must be silent no-ops. The missing-root case (rootExists: false) exercises the guard's
+    // early return; without it, GetFiles on a missing directory throws DirectoryNotFoundException.
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Receive_WhenNoOrphansToDelete_DoesNotThrow(bool rootExists)
     {
         const string root = "/workspace";
         var mockFs = new MockFileSystem();
-        mockFs.AddDirectory(root);
+        if (rootExists)
+            mockFs.AddDirectory(root);
 
         var messenger = new StrongReferenceMessenger();
         _ = new OrphanedTempCleaner(mockFs, messenger);

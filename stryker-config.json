@@ -16,7 +16,8 @@
       "**/ViewModels/Fields/*.cs",
       "!**/*.axaml.cs"
     ],
-    "reporters": ["html", "json", "cleartext"],
-    "concurrency": 4
+    "reporters": ["markdown", "json"],
+    "concurrency": 4,
+    "thresholds": { "high": 100, "low": 95, "break": 95 }
   }
 }

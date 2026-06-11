@@ -21,6 +21,20 @@ public sealed class TemplateRendererTests
         return new FormDefinition(fields);
     }
 
+    // Opening `---` with no closing `---` → not a frontmatter block; the whole text is body.
+    // Kills the block-removal of the `closing < 0` early return (without it, GetRange(1, -2) throws).
+    [Fact]
+    public void Render_WhenFrontmatterFenceUnclosed_TreatsWholeTextAsBody()
+    {
+        const string template = "---\nkey: value\nbody {{name}}\n";
+
+        var result = _renderer.Render(
+            template, Definition("name"),
+            new Dictionary<string, string> { ["name"] = "X" });
+
+        Assert.Equal("---\nkey: value\nbody X\n", result);
+    }
+
     public sealed record RenderCase(
         string Template,
         string[] FieldNames,
@@ -210,16 +224,19 @@ public sealed class TemplateRendererTests
         Assert.Equal("---\r\ntitle: My Note\r\n---\r\nBody X\r\nNext line\r\n", result);
     }
 
+    // The body deliberately has NO trailing newline so this also pins last-line terminator
+    // fidelity: it kills the SplitLines no-final-newline branch (dropping the last line,
+    // mangling its empty terminator, or removing the loop break).
     [Fact]
     public void Render_WhenMultipleDeclaredTokens_SubstitutesEachInOrder()
     {
         var template =
-            "---\nform:\n  a:\n    type: text\n    label: A\n  b:\n    type: text\n    label: B\n---\n{{a}}-{{b}}-{{a}}\n";
+            "---\nform:\n  a:\n    type: text\n    label: A\n  b:\n    type: text\n    label: B\n---\n{{a}}-{{b}}-{{a}}";
         var values = new Dictionary<string, string> { ["a"] = "1", ["b"] = "2" };
 
         var result = _renderer.Render(template, Definition("a", "b"), values);
 
-        Assert.Equal("1-2-1\n", result);
+        Assert.Equal("1-2-1", result);
     }
 
     // DoesNotContain loop is the belt-and-suspenders proof: each declared token that received a value must leave

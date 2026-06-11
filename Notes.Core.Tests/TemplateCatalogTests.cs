@@ -45,7 +45,13 @@ public sealed class TemplateCatalogTests
     [Fact]
     public void List_WhenNoTemplatesLoaded_ReturnsEmpty()
     {
-        var catalog = Loaded("root.md", "notes/other.md");
+        // Plain non-template paths plus prefix near-misses: ".templatesX/" and ".templates-backup/"
+        // share the ".templates" prefix but are not children of ".templates/", and ".templates"
+        // has no separator at all. The near-misses pin the StartsWith separator boundary — a mutant
+        // dropping the trailing "/" from the prefix would wrongly include ".templatesX/daily.md".
+        var catalog = Loaded(
+            "root.md", "notes/other.md",
+            ".templatesX/daily.md", ".templates-backup/old.md", ".templates");
 
         Assert.Empty(catalog.List());
     }
@@ -66,18 +72,6 @@ public sealed class TemplateCatalogTests
     public void HasAny_WhenNoTemplates_ReturnsFalse()
     {
         Assert.False(Loaded("root.md").HasAny());
-    }
-
-    [Fact]
-    public void List_WhenPrefixMatchesWithoutSeparator_SkipsEntry()
-    {
-        // ".templatesX/" and ".templates-backup/" share the ".templates" prefix but are
-        // not children of ".templates/"; ".templates" alone has no separator at all.
-        // A StartsWith mutant that drops the trailing "/" from the prefix would wrongly
-        // include ".templatesX/daily.md" — this case kills it.
-        var catalog = Loaded(".templatesX/daily.md", ".templates-backup/old.md", ".templates");
-
-        Assert.Empty(catalog.List());
     }
 
     [Fact]

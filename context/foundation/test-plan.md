@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-07 (Phase 1 cookbook §6.1/§6.3/§6.4 filled)
+> Last updated: 2026-06-11 (Phase 3 mutation testing shipped; §6.5 filled, §3 synced)
 
 ## 1. Strategy
 
@@ -88,8 +88,8 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|------------------|----------------|------------|--------|----------------|
 | 1 | Template pipeline correctness | Prove parse → form → render produces faithful notes (the differentiator + least-confident area) | #1, #2, #6 | unit + integration | change opened | context/changes/testing-template-pipeline/ |
-| 2 | File-safety & data-loss guardrails | Prove collisions, durable writes, and path containment never destroy data | #3, #4, #5 | integration | not started | — |
-| 3 | Test-effectiveness validation | Prove the Phase 1–2 tests actually kill regressions (mutation testing scoped to template + file-safety logic), answering "are these tests correct?" | cross-cutting (#1–#6) | mutation testing (AI-native/tooling) | not started | — |
+| 2 | File-safety & data-loss guardrails | Prove collisions, durable writes, and path containment never destroy data | #3, #4, #5 | integration | complete | context/archive/2026-06-08-file-safety/ |
+| 3 | Test-effectiveness validation | Prove the Phase 1–2 tests actually kill regressions (mutation testing scoped to template + file-safety logic), answering "are these tests correct?" | cross-cutting (#1–#6) | mutation testing (AI-native/tooling) | complete | context/changes/test-validation/ |
 | 4 | Quality-gates wiring | Lock the floor: format/build/test mapped to CI steps; post-edit hook recommended-local | cross-cutting | gates | not started | — |
 
 **Status vocabulary** (fixed — parser literals):
@@ -271,7 +271,63 @@ The field-type decision spans two boundaries; test both.
 
 ### 6.5 Validating that a test actually catches regressions
 
-- TBD — see §3 Phase 3 (mutation testing scoped to template + file-safety logic).
+Mutation testing (Stryker.NET) proves the suite kills regressions, not just that
+it passes. Scoped to the template + file-safety logic. Full run record:
+`context/changes/test-validation/baseline.md`.
+
+**Why `Notes.Core` exists (the blocker).** Stryker mutates a project by recompiling
+it in-memory per mutant. The Avalonia `Notes` project cannot survive that recompile —
+Avalonia's `InitializeComponent` source-generator output is lost (CS0103 on every
+`.axaml.cs`), independent of `mutate` scope. The fix was to extract all Avalonia-free
+logic into a **`Notes.Core`** class library (no UI source generators) with its own
+**`Notes.Core.Tests`** project. The CommunityToolkit MVVM generators (`[ObservableProperty]`,
+`[RelayCommand]`) *do* survive Stryker's recompile — the in-scope VMs mutate fine.
+
+**Run location is load-bearing.** Run from **`Notes.Core.Tests/`**, never the repo root:
+
+```sh
+cd Notes.Core.Tests
+dotnet stryker -f ../stryker-config.json
+```
+
+`Notes.Core.Tests` references exactly one source project (`Notes.Core`), so Stryker
+auto-discovers it in **single-project mode**. Running from the root triggers `.slnx`
+solution mode, which re-includes the Avalonia `Notes` project and reproduces the
+blocker. `stryker-config.json` lives at the repo root; `test-runner: "mtp"` is required
+because the suite is xUnit v3 + Microsoft Testing Platform with no VSTest adapter (the
+default runner cannot drive it).
+
+**Reading the report — use `markdown`, not the cleartext `# survived` column.** The
+cleartext table has no `Ignored` column, so it folds `Ignored` *and* excluded-file
+mutants into `# survived` — a 100%-score row showing "survivors" is the tell. The
+`markdown` reporter (`reports/mutation-report.md`) has dedicated `Survived`, `No Coverage`,
+`Ignored`, and `Compile Errors` columns. `Ignored` block-removals carry the reason
+"Removed by block already covered filter" — Stryker dedups a whole-block removal when
+the inner statements are already mutated and killed; they are **not** survivors.
+
+**The proof is the raw→post-fix delta.** Take a raw baseline first (no `thresholds.break`,
+no exclusions), classify every survivor, then close the real gaps and re-run; the score
+*increase* is the evidence a test now kills what it didn't. This run went **93.12% → 96.76%**
+(closed `NoteFolderService` no-coverage, the `TemplateRenderer` no-fence / no-newline
+branches, `OrphanedTempCleaner` missing-root, `TemplateFormViewModel` re-`Load` reset; plus
+tightened the `NoteFileService` BOM oracle to literal bytes). **Kill a survivor by first
+strengthening an existing test** (tighten an assertion or tweak an input — e.g. drop a
+trailing newline), only adding a new method for a genuinely new branch (see AGENTS.md).
+
+**Equivalent mutants: document, don't hide.** The residual survivors here are equivalent
+or defensive-unreachable (best-effort `Trace.WriteLine` log in a catch; `&& value is not
+null` vs `||` that only differ on a `null` dictionary value the `string` contract forbids;
+`?? string.Empty` null-guards on inputs callers never null). Stryker's only precise
+per-mutant suppressors are `// Stryker disable` source comments (rejected here — no
+tool-coupled comments in source) and character-offset config spans (brittle). So these are
+**accepted and catalogued in `baseline.md`**, not excluded — the score stays honest.
+
+**Set `break` after measuring, not before.** `thresholds.break` is the CI failure floor;
+set it just under the measured clean score so today passes and a future test-quality
+regression trips a non-zero exit. Here: score 96.76% → `"thresholds": { "high": 100,
+"low": 95, "break": 95 }` (≈1.7 pp margin; ~5 new real survivors trip it). `high`/`low`
+are cosmetic. Reporters are `["markdown", "json"]` (`json` drives survivor extraction;
+`html`/`cleartext` dropped).
 
 ### 6.6 Per-rollout-phase notes
 
@@ -290,6 +346,13 @@ here capturing anything surprising the rollout phase taught.)
   guard rejection rather than letting it escape the `DispatcherTimer` callback.
   When adding guard tests, always include the delete-path case explicitly — it is
   the most likely spot where a future refactor re-opens the gap.
+- **Phase 3 (test-effectiveness validation):** mutation testing forced a structural
+  prerequisite — the Avalonia `InitializeComponent` source generator does not survive
+  Stryker's mutated recompile, so all Avalonia-free logic was extracted into a new
+  **`Notes.Core`** library + **`Notes.Core.Tests`** project. Logic tests now live in
+  `Notes.Core.Tests/`, not `Notes.Tests/` (the §6.1–§6.4 file paths predate this split).
+  Run mutation from `Notes.Core.Tests/` (single-project mode); read the `markdown`
+  report, not the cleartext `# survived` column. Score 96.76%, `break` 95. See §6.5.
 
 ## 7. What We Deliberately Don't Test
 
@@ -305,7 +368,7 @@ contributors should respect these unless the underlying assumption changes.
 
 - Strategy (§1–§5) last reviewed: 2026-06-06
 - Stack versions last verified: 2026-06-06
-- AI-native tool references last verified: 2026-06-06
+- AI-native tool references last verified: 2026-06-11 (Stryker.NET 4.14.2, `test-runner: mtp`, scoped to `Notes.Core`; §3 Phase 3 complete)
 
 Refresh (`/10x-test-plan --refresh`) when:
 

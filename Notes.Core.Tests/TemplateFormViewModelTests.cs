@@ -158,6 +158,23 @@ public sealed class TemplateFormViewModelTests
         Assert.True(closed);
     }
 
+    // A second Load after a Submit must rebuild Fields from scratch and clear the prior Result.
+    // Kills the removal of `Result = null;` (stale map would leak) and `Fields.Clear();` (the new
+    // fields would be appended to the old ones).
+    [Fact]
+    public void Load_WhenCalledAfterSubmit_ReplacesFieldsAndResetsResult()
+    {
+        var sut = BuildSut(Definition(new FormFieldEntry("a", new FormField("text", "A"))));
+        sut.SubmitCommand.Execute(null);
+        Assert.NotNull(sut.Result);
+
+        sut.Load(Definition(new FormFieldEntry("b", new FormField("text", "B"))));
+
+        Assert.Null(sut.Result);
+        var only = Assert.Single(sut.Fields);
+        Assert.Equal("b", only.Name);
+    }
+
     [Fact]
     public void Load_WhenSelectHasNoEntries_CreatesSelectVmWithEmptyChoicesAndEmptyRenderValue()
     {

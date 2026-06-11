@@ -198,3 +198,50 @@ separate `Compile Errors` / `No Coverage`), so it shows the true `Survived` coun
 (2). Reporters set to **`["markdown", "json"]`** (dropped `html` + `cleartext`):
 `markdown` is the human summary, `json` drives the survivor extraction in this file.
 The real undetected set is unchanged: **2 Survived + 12 No Coverage = 14**.
+
+---
+
+## Phase 4 — kill the real gaps, accept equivalents, lock threshold
+
+**Decision (revised from the plan):** the plan called for line-range *config*
+exclusions of the §F/equivalent survivors. Stryker's only precise per-mutant
+suppressors turned out to be (a) `// Stryker disable` **source comments** and (b)
+**character-offset** config spans (`{start..end}` is char indices, not lines —
+brittle). Source comments were declined (no tool-coupled comments in source), so the
+final approach is: **kill the genuinely-coverable gaps with tests; accept + document
+the true equivalents; set `break` under the measured score.** Equivalents are *not*
+suppressed — the score stays honest.
+
+### Gaps killed (score 93.12% → 94.33% → 96.76%)
+
+Six undetected mutants were real coverage gaps and were killed — **preferring to
+strengthen an existing test over adding a new method** (now an AGENTS.md rule):
+
+| Mutant | How killed |
+| --- | --- |
+| `TemplateRenderer:48` unclosed-fence early return | **new** `Render_WhenFrontmatterFenceUnclosed_TreatsWholeTextAsBody` |
+| `TemplateRenderer:85/86` no-trailing-newline branch | **strengthened** existing `Render_WhenMultipleDeclaredTokens...` (dropped its trailing `\n`) |
+| `TemplateFormViewModel:37` `Fields.Clear()` on re-`Load` | **new** `Load_WhenCalledAfterSubmit_ReplacesFieldsAndResetsResult` |
+| `OrphanedTempCleaner:26` missing-root early return | **folded** existing empty-workspace test into a `[Theory]` over existing-empty + missing |
+
+(The Phase 3 `TemplateCatalog` prefix-trap Fact was likewise **folded** into
+`List_WhenNoTemplatesLoaded_ReturnsEmpty` via near-miss inputs.) Net: only 2 new test
+methods. Suite 221 green in `Notes.Core.Tests` (+61 `Notes.Tests` = 282 total).
+
+### Accepted equivalents (the residual 8 undetected mutants)
+
+These survive by design — chasing them would be wrong; they are catalogued, not
+suppressed:
+
+| file:line | mutator | why equivalent / accepted |
+| --- | --- | --- |
+| `OrphanedTempCleaner.cs:31` | Statement, String | best-effort `Trace.WriteLine` log inside a catch (impl-review F2) |
+| `TemplateRenderer.cs:166` | Logical (`&&`→`\|\|`) | differs only if a *declared* token maps to an explicit `null` value — the `IReadOnlyDictionary<string,string>` contract forbids it |
+| `NameValidator.cs:65`, `NoteFileService.cs:34`, `TemplateRenderer.cs:26`, `TextFieldVm.cs:16`, `TemplateFormViewModel.cs:61` | String | `?? string.Empty` defensive null-guards; the null branch is unreachable from callers |
+
+### Threshold locked
+
+Final score **96.76%** (237 killed + 2 timeout = 239 detected; 8 accepted undetected;
+247 valid). `"thresholds": { "high": 100, "low": 95, "break": 95 }` — `break` is
+~1.7 pp under the score (≈5 new real survivors would trip it). `dotnet stryker` (from
+`Notes.Core.Tests/`) exits **0**. `high`/`low` are cosmetic.

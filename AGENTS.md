@@ -14,6 +14,7 @@ This repo uses **jujutsu (jj)**, not raw git. Use `jj` commands for all VCS oper
 - **No `Async` suffix without a sync sibling:** prefer `Task LoadTree()` over `Task LoadTreeAsync()` — the `Task` return type already signals async. Keep the suffix only when a synchronous method with the same base name exists, or when the API is framework-owned (e.g. `IStorageProvider.OpenFolderPickerAsync`).
 - **File system in tests — `MockFileSystem`:** inject `IFileSystem` (from `System.IO.Abstractions`) into services that touch disk; use `new MockFileSystem()` (from `System.IO.Abstractions.TestingHelpers`) in tests. Never access the real file system from `Notes.Tests/`.
 - **Test method naming — `Method_WhenScenario_ExpectedBehaviour`:** three PascalCase segments separated by underscores, e.g. `Load_WhenFileMissing_ReturnsEmpty`, `Save_WhenParentDirectoryMissing_CreatesParentDirectory`. The expected-behaviour segment leads with a verb (`Returns`, `Creates`, `Throws`, `Calls`). Use `WhenCalled` when the test asserts a general property with no specific scenario.
+- **Killing a surviving mutant — fix an existing test first:** when mutation testing (Stryker) surfaces a survivor, first look for an existing test that already exercises that code path and strengthen it — tighten a weak assertion, or tweak an input (e.g. drop a trailing newline, add a near-miss case). Only add a new test method when no existing test reaches that branch and none can be naturally extended onto it. Prefer one strengthened test over a new redundant one.
 
 ## Project Overview
 
