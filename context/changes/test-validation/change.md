@@ -1,7 +1,7 @@
 ---
 change_id: test-validation
 title: Mutation testing to validate template + file-safety test effectiveness
-status: implementing
+status: implemented
 created: 2026-06-10
 updated: 2026-06-11
 archived_at: null
@@ -36,3 +36,16 @@ delta; **(4)** exclude §F equivalents, lock `break`, document (cookbook §6.5 +
 doc sync). Key decisions: extraction breadth = all Avalonia-free services
 (`AutoSaveScheduler` stays — UI-thread `DispatcherTimer`); in-scope VMs included
 but gated; run from `Notes.Core.Tests/` to avoid the `.slnx` solution-mode trap.
+
+## 2026-06-11 — Implemented (all 4 phases)
+
+All phases landed. Highlights: P1 `Notes.Core`/`Notes.Core.Tests` extraction
+(131f3cc), P2 scoped Stryker + raw baseline 93.12%, VM generator gate passed
+(c0ec940), P3 three §D gaps closed → 94.33% (c7abb6f), P4 six real coverage gaps
+killed → **96.76%**, eight true equivalents accepted + documented, `break: 95`,
+cookbook §6.5 (33d8130). Two plan deviations, both recorded in `baseline.md`:
+(a) `InMemoryNoteFileService` stayed in `Notes.Tests` (only its VM-test consumers
+remain there); (b) equivalents were **accepted + catalogued, not config-excluded**
+— Stryker's `mutate` spans are character-offset based (brittle) and `// Stryker
+disable` source comments were declined. Reporters narrowed to `["markdown","json"]`.
+Run record + survivor inventory: `baseline.md`.

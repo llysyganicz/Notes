@@ -619,14 +619,14 @@ and §6.5 wording are acceptable before closing the phase.
 
 #### Automated
 
-- [x] 4.1 `dotnet build` green and `dotnet test` passes
-- [x] 4.2 `dotnet stryker` (from `Notes.Core.Tests/`) exits 0 with score ≥ `thresholds.break`
-- [x] 4.3 Report shows §F survivors excluded from the scored set — DEVIATION: equivalents **accepted + documented**, not excluded (Stryker spans are char-based; source comments declined). See `baseline.md` §Phase 4
-- [x] 4.4 `stryker-config.json` is valid JSON committed at repo root
+- [x] 4.1 `dotnet build` green and `dotnet test` passes — 33d8130
+- [x] 4.2 `dotnet stryker` (from `Notes.Core.Tests/`) exits 0 with score ≥ `thresholds.break` — 33d8130
+- [x] 4.3 Report shows §F survivors excluded from the scored set — DEVIATION: equivalents **accepted + documented**, not excluded (Stryker spans are char-based; source comments declined). See `baseline.md` §Phase 4 — 33d8130
+- [x] 4.4 `stryker-config.json` is valid JSON committed at repo root — 33d8130
 
 #### Manual
 
-- [x] 4.5 Scored survivor set contains no §F intentional mutants — DEVIATION: §F/equivalents remain in the scored set, accepted + catalogued in `baseline.md`; real gaps were killed instead
-- [x] 4.6 `break` is below the observed score with a documented margin
-- [x] 4.7 Cookbook §6.5 matches the committed config + command (incl. run location)
-- [x] 4.8 test-plan §3 status table and `change.md` reflect reality
+- [x] 4.5 Scored survivor set contains no §F intentional mutants — DEVIATION: §F/equivalents remain in the scored set, accepted + catalogued in `baseline.md`; real gaps were killed instead — 33d8130
+- [x] 4.6 `break` is below the observed score with a documented margin — 33d8130
+- [x] 4.7 Cookbook §6.5 matches the committed config + command (incl. run location) — 33d8130
+- [x] 4.8 test-plan §3 status table and `change.md` reflect reality — 33d8130
