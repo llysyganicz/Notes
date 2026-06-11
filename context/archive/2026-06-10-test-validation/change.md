@@ -1,10 +1,10 @@
 ---
 change_id: test-validation
 title: Mutation testing to validate template + file-safety test effectiveness
-status: implemented
+status: archived
 created: 2026-06-10
 updated: 2026-06-11
-archived_at: null
+archived_at: 2026-06-11T18:08:15Z
 ---
 
 ## Notes
