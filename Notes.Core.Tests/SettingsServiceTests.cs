@@ -1,28 +1,19 @@
-using System;
 using System.IO;
-using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using Notes.Core.Models;
 using Notes.Core.Services;
 using Xunit;
 
 namespace Notes.Core.Tests;
 
-public sealed class SettingsServiceTests : IDisposable
+public sealed class SettingsServiceTests
 {
-    private readonly string _tempDir;
+    private readonly MockFileSystem _fs = new();
+    private readonly string _tempDir = "/notes-tests";
 
     public SettingsServiceTests()
     {
-        _tempDir = Path.Combine(Path.GetTempPath(), "Notes_Tests_" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(_tempDir);
-    }
-
-    public void Dispose()
-    {
-        if (Directory.Exists(_tempDir))
-        {
-            Directory.Delete(_tempDir, recursive: true);
-        }
+        _fs.Directory.CreateDirectory(_tempDir);
     }
 
     private string ConfigPath() => Path.Combine(_tempDir, "settings.json");
@@ -30,7 +21,7 @@ public sealed class SettingsServiceTests : IDisposable
     [Fact]
     public void Load_WhenFileMissing_ReturnsEmpty()
     {
-        var service = new SettingsService(new FileSystem(), ConfigPath());
+        var service = new SettingsService(_fs, ConfigPath());
 
         var result = service.Load();
 
@@ -40,8 +31,8 @@ public sealed class SettingsServiceTests : IDisposable
     [Fact]
     public void Load_WhenJsonMalformed_ReturnsEmpty()
     {
-        File.WriteAllText(ConfigPath(), "{ this is not valid json");
-        var service = new SettingsService(new FileSystem(), ConfigPath());
+        _fs.File.WriteAllText(ConfigPath(), "{ this is not valid json");
+        var service = new SettingsService(_fs, ConfigPath());
 
         var result = service.Load();
 
@@ -51,7 +42,7 @@ public sealed class SettingsServiceTests : IDisposable
     [Fact]
     public void Load_WhenCalledAfterSave_ReturnsSavedSettings()
     {
-        var service = new SettingsService(new FileSystem(), ConfigPath());
+        var service = new SettingsService(_fs, ConfigPath());
         var original = new AppSettings(WorkspacePath: "/home/user/notes");
 
         service.Save(original);
@@ -64,11 +55,11 @@ public sealed class SettingsServiceTests : IDisposable
     public void Save_WhenParentDirectoryMissing_CreatesParentDirectory()
     {
         var nestedPath = Path.Combine(_tempDir, "deeply", "nested", "settings.json");
-        var service = new SettingsService(new FileSystem(), nestedPath);
+        var service = new SettingsService(_fs, nestedPath);
 
         service.Save(new AppSettings("/x"));
 
-        Assert.True(File.Exists(nestedPath));
+        Assert.True(_fs.File.Exists(nestedPath));
     }
 
 }

@@ -1,29 +1,22 @@
 using System;
 using System.IO;
-using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using Notes.Core.Services;
 using Xunit;
 
 namespace Notes.Core.Tests;
 
-public sealed class WorkspaceScannerTests : IDisposable
+public sealed class WorkspaceScannerTests
 {
-    private readonly string _tempDir;
-    private readonly WorkspaceScanner _scanner = new(new FileSystem());
+    private readonly MockFileSystem _fs = new();
+    private readonly WorkspaceScanner _scanner;
+    private readonly string _tempDir = "/workspace";
 
     public WorkspaceScannerTests()
     {
-        _tempDir = Path.Combine(Path.GetTempPath(), "Notes_ScannerTests_" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(_tempDir);
-    }
-
-    public void Dispose()
-    {
-        if (Directory.Exists(_tempDir))
-        {
-            Directory.Delete(_tempDir, recursive: true);
-        }
+        _scanner = new WorkspaceScanner(_fs);
+        _fs.Directory.CreateDirectory(_tempDir);
     }
 
     private void TouchFile(string relativePath)
@@ -32,10 +25,10 @@ public sealed class WorkspaceScannerTests : IDisposable
         var dir = Path.GetDirectoryName(full);
         if (!string.IsNullOrEmpty(dir))
         {
-            Directory.CreateDirectory(dir);
+            _fs.Directory.CreateDirectory(dir);
         }
 
-        File.WriteAllText(full, string.Empty);
+        _fs.File.WriteAllText(full, string.Empty);
     }
 
     [Fact]
