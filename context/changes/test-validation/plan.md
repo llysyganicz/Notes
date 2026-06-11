@@ -574,30 +574,30 @@ and §6.5 wording are acceptable before closing the phase.
 
 #### Automated
 
-- [x] 1.1 `dotnet build` is green for the whole solution (4 projects)
-- [x] 1.2 `dotnet test` passes — all moved + remaining tests run, no lost tests
-- [x] 1.3 `Notes.Core` has no compile-time reference to `Notes` (one-way graph)
+- [x] 1.1 `dotnet build` is green for the whole solution (4 projects) — 131f3cc
+- [x] 1.2 `dotnet test` passes — all moved + remaining tests run, no lost tests — 131f3cc
+- [x] 1.3 `Notes.Core` has no compile-time reference to `Notes` (one-way graph) — 131f3cc
 
 #### Manual
 
-- [x] 1.4 `dotnet run --project Notes` launches and the template-form dialog renders
-- [x] 1.5 No mis-placed logic — `AutoSaveScheduler`/dialog services/shell VMs correctly remain in `Notes`
+- [x] 1.4 `dotnet run --project Notes` launches and the template-form dialog renders — 131f3cc
+- [x] 1.5 No mis-placed logic — `AutoSaveScheduler`/dialog services/shell VMs correctly remain in `Notes` — 131f3cc
 
 ### Phase 2: Re-point Stryker + first run (smoke + raw baseline + VM gate)
 
 #### Automated
 
-- [ ] 2.1 `dotnet build` is green
-- [ ] 2.2 `dotnet stryker` (from `Notes.Core.Tests/`) completes and writes `StrykerOutput/` (html + json)
-- [ ] 2.3 Cleartext report lists a numeric mutation score
-- [ ] 2.4 `mutate` globs resolved to exactly the scoped `Notes.Core` files (no `.axaml.cs`, no `Notes`-project files)
+- [x] 2.1 `dotnet build` is green
+- [x] 2.2 `dotnet stryker` (from `Notes.Core.Tests/`) completes and writes `StrykerOutput/` (html + json)
+- [x] 2.3 Cleartext report lists a numeric mutation score
+- [x] 2.4 `mutate` globs resolved to exactly the scoped `Notes.Core` files (no `.axaml.cs`, no `Notes`-project files)
 
 #### Manual
 
-- [ ] 2.5 HTML report shows nothing from the Avalonia `Notes` project (single-project mode confirmed)
-- [ ] 2.6 VM gate verdict recorded — VMs mutated/compiled, or the VM-exclusion fallback taken and documented
-- [ ] 2.7 Every §F intentional survivor and the three §D gaps appear as survivors
-- [ ] 2.8 Any survivor outside §D/§F noted for investigation in `baseline.md`
+- [x] 2.5 HTML report shows nothing from the Avalonia `Notes` project (single-project mode confirmed)
+- [x] 2.6 VM gate verdict recorded — VMs mutated/compiled, or the VM-exclusion fallback taken and documented
+- [x] 2.7 Every §F intentional survivor and the three §D gaps appear as survivors
+- [x] 2.8 Any survivor outside §D/§F noted for investigation in `baseline.md`
 
 ### Phase 3: Close the three gaps + re-run
 
