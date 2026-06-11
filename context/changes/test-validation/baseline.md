@@ -130,3 +130,71 @@ survive:
   to add a cheap test or accept+exclude. `TemplateRenderer.cs:166` (`&&`→`||`)
   is borderline-equivalent; the `?? string.Empty` null-defaults are benign and
   may be left as NoCoverage or excluded if the floor needs it.
+
+---
+
+## Post-fix re-run (Phase 3)
+
+After closing the three gaps (Phase 3.1–3.3), re-ran with the same command from
+`Notes.Core.Tests/`. Output: `StrykerOutput/2026-06-11.18-05-30/`.
+
+| Metric | Raw (P2) | Post-fix (P3) | Δ |
+| --- | --- | --- | --- |
+| **Mutation score (incl. NoCoverage)** | 93.12 % | **94.33 %** | **+1.21 pp** |
+| Killed | 228 | 231 | +3 |
+| NoCoverage | 15 | 12 | −3 |
+| Survived | 2 | 2 | 0 |
+| Timeout | 2 | 2 | 0 |
+
+**The entire delta is `NoteFolderService`** (3.1): its three NoCoverage mutants at
+`:11/:18/:19` are now **Killed** — `NoteFolderService` survivors remaining: **0**.
+
+- **3.2 BOM oracle:** the write-path mutant was already killed; the oracle is now a
+  fixed literal byte array `{0x68,0x65,0x6C,0x6C,0x6F}` (ASCII `h,e,l,l,o`),
+  no longer re-derived from the SUT's `Encoding.UTF8`
+  (`feedback-independent-test-oracle`). Score-neutral, as predicted.
+- **3.3 TemplateCatalog prefix-trap:** `TemplateCatalog` was already 100 %; the new
+  `.templatesX/` / `.templates-backup/` / `.templates` negative case is defensive —
+  it locks in the kill of a "drop the trailing `/` from the prefix" mutant.
+  Score-neutral, as predicted.
+
+### Remaining survivors after Phase 3 (14)
+
+The three §D-gap survivors are gone. What remains is the Phase-4 input — **not**
+purely the §F set (3.8 is only partially literal-true; documented honestly):
+
+- **§F intentional/equivalent:** `OrphanedTempCleaner.cs:31` (Trace-log catch).
+- **Coverage gaps to accept+exclude or cheaply cover in Phase 4:**
+  `OrphanedTempCleaner.cs:26` (`Receive` entry path untested),
+  `TemplateRenderer.cs:48` (no-closing-fence early return),
+  `TemplateRenderer.cs:85/86` (last-line-without-newline branch).
+- **Borderline-equivalent:** `TemplateRenderer.cs:166` (`&&`→`||`).
+- **Minor oracle gap:** `TemplateFormViewModel.cs:37` (`Result` reset on re-`Load`).
+- **Benign `?? string.Empty` null-defaults (NoCoverage):** `NameValidator.cs:65`,
+  `NoteFileService.cs:34`, `TemplateRenderer.cs:26`, `TextFieldVm.cs:16`,
+  `TemplateFormViewModel.cs:61`.
+
+Phase 4 will line-range-exclude the confirmed §F + accepted-equivalent lines, then
+set `thresholds.break` just under the resulting score.
+
+### Reading the report — `Ignored` vs the cleartext `# survived` column
+
+A trap worth recording for cookbook §6.5: the **cleartext** reporter's table has no
+`# ignored` column, so it folds `Ignored` mutants **into `# survived`**. Running
+`dotnet stryker` from the repo root produced a cleartext table showing
+`NoteFolderService` "1 survived" and `TemplateCatalog` "7 survived" — yet both rows
+read **100 % score**. A 100 % score with real survivors is impossible; the tell is
+that those are `Ignored`, not survived.
+
+- `NoteFolderService` "1 survived" = **1 Ignored** block-removal (`Create()` body),
+  reason `"Removed by block already covered filter"` — its inner statements (L18/L19)
+  are individually mutated and Killed, so Stryker dedups the whole-block removal.
+- `TemplateCatalog` "7 survived" = **6 Ignored** block-removals + **1 CompileError**.
+- The repo-root run also tallied excluded-file mutants (`NoteSearchIndex` 96, etc.)
+  into the same cleartext `# survived` column (309 total) — none are real survivors.
+
+**Fix adopted:** the `markdown` reporter has a dedicated `Ignored` column (and
+separate `Compile Errors` / `No Coverage`), so it shows the true `Survived` count
+(2). Reporters set to **`["markdown", "json"]`** (dropped `html` + `cleartext`):
+`markdown` is the human summary, `json` drives the survivor extraction in this file.
+The real undetected set is unchanged: **2 Survived + 12 No Coverage = 14**.

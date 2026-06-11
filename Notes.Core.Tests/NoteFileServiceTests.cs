@@ -48,7 +48,9 @@ public sealed class NoteFileServiceTests
         _service.Save("/note.md", "hello");
 
         var bytes = _mockFs.GetFile("/note.md").Contents;
-        Assert.Equal(Encoding.UTF8.GetBytes("hello"), bytes);
+        // Independent oracle: fixed literal ASCII bytes for "hello" (h,e,l,l,o), NOT
+        // re-derived from the same Encoding.UTF8 the SUT writes through.
+        Assert.Equal(new byte[] { 0x68, 0x65, 0x6C, 0x6C, 0x6F }, bytes);
         Assert.False(bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF);
     }
 

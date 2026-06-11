@@ -587,33 +587,33 @@ and §6.5 wording are acceptable before closing the phase.
 
 #### Automated
 
-- [x] 2.1 `dotnet build` is green
-- [x] 2.2 `dotnet stryker` (from `Notes.Core.Tests/`) completes and writes `StrykerOutput/` (html + json)
-- [x] 2.3 Cleartext report lists a numeric mutation score
-- [x] 2.4 `mutate` globs resolved to exactly the scoped `Notes.Core` files (no `.axaml.cs`, no `Notes`-project files)
+- [x] 2.1 `dotnet build` is green — c0ec940
+- [x] 2.2 `dotnet stryker` (from `Notes.Core.Tests/`) completes and writes `StrykerOutput/` (html + json) — c0ec940
+- [x] 2.3 Cleartext report lists a numeric mutation score — c0ec940
+- [x] 2.4 `mutate` globs resolved to exactly the scoped `Notes.Core` files (no `.axaml.cs`, no `Notes`-project files) — c0ec940
 
 #### Manual
 
-- [x] 2.5 HTML report shows nothing from the Avalonia `Notes` project (single-project mode confirmed)
-- [x] 2.6 VM gate verdict recorded — VMs mutated/compiled, or the VM-exclusion fallback taken and documented
-- [x] 2.7 Every §F intentional survivor and the three §D gaps appear as survivors
-- [x] 2.8 Any survivor outside §D/§F noted for investigation in `baseline.md`
+- [x] 2.5 HTML report shows nothing from the Avalonia `Notes` project (single-project mode confirmed) — c0ec940
+- [x] 2.6 VM gate verdict recorded — VMs mutated/compiled, or the VM-exclusion fallback taken and documented — c0ec940
+- [x] 2.7 Every §F intentional survivor and the three §D gaps appear as survivors — c0ec940
+- [x] 2.8 Any survivor outside §D/§F noted for investigation in `baseline.md` — c0ec940
 
 ### Phase 3: Close the three gaps + re-run
 
 #### Automated
 
-- [ ] 3.1 `dotnet build` is green
-- [ ] 3.2 `dotnet test` passes (three new/changed tests included)
-- [ ] 3.3 `dotnet stryker` completes and writes an updated report
-- [ ] 3.4 Post-fix mutation score is strictly higher than the raw baseline
+- [x] 3.1 `dotnet build` is green
+- [x] 3.2 `dotnet test` passes (three new/changed tests included)
+- [x] 3.3 `dotnet stryker` completes and writes an updated report
+- [x] 3.4 Post-fix mutation score is strictly higher than the raw baseline
 
 #### Manual
 
-- [ ] 3.5 `NoteFolderService` guard mutant now killed
-- [ ] 3.6 BOM-path mutant killed and oracle no longer encoder-derived
-- [ ] 3.7 `TemplateCatalog` `StartsWith` mutant killed
-- [ ] 3.8 Remaining survivors are only the §F intentional set
+- [x] 3.5 `NoteFolderService` guard mutant now killed
+- [x] 3.6 BOM-path mutant killed and oracle no longer encoder-derived
+- [x] 3.7 `TemplateCatalog` `StartsWith` mutant killed
+- [x] 3.8 Remaining survivors are only the §F intentional set
 
 ### Phase 4: Exclude equivalents, lock threshold, document
 

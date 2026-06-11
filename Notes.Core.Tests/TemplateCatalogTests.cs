@@ -69,6 +69,18 @@ public sealed class TemplateCatalogTests
     }
 
     [Fact]
+    public void List_WhenPrefixMatchesWithoutSeparator_SkipsEntry()
+    {
+        // ".templatesX/" and ".templates-backup/" share the ".templates" prefix but are
+        // not children of ".templates/"; ".templates" alone has no separator at all.
+        // A StartsWith mutant that drops the trailing "/" from the prefix would wrongly
+        // include ".templatesX/daily.md" — this case kills it.
+        var catalog = Loaded(".templatesX/daily.md", ".templates-backup/old.md", ".templates");
+
+        Assert.Empty(catalog.List());
+    }
+
+    [Fact]
     public void Load_WhenCalledAgain_ReplacesPreviousSet()
     {
         var catalog = Loaded(".templates/daily.md");
