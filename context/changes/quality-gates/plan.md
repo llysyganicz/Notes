@@ -267,14 +267,14 @@ The branch-protection ruleset is **already active** (applied during planning). F
 
 #### Automated
 
-- [x] 2.1 `.github/workflows/ci.yml` exists and is valid YAML
-- [x] 2.2 On a test PR, the `build-test-format` check runs and passes against the green tree
-- [x] 2.3 A PR with a deliberate format violation makes the check fail (red)
+- [x] 2.1 `.github/workflows/ci.yml` exists and is valid YAML — 1ad2105c
+- [x] 2.2 On a test PR, the `build-test-format` check runs and passes against the green tree — 1ad2105c
+- [x] 2.3 A PR with a deliberate format violation makes the check fail (red) — 1ad2105c
 
 #### Manual
 
-- [x] 2.4 Reported check name is exactly `build-test-format` (recorded before binding)
-- [x] 2.5 Workflow run time is acceptable
+- [x] 2.4 Reported check name is exactly `build-test-format` (recorded before binding) — 1ad2105c
+- [x] 2.5 Workflow run time is acceptable — 1ad2105c
 
 ### Phase 3: Local Hook + Enforcement Wiring
 
