@@ -253,15 +253,15 @@ The branch-protection ruleset is **already active** (applied during planning). F
 
 #### Automated
 
-- [x] 1.1 `.editorconfig` exists at repo root
-- [x] 1.2 `dotnet format --verify-no-changes` exits 0
-- [x] 1.3 `dotnet build` succeeds
-- [x] 1.4 `dotnet test` passes (both suites)
+- [x] 1.1 `.editorconfig` exists at repo root — d7d45c62
+- [x] 1.2 `dotnet format --verify-no-changes` exits 0 — d7d45c62
+- [x] 1.3 `dotnet build` succeeds — d7d45c62
+- [x] 1.4 `dotnet test` passes (both suites) — d7d45c62
 
 #### Manual
 
-- [x] 1.5 `.editorconfig` pins only rules the current tree satisfies — no large incidental reformat
-- [x] 1.6 `xUnit1051` fixes are semantically correct (no test behaviour change)
+- [x] 1.5 `.editorconfig` pins only rules the current tree satisfies — no large incidental reformat — d7d45c62
+- [x] 1.6 `xUnit1051` fixes are semantically correct (no test behaviour change) — d7d45c62
 
 ### Phase 2: CI Workflow
 
