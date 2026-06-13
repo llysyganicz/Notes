@@ -223,7 +223,7 @@ public sealed class NoteFileServiceTests
         settings.CurrentWorkspacePath.Returns(root);
         var svc = new NoteFileService(_mockFs, new PathGuard(settings));
 
-        await Assert.ThrowsAsync<PathContainmentException>(() => svc.ReadAsync(outsidePath));
+        await Assert.ThrowsAsync<PathContainmentException>(() => svc.ReadAsync(outsidePath, TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -236,7 +236,7 @@ public sealed class NoteFileServiceTests
         settings.CurrentWorkspacePath.Returns(root);
         var svc = new NoteFileService(_mockFs, new PathGuard(settings));
 
-        Assert.Equal("hello async", await svc.ReadAsync(notePath));
+        Assert.Equal("hello async", await svc.ReadAsync(notePath, TestContext.Current.CancellationToken));
     }
 
     #endregion

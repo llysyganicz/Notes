@@ -1,0 +1,17 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+
+# Namespace style matches codebase convention
+csharp_style_namespace_declarations = file_scoped:warning
+
+# xUnit: use TestContext.Current.CancellationToken for responsive cancellation
+dotnet_diagnostic.xUnit1051.severity = warning

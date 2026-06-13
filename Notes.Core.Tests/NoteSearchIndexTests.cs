@@ -87,7 +87,7 @@ public sealed class NoteSearchIndexTests
         await ready;
 
         Assert.True(sut.IsReady);
-        var hits = await sut.Search("b", includeTemplates: false);
+        var hits = await sut.Search("b", includeTemplates: false, TestContext.Current.CancellationToken);
         Assert.Single(hits);
         Assert.Equal("b.md", hits[0].RelativePath);
     }
@@ -105,7 +105,7 @@ public sealed class NoteSearchIndexTests
         _messenger.Send(new NoteSavedMessage("note.md", "hello"));
 
         Assert.Equal(0, _fileService.GetReadAsyncCount("/workspace/note.md"));
-        var hits = await sut.Search("note", includeTemplates: false);
+        var hits = await sut.Search("note", includeTemplates: false, TestContext.Current.CancellationToken);
         Assert.Single(hits);
         Assert.Equal("note.md", hits[0].RelativePath);
     }
@@ -122,7 +122,7 @@ public sealed class NoteSearchIndexTests
 
         _messenger.Send(new NoteSavedMessage("brand-new.md", "body"));
 
-        var hits = await sut.Search("brand-new", includeTemplates: false);
+        var hits = await sut.Search("brand-new", includeTemplates: false, TestContext.Current.CancellationToken);
         Assert.Single(hits);
     }
 
@@ -139,7 +139,7 @@ public sealed class NoteSearchIndexTests
 
         _messenger.Send(new NoteDeletedMessage("a.md"));
 
-        var hits = await sut.Search("md", includeTemplates: false);
+        var hits = await sut.Search("md", includeTemplates: false, TestContext.Current.CancellationToken);
         Assert.Single(hits);
         Assert.Equal("b.md", hits[0].RelativePath);
     }
@@ -162,7 +162,7 @@ public sealed class NoteSearchIndexTests
         _fileService.ReleaseBlockedReads();
         await ready;
 
-        var hits = await sut.Search("interleaved", includeTemplates: false);
+        var hits = await sut.Search("interleaved", includeTemplates: false, TestContext.Current.CancellationToken);
         Assert.Single(hits);
         Assert.Equal("interleaved.md", hits[0].RelativePath);
     }
@@ -185,7 +185,7 @@ public sealed class NoteSearchIndexTests
         _fileService.ReleaseBlockedReads();
         await ready;
 
-        var hits = await sut.Search("doomed", includeTemplates: false);
+        var hits = await sut.Search("doomed", includeTemplates: false, TestContext.Current.CancellationToken);
         Assert.Empty(hits);
     }
 
@@ -211,9 +211,9 @@ public sealed class NoteSearchIndexTests
 
         await ready;
 
-        var leakyHits = await sut.Search("leaky", includeTemplates: false);
+        var leakyHits = await sut.Search("leaky", includeTemplates: false, TestContext.Current.CancellationToken);
         Assert.Empty(leakyHits);
-        var freshHits = await sut.Search("fresh", includeTemplates: false);
+        var freshHits = await sut.Search("fresh", includeTemplates: false, TestContext.Current.CancellationToken);
         Assert.Single(freshHits);
     }
 
@@ -222,7 +222,7 @@ public sealed class NoteSearchIndexTests
     {
         var sut = await BuildReadyIndex(Array.Empty<string>());
 
-        var hits = await sut.Search("", includeTemplates: false);
+        var hits = await sut.Search("", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Empty(hits);
     }
@@ -232,7 +232,7 @@ public sealed class NoteSearchIndexTests
     {
         var sut = await BuildReadyIndex(Array.Empty<string>());
 
-        var hits = await sut.Search("   ", includeTemplates: false);
+        var hits = await sut.Search("   ", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Empty(hits);
     }
@@ -242,7 +242,7 @@ public sealed class NoteSearchIndexTests
     {
         var sut = BuildSut();
 
-        var hits = await sut.Search("anything", includeTemplates: false);
+        var hits = await sut.Search("anything", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Empty(hits);
     }
@@ -255,7 +255,7 @@ public sealed class NoteSearchIndexTests
         var sut = await BuildReadyIndex();
         _fileService.ReadAsyncCounts.Clear();
 
-        var hits = await sut.Search("groc", includeTemplates: false);
+        var hits = await sut.Search("groc", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Single(hits);
         Assert.Equal(0, _fileService.GetReadAsyncCount("/workspace/groceries.md"));
@@ -269,7 +269,7 @@ public sealed class NoteSearchIndexTests
         var sut = await BuildReadyIndex();
         _fileService.ReadAsyncCounts.Clear();
 
-        var hits = await sut.Search("urgent", includeTemplates: false);
+        var hits = await sut.Search("urgent", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Single(hits);
         Assert.Equal(0, _fileService.GetReadAsyncCount("/workspace/note.md"));
@@ -283,7 +283,7 @@ public sealed class NoteSearchIndexTests
         var sut = await BuildReadyIndex();
         _fileService.ReadAsyncCounts.Clear();
 
-        var hits = await sut.Search("magic", includeTemplates: false);
+        var hits = await sut.Search("magic", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Single(hits);
         Assert.Equal(1, _fileService.GetReadAsyncCount("/workspace/note.md"));
@@ -297,7 +297,7 @@ public sealed class NoteSearchIndexTests
         var sut = await BuildReadyIndex();
         _fileService.ReadAsyncCounts.Clear();
 
-        var hits = await sut.Search("groc milk", includeTemplates: false);
+        var hits = await sut.Search("groc milk", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Single(hits);
         Assert.Equal(1, _fileService.GetReadAsyncCount("/workspace/groceries.md"));
@@ -311,7 +311,7 @@ public sealed class NoteSearchIndexTests
         _fileService.Files["/workspace/beta.md"] = "unique text";
         var sut = await BuildReadyIndex();
 
-        var hits = await sut.Search("alpha shared", includeTemplates: false);
+        var hits = await sut.Search("alpha shared", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Single(hits);
         Assert.Equal("alpha.md", hits[0].RelativePath);
@@ -324,7 +324,7 @@ public sealed class NoteSearchIndexTests
         _fileService.Files["/workspace/Note.md"] = "Some Body";
         var sut = await BuildReadyIndex();
 
-        var hits = await sut.Search("NoTe", includeTemplates: false);
+        var hits = await sut.Search("NoTe", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Single(hits);
     }
@@ -337,7 +337,7 @@ public sealed class NoteSearchIndexTests
         _fileService.Files["/workspace/regular.md"] = "";
         var sut = await BuildReadyIndex();
 
-        var hits = await sut.Search("md", includeTemplates: false);
+        var hits = await sut.Search("md", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Single(hits);
         Assert.Equal("regular.md", hits[0].RelativePath);
@@ -351,7 +351,7 @@ public sealed class NoteSearchIndexTests
         _fileService.Files["/workspace/regular.md"] = "";
         var sut = await BuildReadyIndex();
 
-        var hits = await sut.Search("md", includeTemplates: true);
+        var hits = await sut.Search("md", includeTemplates: true, TestContext.Current.CancellationToken);
 
         Assert.Equal(2, hits.Count);
     }
@@ -365,7 +365,7 @@ public sealed class NoteSearchIndexTests
         _fileService.Files["/workspace/middle.md"] = "";
         var sut = await BuildReadyIndex();
 
-        var hits = await sut.Search("md", includeTemplates: false);
+        var hits = await sut.Search("md", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Equal(new[] { "alpha.md", "middle.md", "zebra.md" }, hits.Select(h => h.RelativePath));
     }
@@ -379,7 +379,7 @@ public sealed class NoteSearchIndexTests
         _fileService.Files.Remove("/workspace/ghost.md");
         _fileService.MissingPaths.Add("/workspace/ghost.md");
 
-        var hits = await sut.Search("nonsense-token", includeTemplates: false);
+        var hits = await sut.Search("nonsense-token", includeTemplates: false, TestContext.Current.CancellationToken);
 
         Assert.Empty(hits);
     }
