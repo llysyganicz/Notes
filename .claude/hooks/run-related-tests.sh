@@ -5,9 +5,11 @@
 # and on failure feeds the output back into the agent's context (exit 2).
 #
 # Mapping (this repo's convention — see CLAUDE.md / test-plan.md §6.1):
-#   Notes/**/Foo.cs            -> Notes.Tests/FooTests.cs     (run ~FooTests)
-#   Notes/ViewModels/Fields/*  -> covered by FieldVmTests      (run ~FieldVm)
-#   Notes.Tests/FooTests.cs    -> run that class directly       (run ~FooTests)
+#   Notes.Core/**/Foo.cs       -> Notes.Core.Tests/FooTests.cs (run ~FooTests)
+#   Notes.Core.Tests/FooTests.cs -> run that class directly     (run ~FooTests)
+#   Notes/**/Foo.cs            -> Notes.Tests/FooTests.cs      (run ~FooTests)
+#   Notes/ViewModels/Fields/*  -> covered by FieldVmTests       (run ~FieldVm)
+#   Notes.Tests/FooTests.cs    -> run that class directly        (run ~FooTests)
 # Anything with no matching test class (interfaces, models, configs) is skipped.
 set -euo pipefail
 
@@ -29,12 +31,16 @@ base="$(basename "$file" .cs)"
 
 # 2. Resolve the related test class.
 class=""
-if [[ "$rel" == Notes.Tests/*Tests.cs ]]; then
+if [[ "$rel" == Notes.Core.Tests/*Tests.cs ]]; then
+  class="$base"                                        # a core test file was edited
+elif [[ "$rel" == Notes.Tests/*Tests.cs ]]; then
   class="$base"                                        # a test file was edited
 elif [[ "$rel" == Notes/ViewModels/Fields/*.cs ]]; then
   class="FieldVm"                                      # field VMs share FieldVmTests
+elif [ -f "$REPO_ROOT/Notes.Core.Tests/${base}Tests.cs" ]; then
+  class="${base}Tests"                                 # Notes.Core source with a sibling test
 elif [ -f "$REPO_ROOT/Notes.Tests/${base}Tests.cs" ]; then
-  class="${base}Tests"                                 # source file with a sibling test
+  class="${base}Tests"                                 # Notes source with a sibling test
 fi
 
 # 3. No related test class -> nothing to run.

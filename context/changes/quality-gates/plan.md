@@ -280,10 +280,10 @@ The branch-protection ruleset is **already active** (applied during planning). F
 
 #### Automated
 
-- [ ] 3.1 Ruleset `17644374` shows a `required_status_checks` rule referencing `build-test-format`
-- [ ] 3.2 Editing a `Notes.Core` source triggers the test hook to run its `Notes.Core.Tests` class; a failing one returns exit 2
-- [ ] 3.3 `run-format-check.sh` exists, is registered + executable; a format-violating `.cs` edit surfaces the diff and returns exit 2; a clean edit exits 0
-- [ ] 3.4 `test-plan.md` §5 and `change.md` reflect the enforced gates
+- [x] 3.1 Ruleset `17644374` shows a `required_status_checks` rule referencing `build-test-format`
+- [x] 3.2 Editing a `Notes.Core` source triggers the test hook to run its `Notes.Core.Tests` class; a failing one returns exit 2
+- [x] 3.3 `run-format-check.sh` exists, is registered + executable; a format-violating `.cs` edit surfaces the diff and returns exit 2; a clean edit exits 0
+- [x] 3.4 `test-plan.md` §5 and `change.md` reflect the enforced gates
 
 #### Manual
 

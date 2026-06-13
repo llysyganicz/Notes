@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-11 (Phase 3 mutation testing shipped; §6.5 filled, §3 synced)
+> Last updated: 2026-06-13 (Phase 4 quality-gates shipped; §3 Phase 4 complete, §5 gates updated)
 
 ## 1. Strategy
 
@@ -90,7 +90,7 @@ orchestrator updates Status as artifacts appear on disk.
 | 1 | Template pipeline correctness | Prove parse → form → render produces faithful notes (the differentiator + least-confident area) | #1, #2, #6 | unit + integration | change opened | context/changes/testing-template-pipeline/ |
 | 2 | File-safety & data-loss guardrails | Prove collisions, durable writes, and path containment never destroy data | #3, #4, #5 | integration | complete | context/archive/2026-06-08-file-safety/ |
 | 3 | Test-effectiveness validation | Prove the Phase 1–2 tests actually kill regressions (mutation testing scoped to template + file-safety logic), answering "are these tests correct?" | cross-cutting (#1–#6) | mutation testing (AI-native/tooling) | complete | context/changes/test-validation/ |
-| 4 | Quality-gates wiring | Lock the floor: format/build/test mapped to CI steps; post-edit hook recommended-local | cross-cutting | gates | not started | — |
+| 4 | Quality-gates wiring | Lock the floor: format/build/test mapped to CI steps; post-edit hook recommended-local | cross-cutting | gates | complete | context/changes/quality-gates/ |
 
 **Status vocabulary** (fixed — parser literals):
 
@@ -132,10 +132,10 @@ phase lands; before that, the gate is `planned`.
 | Gate | Where | Required? | Catches |
 |------|-------|-----------|---------|
 | build (`dotnet build`) | local + CI | required | compile / type drift |
-| format (`dotnet format --verify-no-changes`) | local + CI | required after §3 Phase 4 | style / convention drift |
-| unit + integration (`dotnet test`) | local + CI | required after §3 Phase 1 | logic regressions in template + file-safety paths |
-| mutation-score threshold | CI on PR | optional after §3 Phase 3 | tests that pass without actually catching regressions |
-| post-edit hook (run affected tests) | local (agent loop) | recommended after §3 Phase 4 | regressions at edit time |
+| format (`dotnet format --verify-no-changes`) | local + CI | **required** (enforced via `.editorconfig` + CI `build-test-format` job + ruleset required check) | style / convention drift |
+| unit + integration (`dotnet test`) | local + CI | required (enforced via CI `build-test-format` job) | logic regressions in template + file-safety paths |
+| mutation-score threshold | local only | optional (run from `Notes.Core.Tests/`; `break: 95`) | tests that pass without actually catching regressions |
+| post-edit hook (run affected tests + format check) | local (agent loop) | **recommended** (two hooks: `run-format-check.sh` + `run-related-tests.sh`; covers `Notes.Core.Tests` since §3 Phase 4) | regressions and format violations at edit time |
 | GUI / e2e | — | not planned | (excluded per §7) |
 
 ## 6. Cookbook Patterns
@@ -366,7 +366,7 @@ contributors should respect these unless the underlying assumption changes.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-06
+- Strategy (§1–§5) last reviewed: 2026-06-13
 - Stack versions last verified: 2026-06-06
 - AI-native tool references last verified: 2026-06-11 (Stryker.NET 4.14.2, `test-runner: mtp`, scoped to `Notes.Core`; §3 Phase 3 complete)
 
