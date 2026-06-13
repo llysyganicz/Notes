@@ -5,11 +5,13 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
-using Notes.Messaging;
-using Notes.Models;
+using Notes.Core.Messaging;
+using Notes.Core.Models;
 using Notes.Services;
+using Notes.Core.Services;
 using Notes.Tests.Fakes;
 using Notes.ViewModels;
+using Notes.Core.ViewModels;
 using NSubstitute;
 using Xunit;
 

@@ -3,8 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Notes.Models;
+using Notes.Core.Models;
 using Notes.ViewModels;
+using Notes.Core.ViewModels;
 
 namespace Notes.Views;
 

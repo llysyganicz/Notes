@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Notes.Messaging;
-using Notes.Models;
+using Notes.Core.Messaging;
+using Notes.Core.Models;
 using Notes.Services;
+using Notes.Core.Services;
 
 namespace Notes.ViewModels;
 

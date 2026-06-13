@@ -1,7 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Notes.ViewModels"
-        xmlns:models="using:Notes.Models"
+        xmlns:models="using:Notes.Core.Models"
         x:Class="Notes.Views.TemplatePickerDialog"
         x:DataType="vm:TemplatePickerViewModel"
         DataContext="{ReflectionBinding Picker, Source={StaticResource Locator}}"

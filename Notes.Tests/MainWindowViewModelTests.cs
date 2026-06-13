@@ -1,7 +1,9 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Notes.Messaging;
+using Notes.Core.Messaging;
 using Notes.Services;
+using Notes.Core.Services;
 using Notes.ViewModels;
+using Notes.Core.ViewModels;
 using NSubstitute;
 using Xunit;
 

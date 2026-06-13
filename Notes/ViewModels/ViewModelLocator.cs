@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using Notes.Core.ViewModels;
 
 namespace Notes.ViewModels;
 

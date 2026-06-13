@@ -1,0 +1,23 @@
+{
+  "stryker-config": {
+    "test-runner": "mtp",
+    "project": "Notes.Core.csproj",
+    "mutate": [
+      "**/Services/TemplateRenderer.cs",
+      "**/Services/TemplateParser.cs",
+      "**/Services/TemplateCatalog.cs",
+      "**/Services/NameValidator.cs",
+      "**/Services/PathGuard.cs",
+      "**/Services/NoteFileService.cs",
+      "**/Services/NoteDeleter.cs",
+      "**/Services/NoteFolderService.cs",
+      "**/Services/OrphanedTempCleaner.cs",
+      "**/ViewModels/TemplateFormViewModel.cs",
+      "**/ViewModels/Fields/*.cs",
+      "!**/*.axaml.cs"
+    ],
+    "reporters": ["markdown", "json"],
+    "concurrency": 4,
+    "thresholds": { "high": 100, "low": 95, "break": 95 }
+  }
+}

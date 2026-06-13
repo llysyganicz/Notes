@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Notes.Services;
+using Notes.Core.Services;
 
 namespace Notes.Tests.Fakes;
 
