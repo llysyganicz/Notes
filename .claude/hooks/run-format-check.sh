@@ -22,8 +22,10 @@ case "$file" in
 esac
 
 rel="${file#"$REPO_ROOT"/}"
+[ "$rel" = "$file" ] && exit 0  # outside repo, skip
 
 # 2. Run format verification scoped to the single edited file.
+# --no-restore: assumes packages are already restored (run 'dotnet restore' first on a fresh checkout).
 echo "[run-format-check] $rel -> dotnet format --verify-no-changes --include \"$rel\""
 if output="$(cd "$REPO_ROOT" && dotnet format --verify-no-changes --no-restore --include "$rel" Notes.slnx 2>&1)"; then
   exit 0

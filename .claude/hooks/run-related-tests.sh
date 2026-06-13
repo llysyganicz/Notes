@@ -27,13 +27,14 @@ case "$file" in
 esac
 
 rel="${file#"$REPO_ROOT"/}"
+[ "$rel" = "$file" ] && exit 0  # outside repo, skip
 base="$(basename "$file" .cs)"
 
 # 2. Resolve the related test class.
 class=""
-if [[ "$rel" == Notes.Core.Tests/*Tests.cs ]]; then
+if [[ "$rel" == Notes.Core.Tests/* && "$base" == *Tests ]]; then
   class="$base"                                        # a core test file was edited
-elif [[ "$rel" == Notes.Tests/*Tests.cs ]]; then
+elif [[ "$rel" == Notes.Tests/* && "$base" == *Tests ]]; then
   class="$base"                                        # a test file was edited
 elif [[ "$rel" == Notes/ViewModels/Fields/*.cs ]]; then
   class="FieldVm"                                      # field VMs share FieldVmTests
