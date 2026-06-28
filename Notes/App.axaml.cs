@@ -16,8 +16,13 @@ public partial class App : Application
 {
     public static IServiceProvider Services { get; set; } = null!;
 
-    public Window? MainWindow =>
-        (ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+    private Window? _mainWindow;
+
+    public virtual Window? MainWindow
+    {
+        get => _mainWindow ?? (ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        set => _mainWindow = value;
+    }
 
     public override void Initialize()
     {

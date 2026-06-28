@@ -214,13 +214,13 @@ Make the new E2E layer discoverable and documented.
 
 ## Progress
 
-- [x] 1.1 Create `Notes.E2ETests.csproj` matching the existing test project conventions.
-- [x] 1.2 Add `Notes.E2ETests` to `Notes.slnx`.
-- [x] 1.3 Verify `dotnet build` and `dotnet test` work for the new project.
-- [ ] 2.1 Add `TestApp.cs` with headless app builder and test service provider setup.
-- [ ] 2.2 Add fake `IFolderPicker` and `ISettingsService`.
-- [ ] 2.3 Add `E2ETestBase` with per-test isolation and control helpers.
-- [ ] 2.4 Add a smoke test proving the harness can show `MainWindow` and load the tree.
+- [x] 1.1 Create `Notes.E2ETests.csproj` matching the existing test project conventions. — 066440ee
+- [x] 1.2 Add `Notes.E2ETests` to `Notes.slnx`. — 066440ee
+- [x] 1.3 Verify `dotnet build` and `dotnet test` work for the new project. — 066440ee
+- [x] 2.1 Add `TestApp.cs` with headless app builder and test service provider setup.
+- [x] 2.2 Add fake `IFolderPicker` and `ISettingsService`.
+- [x] 2.3 Add `E2ETestBase` with per-test isolation and control helpers.
+- [x] 2.4 Add a smoke test proving the harness can show `MainWindow` and load the tree.
 - [ ] 3.1 Implement happy-path create-new-note test.
 - [ ] 3.2 Implement cancelled-dialog test.
 - [ ] 3.3 Implement validation-disabled-button test.
