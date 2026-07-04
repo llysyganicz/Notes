@@ -1,7 +1,7 @@
 ---
 change_id: avalonia-headless-e2e
 title: Avalonia headless UI E2E tests (minimal slice)
-status: complete
+status: impl_reviewed
 created: 2026-06-28
 updated: 2026-07-04
 archived_at: null
