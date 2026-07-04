@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-13 (Phase 4 quality-gates shipped; §3 Phase 4 complete, §5 gates updated)
+> Last updated: 2026-07-04 (`avalonia-headless-e2e` shipped; §4 stack updated, §5 gates updated, §6.6 + §7 revised)
 
 ## 1. Strategy
 
@@ -114,7 +114,8 @@ date so future readers can see which lines need re-verification.
 | file-system fake | `System.IO.Abstractions` + `MockFileSystem` | (per csproj) | mandatory for any disk-touching service; never hit the real FS (per CLAUDE.md + memory) |
 | mocking | NSubstitute | (per csproj) | behavior-only doubles; preferred over Moq/hand-rolled stubs (memory) |
 | view-model tests | xUnit + `TestApp.cs` bootstrap | — | minimal Avalonia app shell for VM tests that touch Avalonia primitives |
-| e2e / GUI | none — deliberately excluded | n/a | see §7 (GUI is out of scope by interview Q5) |
+| headless UI smoke / e2e | `Avalonia.Headless.XUnit` | 12.0.3 | cross-control flows in a headless desktop lifetime; see §6.6 and §7 |
+| full GUI automation | deliberately excluded | n/a | see §7 (full GUI automation is out of scope) |
 | (optional) AI-native | mutation testing tool, e.g. Stryker.NET — checked: 2026-06-06 | none yet — see §3 Phase 3 | **When NOT to use:** never on GUI/AXAML or the whole repo; scope to the domain logic the suite claims to protect. Version + current usage to be grounded via Context7 / Microsoft Learn when Phase 3 opens. |
 
 **Stack grounding tools (current session):**
@@ -134,6 +135,7 @@ phase lands; before that, the gate is `planned`.
 | build (`dotnet build`) | local + CI | required | compile / type drift |
 | format (`dotnet format --verify-no-changes`) | local + CI | **required** (enforced via `.editorconfig` + CI `build-test-format` job + ruleset required check) | style / convention drift |
 | unit + integration (`dotnet test`) | local + CI | required (enforced via CI `build-test-format` job) | logic regressions in template + file-safety paths |
+| headless UI E2E (`dotnet test --filter "FullyQualifiedName~Notes.E2ETests"` or `dotnet test` from repo root) | local | required locally; keep out of CI first (run is slower and relies on headless Avalonia) | regressions in cross-control flows only observable through the assembled UI |
 | mutation-score threshold | local only | optional (run from `Notes.Core.Tests/`; `break: 95`) | tests that pass without actually catching regressions |
 | post-edit hook (run affected tests + format check) | local (agent loop) | **recommended** (two hooks: `run-format-check.sh` + `run-related-tests.sh`; covers `Notes.Core.Tests` since §3 Phase 4) | regressions and format violations at edit time |
 | GUI / e2e | — | not planned | (excluded per §7) |
@@ -329,7 +331,36 @@ regression trips a non-zero exit. Here: score 96.76% → `"thresholds": { "high"
 are cosmetic. Reporters are `["markdown", "json"]` (`json` drives survivor extraction;
 `html`/`cleartext` dropped).
 
-### 6.6 Per-rollout-phase notes
+### 6.6 Adding an Avalonia headless UI test
+
+Use this layer only for flows that can only fail through the assembled UI boundary
+(menu → dialog → tree → editor). Keep unit and integration tests for pure logic;
+headless UI tests are slower and more brittle.
+
+- **Location:** `Notes.E2ETests/<Flow>Tests.cs` — one file per cross-control flow.
+- **Harness:** extend `E2ETestBase` (`Notes.E2ETests/E2ETestBase.cs`). It gives every
+test an isolated `MockFileSystem` workspace, a fresh `StrongReferenceMessenger`, and a
+headless `MainWindow`; it stubs `IFolderPicker` and `ISettingsService` so no real picker
+appears and no test writes to disk.
+- **Drive through real controls, not view-model internals:** use `[AvaloniaFact]`, open
+the dialog via the VM command (e.g. `mainViewModel.NewNoteCommand.Execute(null)`), wait
+for the dialog window with `WaitForWindowAsync<TWindow>()`, then manipulate named
+controls (`NameInput`, `CreateButton`, etc.) via `SetTextBoxTextAsync` / `ClickButtonAsync`.
+- **Oracle:** assert observable outcomes — the mock file-system content, the selected
+tree-node name, the editor text, or the `NoteEditorViewModel.PaneState`. Never assert
+against internal fields or against values derived from the SUT's own output.
+- **Isolation:** `InitializeAsync` creates a unique `/test-workspace-<guid>` and
+`DisposeAsync` closes the window and cancels pending auto-save. Do not share state
+between tests.
+- **Reference tests:**
+  - `CreateNewNoteTests.CreateNewNote_WhenNameProvided_SelectsNoteInTreeAndEditor` —
+    menu command → dialog → create → assert file exists, tree selected, editor empty.
+  - `EditAndAutoSaveTests.EditNote_WhenTextChanged_AutoSavesAfterDelay` — select note →
+    mutate `TextEditor.Text` → `FlushAutoSave()` → assert file content changed.
+- **Run:** `dotnet test --filter "FullyQualifiedName~Notes.E2ETests"` or `dotnet test`
+from the repo root.
+
+### 6.7 Per-rollout-phase notes
 
 (Optional. After each phase lands, `/10x-implement` appends a 2–3 line note
 here capturing anything surprising the rollout phase taught.)
@@ -353,6 +384,15 @@ here capturing anything surprising the rollout phase taught.)
   `Notes.Core.Tests/`, not `Notes.Tests/` (the §6.1–§6.4 file paths predate this split).
   Run mutation from `Notes.Core.Tests/` (single-project mode); read the `markdown`
   report, not the cleartext `# survived` column. Score 96.76%, `break` 95. See §6.5.
+- **Phase 4 (quality-gates wiring):** the CI `build-test-format` job and the local
+  post-edit hooks (`run-format-check.sh` + `run-related-tests.sh`) were added to catch
+  compile, style, and test regressions before merge. Keep gates local-first for new
+  tooling; promote to CI only after the job is fast and stable.
+- **Phase 5 / `avalonia-headless-e2e` change:** the earlier "no GUI/E2E" assumption
+  was too strong — two critical flows (create note and edit → auto-save) only fail at
+  the assembled UI boundary. `Avalonia.Headless.XUnit` gives a fast, deterministic
+  headless lifetime without a real display or folder picker; the key is isolating each
+  test with its own `MockFileSystem` workspace and `StrongReferenceMessenger`.
 
 ## 7. What We Deliberately Don't Test
 
@@ -361,13 +401,13 @@ contributors should respect these unless the underlying assumption changes.
 
 - **GUI / AXAML layout and visual styling** — low value, breaks constantly; the MVVM split keeps logic in testable view models. Re-evaluate if visual regressions start shipping. (Source: Phase 2 interview Q5.)
 - **Avalonia framework behavior** (bindings, the folder-picker dialog internals) — trust the framework; test our usage of it, not the framework itself. (Source: Phase 2 interview Q5.)
-- **Full end-to-end GUI automation** — too heavy for a solo desktop app; the data-loss and correctness guarantees are reachable at unit/integration layers. Re-evaluate if a critical flow can only fail through the assembled UI. (Source: Phase 2 interview Q5.)
+- **Full end-to-end GUI automation** (pixel-level, multi-window, browser/robot-driven) — too heavy for a solo desktop app; the data-loss and correctness guarantees are reachable at unit/integration layers. *Revised:* scoped Avalonia headless smoke tests for cross-control flows that can only fail through the assembled UI are in scope; full GUI automation remains out. (Source: Phase 2 interview Q5; revisited by `avalonia-headless-e2e` change.)
 - **YAML / markdown library internals** — test our parsing/rendering usage and edge handling, not the third-party parser's own correctness. (Source: Phase 1 cost × signal.)
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-13
-- Stack versions last verified: 2026-06-06
+- Strategy (§1–§5) last reviewed: 2026-07-04
+- Stack versions last verified: 2026-07-04 (`Avalonia.Headless.XUnit` 12.0.3 added to `Notes.E2ETests`; `dotnet test` passes at repo root)
 - AI-native tool references last verified: 2026-06-11 (Stryker.NET 4.14.2, `test-runner: mtp`, scoped to `Notes.Core`; §3 Phase 3 complete)
 
 Refresh (`/10x-test-plan --refresh`) when:
