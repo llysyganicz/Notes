@@ -26,6 +26,20 @@ Create the E2E test project and wire it into the solution.
 
 ### Changes Required
 
+> **Addendum (impl-review F1):** a small production-code seam is also
+> required here. `App.MainWindow` (in `Notes/App.axaml.cs`) is changed from
+> a read-only computed property to a `virtual` property with a `_mainWindow`
+> backing field and a public setter. The getter falls back to
+> `(ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow`
+> when `_mainWindow` is null, so production behavior is unchanged (the real
+> `OnFrameworkInitializationCompleted` path never sets `_mainWindow`). The
+> seam lets headless E2E tests inject the test window via
+> `app.MainWindow = MainWindow` so the dialog services
+> (`NewNoteDialogService`, `ConfirmDialogService`, the template dialog
+> services) — which resolve `(Application.Current as App)?.MainWindow` —
+> find the test window instead of null. This is a test-only seam on a
+> core shell type, accepted to keep `E2ETestBase` wiring simple.
+
 1. Add `Notes.E2ETests/Notes.E2ETests.csproj` with:
    - `TargetFramework`: `net10.0`
    - `Nullable`: `enable`

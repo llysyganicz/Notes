@@ -121,6 +121,11 @@ public abstract class E2ETestBase : IAsyncLifetime
 
     protected Task SelectTreeItemAsync(string headerText)
     {
+        // Drive the real TreeView control rather than assigning the VM's
+        // SelectedNode directly. The TreeView's SelectedItem is two-way bound
+        // to NoteTreeViewModel.SelectedNode, so this exercises the same
+        // TreeView -> ViewModel binding path a real click takes; a regression
+        // in that binding would surface here instead of being bypassed.
         var treeViewModel = Services.GetRequiredService<NoteTreeViewModel>();
         var match = FindNode(treeViewModel.Root, headerText);
         if (match is null)
@@ -128,7 +133,8 @@ public abstract class E2ETestBase : IAsyncLifetime
             throw new InvalidOperationException($"Tree item '{headerText}' was not found.");
         }
 
-        treeViewModel.SelectedNode = match;
+        var tree = FindControl<TreeView>();
+        tree.SelectedItem = match;
         return Task.CompletedTask;
     }
 
