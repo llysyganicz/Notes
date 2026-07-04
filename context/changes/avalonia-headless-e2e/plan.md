@@ -176,9 +176,9 @@ Add the second E2E test: select an existing note, type in the editor, wait/flush
 
 ### Automated
 
-- [ ] 4.1 Implement select-note-loads-content test.
-- [ ] 4.2 Implement edit-auto-save test.
-- [ ] 4.3 Implement no-edit-no-save test.
+- [x] 4.1 Implement select-note-loads-content test.
+- [x] 4.2 Implement edit-auto-save test.
+- [x] 4.3 Implement no-edit-no-save test.
 
 ### Manual
 
@@ -221,11 +221,11 @@ Make the new E2E layer discoverable and documented.
 - [x] 2.2 Add fake `IFolderPicker` and `ISettingsService`.
 - [x] 2.3 Add `E2ETestBase` with per-test isolation and control helpers.
 - [x] 2.4 Add a smoke test proving the harness can show `MainWindow` and load the tree.
-- [ ] 3.1 Implement happy-path create-new-note test.
-- [ ] 3.2 Implement cancelled-dialog test.
-- [ ] 3.3 Implement validation-disabled-button test.
-- [ ] 4.1 Implement select-note-loads-content test.
-- [ ] 4.2 Implement edit-auto-save test.
-- [ ] 4.3 Implement no-edit-no-save test.
+- [x] 3.1 Implement happy-path create-new-note test.
+- [x] 3.2 Implement cancelled-dialog test.
+- [x] 3.3 Implement validation-disabled-button test.
+- [x] 4.1 Implement select-note-loads-content test.
+- [x] 4.2 Implement edit-auto-save test.
+- [x] 4.3 Implement no-edit-no-save test.
 - [ ] 5.1 Update `test-plan.md` §4, §5, §6, §7.
 - [ ] 5.2 Verify full `dotnet test` pass.

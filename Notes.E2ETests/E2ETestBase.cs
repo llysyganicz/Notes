@@ -1,9 +1,12 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
@@ -90,9 +93,11 @@ public abstract class E2ETestBase : IAsyncLifetime
             ?? throw new InvalidOperationException($"No control of type {typeof(T).Name} was found.");
     }
 
-    protected Task ClickButtonAsync(string name)
+    protected Task ClickButtonAsync(string name) => ClickButtonAsync(MainWindow, name);
+
+    protected Task ClickButtonAsync(Window window, string name)
     {
-        var button = FindControl<Button>(name);
+        var button = FindControl<Button>(window, name);
         if (button.Command is not null && button.Command.CanExecute(button.CommandParameter))
         {
             button.Command.Execute(button.CommandParameter);
@@ -105,9 +110,11 @@ public abstract class E2ETestBase : IAsyncLifetime
         return Task.CompletedTask;
     }
 
-    protected Task SetTextBoxTextAsync(string name, string text)
+    protected Task SetTextBoxTextAsync(string name, string text) => SetTextBoxTextAsync(MainWindow, name, text);
+
+    protected Task SetTextBoxTextAsync(Window window, string name, string text)
     {
-        var textBox = FindControl<TextBox>(name);
+        var textBox = FindControl<TextBox>(window, name);
         textBox.Text = text;
         return Task.CompletedTask;
     }
@@ -132,7 +139,74 @@ public abstract class E2ETestBase : IAsyncLifetime
         return editor.Text;
     }
 
+    protected Task SetEditorTextAsync(string text)
+    {
+        var editor = MainWindow.GetVisualDescendants().OfType<TextEditor>().FirstOrDefault()
+            ?? throw new InvalidOperationException("TextEditor was not found.");
+        editor.Text = text;
+        return Task.CompletedTask;
+    }
+
     protected void FlushAutoSave() => Services.GetRequiredService<IAutoSaveScheduler>().Flush();
+
+    protected T FindControl<T>(Window window, string name) where T : Control
+    {
+        var direct = window.FindControl<T>(name);
+        if (direct is not null)
+        {
+            return direct;
+        }
+
+        var found = window.GetVisualDescendants()
+            .OfType<T>()
+            .FirstOrDefault(c => c.Name == name);
+
+        return found ?? throw new InvalidOperationException(
+            $"Control '{name}' of type {typeof(T).Name} was not found.");
+    }
+
+    protected TWindow? FindWindow<TWindow>() where TWindow : Window
+    {
+        var lifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        return lifetime?.Windows.OfType<TWindow>().FirstOrDefault()
+            ?? MainWindow.OwnedWindows.OfType<TWindow>().FirstOrDefault();
+    }
+
+    protected async Task<TWindow> WaitForWindowAsync<TWindow>(CancellationToken cancellationToken = default)
+        where TWindow : Window
+    {
+        for (var i = 0; i < 100; i++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var window = FindWindow<TWindow>();
+            if (window is not null)
+            {
+                return window;
+            }
+
+            Dispatcher.UIThread.RunJobs();
+            await Task.Delay(10, cancellationToken);
+        }
+
+        throw new TimeoutException($"Timed out waiting for {typeof(TWindow).Name} window.");
+    }
+
+    protected async Task WaitForConditionAsync(Func<bool> condition, CancellationToken cancellationToken = default)
+    {
+        for (var i = 0; i < 100; i++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (condition())
+            {
+                return;
+            }
+
+            Dispatcher.UIThread.RunJobs();
+            await Task.Delay(10, cancellationToken);
+        }
+
+        throw new TimeoutException("Timed out waiting for condition.");
+    }
 
     private static NoteTreeNode? FindNode(NoteTreeNode? node, string name)
     {
