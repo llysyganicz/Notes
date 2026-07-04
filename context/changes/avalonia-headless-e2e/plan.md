@@ -227,5 +227,5 @@ Make the new E2E layer discoverable and documented.
 - [x] 4.1 Implement select-note-loads-content test.
 - [x] 4.2 Implement edit-auto-save test.
 - [x] 4.3 Implement no-edit-no-save test.
-- [ ] 5.1 Update `test-plan.md` §4, §5, §6, §7.
-- [ ] 5.2 Verify full `dotnet test` pass.
+- [x] 5.1 Update `test-plan.md` §4, §5, §6, §7.
+- [x] 5.2 Verify full `dotnet test` pass.
