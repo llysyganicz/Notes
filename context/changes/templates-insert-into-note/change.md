@@ -1,9 +1,9 @@
 ---
 change_id: templates-insert-into-note
 title: Insert a rendered template body into an existing note at the cursor
-status: implementing
+status: implemented
 created: 2026-07-05
-updated: 2026-07-31
+updated: 2026-07-29
 roadmap_ref: post-MVP (deferred from S-04)
 prd_refs: [FR-009, US-02, US-03 (new)]
 blocked_by: []

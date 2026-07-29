@@ -435,10 +435,10 @@ text, including the template's non-form frontmatter.
 
 #### Automated
 
-- [x] 4.1 `dotnet test` passes
-- [x] 4.2 Existing new-from-template tests pass
+- [x] 4.1 `dotnet test` passes — eabc534a
+- [x] 4.2 Existing new-from-template tests pass — eabc534a
 
 #### Manual
 
-- [x] 4.3 New from Template creates full note with frontmatter
-- [x] 4.4 Canceling picker/form creates no note
+- [x] 4.3 New from Template creates full note with frontmatter — eabc534a
+- [x] 4.4 Canceling picker/form creates no note — eabc534a
