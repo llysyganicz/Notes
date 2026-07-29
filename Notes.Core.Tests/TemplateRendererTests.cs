@@ -239,6 +239,51 @@ public sealed class TemplateRendererTests
         Assert.Equal("1-2-1", result);
     }
 
+    [Fact]
+    public void RenderBody_WhenFrontmatterAndBody_ReturnsSubstitutedBodyOnly()
+    {
+        var template =
+            "---\nform:\n  name:\n    type: text\n    label: Name\ntitle: Kept\n---\n# {{name}}\nBody line\n";
+        var values = new Dictionary<string, string> { ["name"] = "World" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal("# World\nBody line\n", result);
+    }
+
+    [Fact]
+    public void RenderBody_WhenNoFrontmatter_ReturnsSubstitutedFullText()
+    {
+        var template = "# {{name}}\nNo frontmatter here.\n";
+        var values = new Dictionary<string, string> { ["name"] = "Plain" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal("# Plain\nNo frontmatter here.\n", result);
+    }
+
+    [Fact]
+    public void RenderBody_WhenOnlyFrontmatter_ReturnsEmptyString()
+    {
+        var template = "---\nform:\n  name:\n    type: text\n    label: Name\n---\n";
+        var values = new Dictionary<string, string> { ["name"] = "Unused" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void RenderBody_WhenUndeclaredToken_LeavesItVerbatim()
+    {
+        var template = "---\nform:\n  name:\n    type: text\n    label: Name\n---\nHello {{name}} and {{extra}}\n";
+        var values = new Dictionary<string, string> { ["name"] = "World" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal("Hello World and {{extra}}\n", result);
+    }
+
     // DoesNotContain loop is the belt-and-suspenders proof: each declared token that received a value must leave
     // zero literal survivors in the output, independent of the Equal assertion.
     [Theory]

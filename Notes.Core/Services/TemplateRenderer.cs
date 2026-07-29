@@ -33,15 +33,7 @@ public sealed class TemplateRenderer : ITemplateRenderer
             return SubstituteBody(templateText, definition, values);
         }
 
-        var closing = -1;
-        for (var i = 1; i < lines.Count; i++)
-        {
-            if (lines[i].Content == "---")
-            {
-                closing = i;
-                break;
-            }
-        }
+        var closing = FindClosingFence(lines);
 
         // No closing fence → not a frontmatter block; treat the whole text as body.
         if (closing < 0)
@@ -67,6 +59,39 @@ public sealed class TemplateRenderer : ITemplateRenderer
         Append(builder, lines[closing]);            // closing fence, verbatim
         builder.Append(body);
         return builder.ToString();
+    }
+
+    public string RenderBody(string templateText, FormDefinition definition, IReadOnlyDictionary<string, string> values)
+    {
+        templateText ??= string.Empty;
+        var lines = SplitLines(templateText);
+
+        if (lines.Count == 0 || lines[0].Content != "---")
+        {
+            return SubstituteBody(templateText, definition, values);
+        }
+
+        var closing = FindClosingFence(lines);
+        if (closing < 0)
+        {
+            return SubstituteBody(templateText, definition, values);
+        }
+
+        var body = Join(lines, closing + 1, lines.Count);
+        return SubstituteBody(body, definition, values);
+    }
+
+    private static int FindClosingFence(List<Line> lines)
+    {
+        for (var i = 1; i < lines.Count; i++)
+        {
+            if (lines[i].Content == "---")
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     /// <summary>

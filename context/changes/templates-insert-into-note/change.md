@@ -1,9 +1,9 @@
 ---
 change_id: templates-insert-into-note
 title: Insert a rendered template body into an existing note at the cursor
-status: preparing
+status: implementing
 created: 2026-07-05
-updated: 2026-07-05
+updated: 2026-07-21
 roadmap_ref: post-MVP (deferred from S-04)
 prd_refs: [FR-009, US-02, US-03 (new)]
 blocked_by: []
@@ -39,9 +39,9 @@ See `frame.md` for the framing that produced this scope.
 - **Menu path keeps today's behavior** — the new note retains the
   template's non-`form` frontmatter verbatim plus the substituted body.
   Q1=A applies to the editor-insert path only.
-- **Common orchestration extracted into a shared service** (provisionally
-  `ITemplateInstantiationService` in `Notes.Core`), injected by both
-  `NoteTreeViewModel` (menu path) and `NoteEditorViewModel` (editor path).
+- **Common orchestration extracted into a shared service** (`ITemplateService`
+  in `Notes`), injected by both `NoteTreeViewModel` (menu path) and
+  `NoteEditorViewModel` (editor path).
 - **Editor entry enabled only while a note is open and in editing mode**
   (`EditorPaneState.Editing`), not in preview/empty.
 - **Active selection is replaced** by the rendered body; with no
