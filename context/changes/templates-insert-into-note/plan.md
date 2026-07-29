@@ -108,6 +108,9 @@ frontmatter fence.
   treat the whole text as body when the first line is not `---` or when no
   closing `---` fence is found; otherwise take the lines after the closing
   fence as the body.
+- Trim leading empty lines from the body region so templates that leave a blank
+  separator after the closing fence do not inject leading whitespace into the
+  open note.
 - Null `templateText` is treated as empty.
 - The resulting body is passed through the existing `SubstituteBody` helper,
   so token substitution behaves identically to `Render`.
@@ -279,9 +282,10 @@ insertion.
   the new VM, mirroring how `PropertyChanged` is already (un)wired there.
 - The `InsertAtCaretRequested` handler is a no-op unless `_viewModel` is
   non-null and `IsEditing` is true.
-- When active, it calls `Editor.Document.Replace(Editor.CaretOffset,
+- When active, it calls `Editor.Document.Replace(Editor.SelectionStart,
   Editor.SelectionLength, body)` — replacing the active selection (zero-length
-  at the caret inserts without removing anything).
+  at the caret inserts without removing anything). After replacing, it clears the
+  selection and sets the caret to the end of the inserted body.
 - Do **not** set `_suppressEvents` for this replace; it must propagate through
   the existing `OnEditorTextChanged` channel so autosave sees the change.
 
@@ -312,6 +316,17 @@ and pass it to the constructor. Add tests verifying:
 - `InsertFromTemplateCommand` cannot execute when `IsEditing` is false.
 - When a body is returned, `ApplyCaretInsert` fires the event.
 - When the dialog is cancelled, no event is fired.
+
+#### 5. Project test-visibility for internal insert event
+
+**File**: `Notes/Notes.csproj`
+
+**Intent**: Expose the `internal` `InsertAtCaretRequested` event and
+`ApplyCaretInsert` method to the test projects so headless VM tests can subscribe
+to and assert the caret-insert seam without making the event public.
+
+**Contract**: Add `<InternalsVisibleTo Include="Notes.Tests" />` and
+`<InternalsVisibleTo Include="Notes.E2ETests" />` inside an `ItemGroup`.
 
 ### Success Criteria:
 

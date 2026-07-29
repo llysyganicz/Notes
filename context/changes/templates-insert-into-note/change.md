@@ -1,7 +1,7 @@
 ---
 change_id: templates-insert-into-note
 title: Insert a rendered template body into an existing note at the cursor
-status: implemented
+status: impl_reviewed
 created: 2026-07-05
 updated: 2026-07-29
 roadmap_ref: post-MVP (deferred from S-04)
