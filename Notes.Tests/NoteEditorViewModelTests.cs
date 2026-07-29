@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Notes.Core.Messaging;
 using Notes.Core.Models;
@@ -9,6 +10,7 @@ using Notes.Core.Services;
 using Notes.Tests.Fakes;
 using Notes.ViewModels;
 using Notes.Core.ViewModels;
+using NSubstitute;
 using Xunit;
 
 namespace Notes.Tests;
@@ -18,9 +20,10 @@ public sealed class NoteEditorViewModelTests
     private readonly StrongReferenceMessenger _messenger = new();
     private readonly InMemoryNoteFileService _fileService = new();
     private readonly StubAutoSaveScheduler _scheduler = new();
+    private readonly ITemplateService _templateService = Substitute.For<ITemplateService>();
 
     private NoteEditorViewModel BuildSut() =>
-        new(_messenger, _fileService, _scheduler);
+        new(_messenger, _fileService, _scheduler, _templateService);
 
     private static NoteTreeNode File(string relativePath, string name)
         => new(name, relativePath, NoteNodeKind.File, Array.Empty<NoteTreeNode>());
@@ -184,6 +187,47 @@ public sealed class NoteEditorViewModelTests
 
         Assert.Equal(EditorPaneState.Empty, sut.PaneState);
         Assert.True(sut.IsEmpty);
+    }
+
+    [Fact]
+    public void InsertFromTemplateCommand_WhenNotEditing_CannotExecute()
+    {
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage("/workspace"));
+
+        Assert.False(sut.InsertFromTemplateCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public async Task InsertFromTemplateCommand_WhenBodyReturned_FiresInsertAtCaretRequested()
+    {
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage("/workspace"));
+        _fileService.FilesByPath[Path.Combine("/workspace", "a.md")] = "hello";
+        _messenger.Send(new NoteSelectedMessage(File("a.md", "a.md")));
+        _templateService.RenderForInsert("/workspace").Returns(Task.FromResult<string?>("rendered body"));
+        string? capturedBody = null;
+        sut.InsertAtCaretRequested += body => capturedBody = body;
+
+        await sut.InsertFromTemplateCommand.ExecuteAsync(null);
+
+        Assert.Equal("rendered body", capturedBody);
+    }
+
+    [Fact]
+    public async Task InsertFromTemplateCommand_WhenDialogCancelled_DoesNotFireEvent()
+    {
+        var sut = BuildSut();
+        _messenger.Send(new WorkspaceChangedMessage("/workspace"));
+        _fileService.FilesByPath[Path.Combine("/workspace", "a.md")] = "hello";
+        _messenger.Send(new NoteSelectedMessage(File("a.md", "a.md")));
+        _templateService.RenderForInsert("/workspace").Returns(Task.FromResult<string?>(null));
+        var fired = false;
+        sut.InsertAtCaretRequested += _ => fired = true;
+
+        await sut.InsertFromTemplateCommand.ExecuteAsync(null);
+
+        Assert.False(fired);
     }
 
     private sealed class StubAutoSaveScheduler : IAutoSaveScheduler

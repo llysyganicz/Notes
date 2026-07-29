@@ -78,6 +78,7 @@ public sealed class TemplateRenderer : ITemplateRenderer
         }
 
         var body = Join(lines, closing + 1, lines.Count);
+        body = TrimLeadingEmptyLines(body);
         return SubstituteBody(body, definition, values);
     }
 
@@ -92,6 +93,23 @@ public sealed class TemplateRenderer : ITemplateRenderer
         }
 
         return -1;
+    }
+
+    /// <summary>
+    /// Removes all leading empty lines from the body region. Templates conventionally separate
+    /// the frontmatter fence from the body with one or more blank lines; dropping those separators
+    /// avoids unwanted empty lines when the rendered body is inserted into an existing note.
+    /// </summary>
+    private static string TrimLeadingEmptyLines(string text)
+    {
+        var bodyLines = SplitLines(text);
+        var start = 0;
+        while (start < bodyLines.Count && string.IsNullOrEmpty(bodyLines[start].Content))
+        {
+            start++;
+        }
+
+        return Join(bodyLines, start, bodyLines.Count);
     }
 
     /// <summary>

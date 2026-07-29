@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Notes.Core.Messaging;
 using Notes.Core.Models;
@@ -20,6 +22,7 @@ public sealed partial class NoteEditorViewModel :
     private readonly IMessenger _messenger;
     private readonly INoteFileService _fileService;
     private readonly IAutoSaveScheduler _scheduler;
+    private readonly ITemplateService _templateService;
 
     private string? _workspacePath;
     private NoteTreeNode? _currentNote;
@@ -37,15 +40,21 @@ public sealed partial class NoteEditorViewModel :
     public NoteEditorViewModel(
         IMessenger messenger,
         INoteFileService fileService,
-        IAutoSaveScheduler scheduler)
+        IAutoSaveScheduler scheduler,
+        ITemplateService templateService)
     {
         _messenger = messenger;
         _fileService = fileService;
         _scheduler = scheduler;
+        _templateService = templateService;
 
         _scheduler.OnSave += DoSave;
         _messenger.RegisterAll(this);
     }
+
+    internal event Action<string>? InsertAtCaretRequested;
+
+    internal void ApplyCaretInsert(string body) => InsertAtCaretRequested?.Invoke(body);
 
     public bool IsEmpty => PaneState == EditorPaneState.Empty;
     public bool IsEditing => PaneState == EditorPaneState.Editing;
@@ -148,6 +157,21 @@ public sealed partial class NoteEditorViewModel :
         if (_currentNote is not null)
         {
             _scheduler.Bump();
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(IsEditing))]
+    private async Task InsertFromTemplate()
+    {
+        if (string.IsNullOrEmpty(_workspacePath))
+        {
+            return;
+        }
+
+        var body = await _templateService.RenderForInsert(_workspacePath);
+        if (!string.IsNullOrEmpty(body))
+        {
+            ApplyCaretInsert(body);
         }
     }
 

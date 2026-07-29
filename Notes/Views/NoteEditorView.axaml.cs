@@ -26,6 +26,7 @@ public partial class NoteEditorView : UserControl
         if (_viewModel is not null)
         {
             _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+            _viewModel.InsertAtCaretRequested -= OnInsertAtCaretRequested;
         }
 
         _viewModel = DataContext as NoteEditorViewModel;
@@ -33,8 +34,22 @@ public partial class NoteEditorView : UserControl
         if (_viewModel is not null)
         {
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+            _viewModel.InsertAtCaretRequested += OnInsertAtCaretRequested;
             ApplyLoadedText(_viewModel.LoadedText);
         }
+    }
+
+    private void OnInsertAtCaretRequested(string body)
+    {
+        if (_viewModel is null || !_viewModel.IsEditing)
+        {
+            return;
+        }
+
+        var offset = Editor.SelectionStart;
+        Editor.Document.Replace(offset, Editor.SelectionLength, body);
+        Editor.SelectionLength = 0;
+        Editor.CaretOffset = offset + body.Length;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

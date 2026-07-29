@@ -421,8 +421,8 @@ text, including the template's non-form frontmatter.
 
 #### Automated
 
-- [ ] 3.1 `dotnet test` passes
-- [ ] 3.2 `NoteEditorViewModelTests` compile and pass
+- [x] 3.1 `dotnet test` passes
+- [x] 3.2 `NoteEditorViewModelTests` compile and pass
 
 #### Manual
 
