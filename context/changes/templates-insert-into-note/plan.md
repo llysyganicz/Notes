@@ -426,10 +426,10 @@ text, including the template's non-form frontmatter.
 
 #### Manual
 
-- [x] 3.3 Insert at caret works
-- [x] 3.4 Selection replace works
-- [x] 3.5 Existing note frontmatter unchanged
-- [x] 3.6 Command disabled when not editing
+- [x] 3.3 Insert at caret works — 814d6b5
+- [x] 3.4 Selection replace works — 814d6b5
+- [x] 3.5 Existing note frontmatter unchanged — 814d6b5
+- [x] 3.6 Command disabled when not editing — 814d6b5
 
 ### Phase 4: Regression-check the menu path
 
