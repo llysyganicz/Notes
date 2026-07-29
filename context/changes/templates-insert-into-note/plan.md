@@ -216,6 +216,17 @@ of the individual template dependencies.
 and adjust the constructor call and test stubs. The existing test assertions on
 saved file content remain unchanged.
 
+#### 6. E2E test harness registration
+
+**File**: `Notes.E2ETests/E2ETestBase.cs`
+
+**Intent**: Register `ITemplateService` in the E2E test harness's service
+provider so that `NoteTreeViewModel` (and later `NoteEditorViewModel`) can
+resolve it.
+
+**Contract**: Add `services.AddSingleton<ITemplateService, TemplateService>();`
+alongside the existing template-service registrations.
+
 ### Success Criteria:
 
 #### Automated Verification:
@@ -403,8 +414,8 @@ text, including the template's non-form frontmatter.
 
 #### Automated
 
-- [x] 2.1 `dotnet test` passes
-- [x] 2.2 Existing `NoteTreeViewModel` template tests pass
+- [x] 2.1 `dotnet test` passes — 2abb6765
+- [x] 2.2 Existing `NoteTreeViewModel` template tests pass — 2abb6765
 
 ### Phase 3: Add editor "Insert from Template" command and view seam
 

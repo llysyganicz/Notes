@@ -310,7 +310,6 @@ public sealed class NoteTreeViewModelTests
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
 
-        _templateCatalog.List().Returns(new[] { new TemplateInfo(".templates/meeting.md", "meeting.md") });
         _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(Rendered));
         StubPrompt("notes");
         _scanner.Paths = new List<string> { ".templates/meeting.md", "notes.md" };
@@ -332,7 +331,6 @@ public sealed class NoteTreeViewModelTests
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
 
-        _templateCatalog.List().Returns(new[] { new TemplateInfo(".templates/meeting.md", "meeting.md") });
         _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(null));
         StubPrompt("notes");
 
@@ -346,7 +344,6 @@ public sealed class NoteTreeViewModelTests
     {
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
-        _templateCatalog.List().Returns(Array.Empty<TemplateInfo>());
         _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(null));
         StubPrompt("notes");
 
@@ -363,7 +360,6 @@ public sealed class NoteTreeViewModelTests
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
 
-        _templateCatalog.List().Returns(new[] { new TemplateInfo(".templates/broken.md", "broken.md") });
         _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(Rendered));
         StubPrompt("broken-note");
         _scanner.Paths = new List<string> { ".templates/broken.md", "broken-note.md" };
@@ -409,7 +405,6 @@ public sealed class NoteTreeViewModelTests
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
 
-        _templateCatalog.List().Returns(new[] { new TemplateInfo(".templates/meeting.md", "meeting.md") });
         _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(Rendered));
         StubPrompt("blank-note");
         _scanner.Paths = new List<string> { ".templates/meeting.md", "blank-note.md" };
