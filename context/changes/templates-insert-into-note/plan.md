@@ -396,15 +396,15 @@ text, including the template's non-form frontmatter.
 
 #### Automated
 
-- [x] 1.1 `dotnet test --filter Notes.Core.Tests` passes
-- [x] 1.2 New `RenderBody` tests pass
+- [x] 1.1 `dotnet test --filter Notes.Core.Tests` passes — 2df3ca0
+- [x] 1.2 New `RenderBody` tests pass — 2df3ca0
 
 ### Phase 2: Extract shared template orchestration into TemplateService
 
 #### Automated
 
-- [ ] 2.1 `dotnet test` passes
-- [ ] 2.2 Existing `NoteTreeViewModel` template tests pass
+- [x] 2.1 `dotnet test` passes
+- [x] 2.2 Existing `NoteTreeViewModel` template tests pass
 
 ### Phase 3: Add editor "Insert from Template" command and view seam
 
