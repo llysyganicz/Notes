@@ -29,10 +29,7 @@ public sealed partial class NoteTreeViewModel :
     private readonly INoteFileService _fileService;
     private readonly INoteFolderService _folderService;
     private readonly ITemplateCatalog _templateCatalog;
-    private readonly ITemplatePickerDialogService _templatePickerDialog;
-    private readonly ITemplateParser _templateParser;
-    private readonly ITemplateFormDialogService _templateFormDialog;
-    private readonly ITemplateRenderer _templateRenderer;
+    private readonly ITemplateService _templateService;
 
     private string? _workspacePath;
 
@@ -53,10 +50,7 @@ public sealed partial class NoteTreeViewModel :
         INoteFileService fileService,
         INoteFolderService folderService,
         ITemplateCatalog templateCatalog,
-        ITemplatePickerDialogService templatePickerDialog,
-        ITemplateParser templateParser,
-        ITemplateFormDialogService templateFormDialog,
-        ITemplateRenderer templateRenderer)
+        ITemplateService templateService)
     {
         _messenger = messenger;
         _scanner = scanner;
@@ -68,10 +62,7 @@ public sealed partial class NoteTreeViewModel :
         _fileService = fileService;
         _folderService = folderService;
         _templateCatalog = templateCatalog;
-        _templatePickerDialog = templatePickerDialog;
-        _templateParser = templateParser;
-        _templateFormDialog = templateFormDialog;
-        _templateRenderer = templateRenderer;
+        _templateService = templateService;
 
         _messenger.RegisterAll(this);
     }
@@ -137,44 +128,11 @@ public sealed partial class NoteTreeViewModel :
             return;
         }
 
-        var templates = _templateCatalog.List();
-        if (templates.Count == 0)
+        var rendered = await _templateService.RenderForNewNote(_workspacePath);
+        if (rendered is not null)
         {
-            return;
+            await PromptNameAndSave(rendered);
         }
-
-        var picked = await _templatePickerDialog.PickTemplate(templates);
-        if (picked is null)
-        {
-            return;
-        }
-
-        var templateAbsolute = Path.Combine(
-            _workspacePath,
-            picked.RelativePath.Replace('/', Path.DirectorySeparatorChar));
-        var templateText = _fileService.Read(templateAbsolute);
-
-        var definition = _templateParser.Parse(templateText);
-
-        IReadOnlyDictionary<string, string> values;
-        if (definition.Fields.Count > 0)
-        {
-            var collected = await _templateFormDialog.CollectValues(definition);
-            if (collected is null)
-            {
-                return;
-            }
-
-            values = collected;
-        }
-        else
-        {
-            values = new Dictionary<string, string>();
-        }
-
-        var rendered = _templateRenderer.Render(templateText, definition, values);
-
-        await PromptNameAndSave(rendered);
     }
 
     private async Task PromptNameAndSave(string content)

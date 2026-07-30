@@ -11,7 +11,6 @@ using Notes.Services;
 using Notes.Core.Services;
 using Notes.Tests.Fakes;
 using Notes.ViewModels;
-using Notes.Core.ViewModels;
 using NSubstitute;
 using Xunit;
 
@@ -32,10 +31,7 @@ public sealed class NoteTreeViewModelTests
     private readonly InMemoryNoteFileService _fileService = new();
     private readonly NoteFolderService _folderService;
     private readonly ITemplateCatalog _templateCatalog = Substitute.For<ITemplateCatalog>();
-    private readonly ITemplatePickerDialogService _templatePicker = Substitute.For<ITemplatePickerDialogService>();
-    private readonly TemplateParser _templateParser = new();
-    private readonly ITemplateFormDialogService _templateForm = Substitute.For<ITemplateFormDialogService>();
-    private readonly TemplateRenderer _templateRenderer = new();
+    private readonly ITemplateService _templateService = Substitute.For<ITemplateService>();
 
     public NoteTreeViewModelTests()
     {
@@ -46,7 +42,7 @@ public sealed class NoteTreeViewModelTests
 
     private NoteTreeViewModel BuildSut() =>
         new(_messenger, _scanner, _treeBuilder, _deleter, _confirm, _nameValidator, _newNoteDialog, _fileService, _folderService,
-            _templateCatalog, _templatePicker, _templateParser, _templateForm, _templateRenderer);
+            _templateCatalog, _templateService);
 
     private void StubPrompt(string? response) =>
         _newNoteDialog.PromptForName(Arg.Any<string>(), Arg.Any<Func<string, string?>>())
@@ -309,19 +305,12 @@ public sealed class NoteTreeViewModelTests
     [Fact]
     public void Receive_WhenNewFromTemplateRequested_RendersTemplateAndSavesNote()
     {
-        const string templateText = "---\nform:\n  topic:\n    type: text\n    label: Topic\nkeep: yes\n---\n# {{topic}}\n";
+        const string Rendered = "---\nkeep: yes\n---\n# Standup\n";
         _scanner.Paths = new List<string> { ".templates/meeting.md" };
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
 
-        var templateInfo = new TemplateInfo(".templates/meeting.md", "meeting.md");
-        _templateCatalog.List().Returns(new[] { templateInfo });
-        _templatePicker.PickTemplate(Arg.Any<IReadOnlyList<TemplateInfo>>())
-            .Returns(Task.FromResult<TemplateInfo?>(templateInfo));
-        _fileService.FilesByPath[Path.Combine(Workspace, ".templates", "meeting.md")] = templateText;
-        _templateForm.CollectValues(Arg.Any<FormDefinition>())
-            .Returns(Task.FromResult<IReadOnlyDictionary<string, string>?>(
-                new Dictionary<string, string> { ["topic"] = "Standup" }));
+        _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(Rendered));
         StubPrompt("notes");
         _scanner.Paths = new List<string> { ".templates/meeting.md", "notes.md" };
 
@@ -336,16 +325,13 @@ public sealed class NoteTreeViewModelTests
     }
 
     [Fact]
-    public void Receive_WhenTemplatePickerCancelled_CreatesNoNote()
+    public void Receive_WhenTemplateServiceReturnsNull_CreatesNoNote()
     {
         _scanner.Paths = new List<string> { ".templates/meeting.md" };
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
 
-        var templateInfo = new TemplateInfo(".templates/meeting.md", "meeting.md");
-        _templateCatalog.List().Returns(new[] { templateInfo });
-        _templatePicker.PickTemplate(Arg.Any<IReadOnlyList<TemplateInfo>>())
-            .Returns(Task.FromResult<TemplateInfo?>(null));
+        _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(null));
         StubPrompt("notes");
 
         _messenger.Send(new NewFromTemplateRequestedMessage());
@@ -358,7 +344,7 @@ public sealed class NoteTreeViewModelTests
     {
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
-        _templateCatalog.List().Returns(Array.Empty<TemplateInfo>());
+        _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(null));
         StubPrompt("notes");
 
         _messenger.Send(new NewFromTemplateRequestedMessage());
@@ -367,28 +353,22 @@ public sealed class NoteTreeViewModelTests
     }
 
     [Fact]
-    public void Receive_WhenMalformedTemplate_SkipsFormDialogAndSavesStaticBody()
+    public void Receive_WhenTemplateServiceReturnsStaticBody_SavesStaticBody()
     {
-        // Tab-indented form: → TemplateParser returns FormDefinition.Empty (0 fields) → no form dialog.
-        const string templateText = "---\nform:\n\tfield1:\n\t\ttype: text\n---\n# Static Body\n";
+        const string Rendered = "# Static Body\n";
         _scanner.Paths = new List<string> { ".templates/broken.md" };
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
 
-        var templateInfo = new TemplateInfo(".templates/broken.md", "broken.md");
-        _templateCatalog.List().Returns(new[] { templateInfo });
-        _templatePicker.PickTemplate(Arg.Any<IReadOnlyList<TemplateInfo>>())
-            .Returns(Task.FromResult<TemplateInfo?>(templateInfo));
-        _fileService.FilesByPath[Path.Combine(Workspace, ".templates", "broken.md")] = templateText;
+        _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(Rendered));
         StubPrompt("broken-note");
         _scanner.Paths = new List<string> { ".templates/broken.md", "broken-note.md" };
 
         _messenger.Send(new NewFromTemplateRequestedMessage());
 
-        _templateForm.DidNotReceive().CollectValues(Arg.Any<FormDefinition>());
         var savedPath = Path.Combine(Workspace, "broken-note.md");
         Assert.True(_fileService.FilesByPath.ContainsKey(savedPath));
-        Assert.Equal("# Static Body\n", _fileService.FilesByPath[savedPath]);
+        Assert.Equal(Rendered, _fileService.FilesByPath[savedPath]);
     }
 
     [Fact]
@@ -418,21 +398,14 @@ public sealed class NoteTreeViewModelTests
     }
 
     [Fact]
-    public void Receive_WhenFormSubmittedBlank_SavesNoteWithNoLeftoverDeclaredTokens()
+    public void Receive_WhenTemplateServiceReturnsBlank_SavesNoteWithNoLeftoverDeclaredTokens()
     {
-        const string templateText = "---\nform:\n  topic:\n    type: text\n    label: Topic\n---\n# {{topic}}\n";
+        const string Rendered = "# \n";
         _scanner.Paths = new List<string> { ".templates/meeting.md" };
         var sut = BuildSut();
         _messenger.Send(new WorkspaceChangedMessage(Workspace));
 
-        var templateInfo = new TemplateInfo(".templates/meeting.md", "meeting.md");
-        _templateCatalog.List().Returns(new[] { templateInfo });
-        _templatePicker.PickTemplate(Arg.Any<IReadOnlyList<TemplateInfo>>())
-            .Returns(Task.FromResult<TemplateInfo?>(templateInfo));
-        _fileService.FilesByPath[Path.Combine(Workspace, ".templates", "meeting.md")] = templateText;
-        _templateForm.CollectValues(Arg.Any<FormDefinition>())
-            .Returns(Task.FromResult<IReadOnlyDictionary<string, string>?>(
-                new Dictionary<string, string>()));
+        _templateService.RenderForNewNote(Workspace).Returns(Task.FromResult<string?>(Rendered));
         StubPrompt("blank-note");
         _scanner.Paths = new List<string> { ".templates/meeting.md", "blank-note.md" };
 

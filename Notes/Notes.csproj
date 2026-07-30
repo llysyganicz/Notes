@@ -33,4 +33,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Notes.Core\Notes.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Notes.Tests" />
+    <InternalsVisibleTo Include="Notes.E2ETests" />
+  </ItemGroup>
 </Project>

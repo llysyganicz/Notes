@@ -239,6 +239,95 @@ public sealed class TemplateRendererTests
         Assert.Equal("1-2-1", result);
     }
 
+    [Fact]
+    public void RenderBody_WhenFrontmatterAndBody_ReturnsSubstitutedBodyOnly()
+    {
+        var template =
+            "---\nform:\n  name:\n    type: text\n    label: Name\ntitle: Kept\n---\n# {{name}}\nBody line\n";
+        var values = new Dictionary<string, string> { ["name"] = "World" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal("# World\nBody line\n", result);
+    }
+
+    [Fact]
+    public void RenderBody_WhenNoFrontmatter_ReturnsSubstitutedFullText()
+    {
+        var template = "# {{name}}\nNo frontmatter here.\n";
+        var values = new Dictionary<string, string> { ["name"] = "Plain" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal("# Plain\nNo frontmatter here.\n", result);
+    }
+
+    [Fact]
+    public void RenderBody_WhenOnlyFrontmatter_ReturnsEmptyString()
+    {
+        var template = "---\nform:\n  name:\n    type: text\n    label: Name\n---\n";
+        var values = new Dictionary<string, string> { ["name"] = "Unused" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void RenderBody_WhenUndeclaredToken_LeavesItVerbatim()
+    {
+        var template = "---\nform:\n  name:\n    type: text\n    label: Name\n---\nHello {{name}} and {{extra}}\n";
+        var values = new Dictionary<string, string> { ["name"] = "World" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal("Hello World and {{extra}}\n", result);
+    }
+
+    [Fact]
+    public void RenderBody_WhenBlankLineAfterFence_TrimsLeadingEmptyLines()
+    {
+        var template = "---\nform:\n  name:\n    type: text\n    label: Name\n---\n\nHello {{name}}\n";
+        var values = new Dictionary<string, string> { ["name"] = "World" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal("Hello World\n", result);
+    }
+
+    [Fact]
+    public void RenderBody_WhenBlankLineAfterFenceWithCrlf_TrimsLeadingEmptyLines()
+    {
+        var template = "---\r\nform:\r\n  name:\r\n    type: text\r\n    label: Name\r\n---\r\n\r\nHello {{name}}\r\n";
+        var values = new Dictionary<string, string> { ["name"] = "World" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal("Hello World\r\n", result);
+    }
+
+    [Fact]
+    public void RenderBody_WhenMultipleBlankLinesAfterFence_TrimsAllLeadingEmptyLines()
+    {
+        var template = "---\nform:\n  name:\n    type: text\n    label: Name\n---\n\n\nHello {{name}}\n";
+        var values = new Dictionary<string, string> { ["name"] = "World" };
+
+        var result = _renderer.RenderBody(template, Definition("name"), values);
+
+        Assert.Equal("Hello World\n", result);
+    }
+
+    [Fact]
+    public void RenderBody_UserTemplate_ReturnsNoLeadingNewLine()
+    {
+        var template = "---\nform:\n  test:\n    type: text\n    label: Test\n---\n\n{{test}}\n";
+        var values = new Dictionary<string, string> { ["test"] = "hello" };
+
+        var result = _renderer.RenderBody(template, Definition("test"), values);
+
+        Assert.Equal("hello\n", result);
+    }
+
     // DoesNotContain loop is the belt-and-suspenders proof: each declared token that received a value must leave
     // zero literal survivors in the output, independent of the Equal assertion.
     [Theory]

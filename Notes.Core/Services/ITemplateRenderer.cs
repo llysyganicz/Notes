@@ -10,5 +10,14 @@ namespace Notes.Core.Services;
 /// </summary>
 public interface ITemplateRenderer
 {
+    /// <summary>
+    /// Renders the full generated note from the template, keeping non-form frontmatter
+    /// and substituting declared tokens in the body.
+    /// </summary>
     string Render(string templateText, FormDefinition definition, IReadOnlyDictionary<string, string> values);
+
+    /// <summary>
+    /// Renders only the body region of the template, omitting the frontmatter block entirely.
+    /// </summary>
+    string RenderBody(string templateText, FormDefinition definition, IReadOnlyDictionary<string, string> values);
 }
