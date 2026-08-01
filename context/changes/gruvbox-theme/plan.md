@@ -371,8 +371,8 @@ Make the tree view's context menu open on a right-click anywhere on the row, not
 
 #### Automated
 
-- [ ] 2.1 `dotnet build` passes
-- [ ] 2.2 `dotnet test` + `Notes.E2ETests` pass (editor/preview flows intact)
+- [x] 2.1 `dotnet build` passes
+- [x] 2.2 `dotnet test` + `Notes.E2ETests` pass (editor/preview flows intact)
 
 #### Manual
 

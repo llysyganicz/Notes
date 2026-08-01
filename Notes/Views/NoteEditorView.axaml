@@ -21,9 +21,19 @@
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch"
                          IsVisible="{Binding IsEditing}" />
-        <md:MarkdownScrollViewer Markdown="{Binding PreviewText}"
-                                 HorizontalAlignment="Stretch"
-                                 VerticalAlignment="Stretch"
-                                 IsVisible="{Binding IsPreviewing}" />
+        <Border Background="{DynamicResource Background}"
+                IsVisible="{Binding IsPreviewing}">
+            <!--
+                MarkdownStyle is set from code-behind (NoteEditorView.axaml.cs),
+                not as a XAML attribute here: MarkdownScrollViewer.MarkdownStyleProperty
+                is a *private* backing field, and Avalonia's compiled-bindings
+                compiler emits a direct field-access IL instruction for it, which
+                throws FieldAccessException across assemblies at runtime.
+            -->
+            <md:MarkdownScrollViewer x:Name="Preview"
+                                     Markdown="{Binding PreviewText}"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Stretch" />
+        </Border>
     </Grid>
 </UserControl>

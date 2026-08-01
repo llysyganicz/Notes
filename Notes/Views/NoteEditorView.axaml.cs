@@ -1,7 +1,9 @@
 using System;
 using System.ComponentModel;
+using Avalonia;
 using Avalonia.Controls;
-using AvaloniaEdit.Highlighting;
+using Avalonia.Styling;
+using Notes.Services;
 using Notes.ViewModels;
 using Notes.Core.ViewModels;
 
@@ -15,8 +17,57 @@ public partial class NoteEditorView : UserControl
     public NoteEditorView()
     {
         InitializeComponent();
-        Editor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("MarkDown");
+        ApplyGruvboxSyntaxHighlighting();
         Editor.TextChanged += OnEditorTextChanged;
+        ApplyGruvboxMarkdownPreviewStyle();
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+
+        if (Application.Current is { } app)
+        {
+            app.ActualThemeVariantChanged += OnActualThemeVariantChanged;
+        }
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+
+        if (Application.Current is { } app)
+        {
+            app.ActualThemeVariantChanged -= OnActualThemeVariantChanged;
+        }
+    }
+
+    private void OnActualThemeVariantChanged(object? sender, EventArgs e)
+    {
+        // The markdown preview (Notes/Themes/GruvboxMarkdownPreview.axaml) is
+        // DynamicResource-based and re-resolves colors on its own. The editor's
+        // syntax-highlighting definition is not - .xshd <Color> values are
+        // load-time literals - so it must be explicitly reloaded and reassigned
+        // when the OS theme toggles.
+        ApplyGruvboxSyntaxHighlighting();
+    }
+
+    private void ApplyGruvboxSyntaxHighlighting()
+    {
+        var variant = Application.Current?.ActualThemeVariant ?? ThemeVariant.Dark;
+        Editor.SyntaxHighlighting = GruvboxHighlightingLoader.Load(variant);
+    }
+
+    private void ApplyGruvboxMarkdownPreviewStyle()
+    {
+        // MarkdownScrollViewer.MarkdownStyle can't be set as a XAML attribute
+        // (see the comment on <md:MarkdownScrollViewer> in NoteEditorView.axaml)
+        // so it's assigned here via the ordinary CLR property setter instead.
+        if (Application.Current?.Resources.TryGetResource("GruvboxMarkdownPreview", ThemeVariant.Default, out var resource) == true
+            && resource is IStyle style)
+        {
+            Preview.MarkdownStyle = style;
+        }
     }
 
     protected override void OnDataContextChanged(EventArgs e)

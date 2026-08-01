@@ -34,6 +34,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!--
+      Not auto-picked-up by the Avalonia SDK's default AvaloniaXaml item glob
+      (that glob only matches .axaml/.paxaml) - must be listed explicitly so
+      it is embedded and loadable via avares://Notes/Themes/GruvboxMarkdownHighlighting.xshd
+      (see Notes/Services/GruvboxHighlightingLoader.cs).
+    -->
+    <AvaloniaResource Include="Themes\GruvboxMarkdownHighlighting.xshd" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Notes.Tests" />
     <InternalsVisibleTo Include="Notes.E2ETests" />
   </ItemGroup>
