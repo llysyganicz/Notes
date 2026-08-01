@@ -122,7 +122,7 @@ Define the original gruvbox color/brush palette in `ThemeDictionaries` for light
 
 **Intent**: Remove Fluent and wire gruvbox as the active styling, keeping `RequestedThemeVariant="Default"`.
 
-**Contract**: Remove `<FluentTheme />` and `<StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />`. The AvaloniaEdit Fluent include reappears in Phase 2 as a gruvbox replacement. Add `<StyleInclude Source="avares://Notes/Themes/GruvboxPalette.axaml" />` and `<StyleInclude Source="avares://Notes/Themes/GruvboxControls.axaml" />` (or merge palette into `Application.Resources` `MergedDictionaries`). `RequestedThemeVariant="Default"` unchanged.
+**Contract**: Remove `<FluentTheme />` and `<StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />`. The AvaloniaEdit Fluent include reappears in Phase 2 as a gruvbox replacement. Add `<StyleInclude Source="avares://Notes/Themes/GruvboxPalette.axaml" />` and `<StyleInclude Source="avares://Notes/Themes/GruvboxControls.axaml" />` (or merge palette into `Application.Resources` `MergedDictionaries`). `RequestedThemeVariant="Default"` unchanged. **Addendum (Phase 1 review 2026-08-01):** a minimal gruvbox `TextEditor`/`TextArea` chrome theme (`Notes/Themes/Controls/Editor.axaml`) landed in this phase so the editor renders once the Fluent include is removed; the full AvaloniaEdit syntax-color theming remains a Phase 2 deliverable.
 
 #### 7. csproj asset includes
 
@@ -355,17 +355,17 @@ Make the tree view's context menu open on a right-click anywhere on the row, not
 
 #### Automated
 
-- [x] 1.0 Pre-flight: NuGet search for an existing gruvbox Avalonia theme/AvaloniaEdit package recorded in `change.md` (adopt or justify hand-writing)
-- [x] 1.1 `dotnet build` passes for all four projects
-- [x] 1.2 `dotnet test` passes (Notes.Core.Tests + Notes.Tests)
-- [x] 1.3 `dotnet run --project Notes` launches with no XAML/asset-load exception
+- [x] 1.0 Pre-flight: NuGet search for an existing gruvbox Avalonia theme/AvaloniaEdit package recorded in `change.md` (adopt or justify hand-writing) — 995eb8c
+- [x] 1.1 `dotnet build` passes for all four projects — 995eb8c
+- [x] 1.2 `dotnet test` passes (Notes.Core.Tests + Notes.Tests) — 995eb8c
+- [x] 1.3 `dotnet run --project Notes` launches with no XAML/asset-load exception — 995eb8c
 
 #### Manual
 
-- [x] 1.4 Chrome, menu, search pane, split bar render gruvbox on Linux light + dark
-- [x] 1.5 Same controls render gruvbox on Windows light + dark
-- [x] 1.6 Toggling OS theme re-resolves chrome to the other variant without restart
-- [x] 1.7 All dialogs (New Note, Confirm, Template Picker, Template Form) render gruvbox
+- [x] 1.4 Chrome, menu, search pane, split bar render gruvbox on Linux light + dark — 995eb8c
+- [x] 1.5 Same controls render gruvbox on Windows light + dark — 995eb8c
+- [x] 1.6 Toggling OS theme re-resolves chrome to the other variant without restart — 995eb8c
+- [x] 1.7 All dialogs (New Note, Confirm, Template Picker, Template Form) render gruvbox — 995eb8c
 
 ### Phase 2: Editor & Preview Theming
 

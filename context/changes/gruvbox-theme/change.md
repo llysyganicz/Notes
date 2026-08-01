@@ -1,7 +1,7 @@
 ---
 change_id: gruvbox-theme
 title: Gruvbox theme, app icon, and tree-row context menu
-status: implementing
+status: impl_reviewed
 created: 2026-07-30
 updated: 2026-08-01
 archived_at: null
