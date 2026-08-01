@@ -376,11 +376,11 @@ Make the tree view's context menu open on a right-click anywhere on the row, not
 
 #### Manual
 
-- [x] 2.3 Editor markdown syntax tokens use gruvbox accents on Linux light + dark
-- [x] 2.4 Editor syntax tokens use gruvbox accents on Windows light + dark
-- [x] 2.5 Caret, selection, line numbers are gruvbox
-- [x] 2.6 Rendered preview (headings, code, links, blockquotes, tables, lists) is gruvbox
-- [x] 2.7 OS-theme toggle re-resolves editor + preview colors (confirm running-app vs relaunch)
+- [x] 2.3 Editor markdown syntax tokens use gruvbox accents on Linux light + dark — 2998e8e
+- [x] 2.4 Editor syntax tokens use gruvbox accents on Windows light + dark — 2998e8e
+- [x] 2.5 Caret, selection, line numbers are gruvbox — 2998e8e
+- [x] 2.6 Rendered preview (headings, code, links, blockquotes, tables, lists) is gruvbox — 2998e8e
+- [x] 2.7 OS-theme toggle re-resolves editor + preview colors (confirm running-app vs relaunch) — 2998e8e
 
 ### Phase 3: App Icon
 
@@ -399,11 +399,11 @@ Make the tree view's context menu open on a right-click anywhere on the row, not
 
 #### Automated
 
-- [x] 4.1 `dotnet build` passes
-- [x] 4.2 `dotnet test` passes (new `TreeViewContextMenuTests` + existing suites green)
-- [x] 4.3 `dotnet run --project Notes` launches with no tree regression
+- [x] 4.1 `dotnet build` passes — 2998e8e
+- [x] 4.2 `dotnet test` passes (new `TreeViewContextMenuTests` + existing suites green) — 2998e8e
+- [x] 4.3 `dotnet run --project Notes` launches with no tree regression — 2998e8e
 
 #### Manual
 
-- [x] 4.4 Right-clicking the empty area to the right of a folder/note name opens the context menu
-- [x] 4.5 New Folder and Delete actions from the menu still behave as before
+- [x] 4.4 Right-clicking the empty area to the right of a folder/note name opens the context menu — 2998e8e
+- [x] 4.5 New Folder and Delete actions from the menu still behave as before — 2998e8e
