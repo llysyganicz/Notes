@@ -376,34 +376,34 @@ Make the tree view's context menu open on a right-click anywhere on the row, not
 
 #### Manual
 
-- [ ] 2.3 Editor markdown syntax tokens use gruvbox accents on Linux light + dark
-- [ ] 2.4 Editor syntax tokens use gruvbox accents on Windows light + dark
-- [ ] 2.5 Caret, selection, line numbers are gruvbox
-- [ ] 2.6 Rendered preview (headings, code, links, blockquotes, tables, lists) is gruvbox
-- [ ] 2.7 OS-theme toggle re-resolves editor + preview colors (confirm running-app vs relaunch)
+- [x] 2.3 Editor markdown syntax tokens use gruvbox accents on Linux light + dark
+- [x] 2.4 Editor syntax tokens use gruvbox accents on Windows light + dark
+- [x] 2.5 Caret, selection, line numbers are gruvbox
+- [x] 2.6 Rendered preview (headings, code, links, blockquotes, tables, lists) is gruvbox
+- [x] 2.7 OS-theme toggle re-resolves editor + preview colors (confirm running-app vs relaunch)
 
 ### Phase 3: App Icon
 
 #### Automated
 
-- [x] 3.1 `dotnet build` passes (`.ico`/PNGs compile without resource errors)
-- [x] 3.2 `dotnet test` + `Notes.E2ETests` pass (icon load does not throw during window construction)
+- [x] 3.1 `dotnet build` passes (`.ico`/PNGs compile without resource errors) — 5270397
+- [x] 3.2 `dotnet test` + `Notes.E2ETests` pass (icon load does not throw during window construction) — 5270397
 
 #### Manual
 
-- [x] 3.3 Linux taskbar/dock + window title bar show the gruvbox icon
-- [x] 3.4 Windows `.exe` in Explorer, taskbar, and title bar show the icon
-- [x] 3.5 Icon is legible on a light desktop background and a dark one
+- [x] 3.3 Linux taskbar/dock + window title bar show the gruvbox icon — 5270397
+- [x] 3.4 Windows `.exe` in Explorer, taskbar, and title bar show the icon — 5270397
+- [x] 3.5 Icon is legible on a light desktop background and a dark one — 5270397
 
 ### Phase 4: Tree-Row Context Menu Fix
 
 #### Automated
 
-- [ ] 4.1 `dotnet build` passes
-- [ ] 4.2 `dotnet test` passes (new `TreeViewContextMenuTests` + existing suites green)
-- [ ] 4.3 `dotnet run --project Notes` launches with no tree regression
+- [x] 4.1 `dotnet build` passes
+- [x] 4.2 `dotnet test` passes (new `TreeViewContextMenuTests` + existing suites green)
+- [x] 4.3 `dotnet run --project Notes` launches with no tree regression
 
 #### Manual
 
-- [ ] 4.4 Right-clicking the empty area to the right of a folder/note name opens the context menu
-- [ ] 4.5 New Folder and Delete actions from the menu still behave as before
+- [x] 4.4 Right-clicking the empty area to the right of a folder/note name opens the context menu
+- [x] 4.5 New Folder and Delete actions from the menu still behave as before
