@@ -386,14 +386,14 @@ Make the tree view's context menu open on a right-click anywhere on the row, not
 
 #### Automated
 
-- [ ] 3.1 `dotnet build` passes (`.ico`/PNGs compile without resource errors)
-- [ ] 3.2 `dotnet test` + `Notes.E2ETests` pass (icon load does not throw during window construction)
+- [x] 3.1 `dotnet build` passes (`.ico`/PNGs compile without resource errors)
+- [x] 3.2 `dotnet test` + `Notes.E2ETests` pass (icon load does not throw during window construction)
 
 #### Manual
 
-- [ ] 3.3 Linux taskbar/dock + window title bar show the gruvbox icon
-- [ ] 3.4 Windows `.exe` in Explorer, taskbar, and title bar show the icon
-- [ ] 3.5 Icon is legible on a light desktop background and a dark one
+- [x] 3.3 Linux taskbar/dock + window title bar show the gruvbox icon
+- [x] 3.4 Windows `.exe` in Explorer, taskbar, and title bar show the icon
+- [x] 3.5 Icon is legible on a light desktop background and a dark one
 
 ### Phase 4: Tree-Row Context Menu Fix
 

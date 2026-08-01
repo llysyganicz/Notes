@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets/app-icon.ico</ApplicationIcon>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <AssemblyTitle>Notes</AssemblyTitle>
     <Product>Notes</Product>
@@ -41,6 +42,7 @@
       (see Notes/Services/GruvboxHighlightingLoader.cs).
     -->
     <AvaloniaResource Include="Themes\GruvboxMarkdownHighlighting.xshd" />
+    <AvaloniaResource Include="Assets\app-icon-256.png" />
   </ItemGroup>
 
   <ItemGroup>
