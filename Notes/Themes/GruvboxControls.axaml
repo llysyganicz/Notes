@@ -1,0 +1,20 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!--
+    Aggregator: merges every gruvbox ControlTheme dictionary under
+    Notes/Themes/Controls/. Split per-control-group for maintainability;
+    this file is the single StyleInclude/ResourceInclude target from
+    App.axaml. All ControlThemes are keyed by {x:Type ...} so they apply
+    implicitly, matching how FluentTheme replaced them.
+  -->
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceInclude Source="avares://Notes/Themes/Controls/Base.axaml" />
+    <ResourceInclude Source="avares://Notes/Themes/Controls/Buttons.axaml" />
+    <ResourceInclude Source="avares://Notes/Themes/Controls/Input.axaml" />
+    <ResourceInclude Source="avares://Notes/Themes/Controls/DatePicker.axaml" />
+    <ResourceInclude Source="avares://Notes/Themes/Controls/Lists.axaml" />
+    <ResourceInclude Source="avares://Notes/Themes/Controls/Menus.axaml" />
+    <ResourceInclude Source="avares://Notes/Themes/Controls/Scrolling.axaml" />
+    <ResourceInclude Source="avares://Notes/Themes/Controls/Editor.axaml" />
+  </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

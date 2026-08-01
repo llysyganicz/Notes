@@ -1,0 +1,46 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:edit="https://github.com/avaloniaui/avaloniaedit">
+  <!--
+    Minimal gruvbox chrome for AvaloniaEdit's TextEditor/TextArea, replacing
+    avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml (removed from
+    App.axaml alongside FluentTheme in this phase). Covers background,
+    default text color, selection, and caret so the editor is legible and
+    gruvbox as soon as Fluent is gone. Markdown syntax token colors and
+    the line-number margin foreground are refined in Phase 2
+    (Notes/Themes/Controls/Editor.axaml continues to be the home for that).
+
+    Template structure mirrors AvaloniaEdit's own OnApplyTemplate contract:
+    TextEditor looks up "PART_ScrollViewer" and assigns its Content to the
+    TextArea in code; TextArea looks up "PART_CP" (a ContentPresenter) and
+    assigns its Content to the TextView. Both must keep those exact names.
+  -->
+
+  <ControlTheme x:Key="{x:Type edit:TextEditor}" TargetType="edit:TextEditor">
+    <Setter Property="Background" Value="{DynamicResource Background}" />
+    <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+    <Setter Property="LineNumbersForeground" Value="{DynamicResource ForegroundMuted}" />
+    <Setter Property="Padding" Value="8" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+          <ScrollViewer Name="PART_ScrollViewer"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type edit:TextArea}" TargetType="edit:TextArea">
+    <Setter Property="SelectionBrush" Value="{DynamicResource TextSelectionBackground}" />
+    <Setter Property="SelectionForeground" Value="{DynamicResource ForegroundStrong}" />
+    <Setter Property="CaretBrush" Value="{DynamicResource Accent}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_CP" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+</ResourceDictionary>

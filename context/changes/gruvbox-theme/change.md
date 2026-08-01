@@ -1,13 +1,15 @@
 ---
 change_id: gruvbox-theme
 title: Gruvbox theme, app icon, and tree-row context menu
-status: planned
+status: implementing
 created: 2026-07-30
-updated: 2026-07-30
+updated: 2026-08-01
 archived_at: null
 ---
 
 ## Notes
+
+**Phase 1 pre-flight (2026-08-01):** NuGet search for an existing gruvbox Avalonia 12 theme / AvaloniaEdit highlighting package found nothing suitable — `gruvbox` and `gruvbox avalonia` queries return zero Avalonia theme hits, and the full avalonia-theme package listing (Material.Avalonia, SukiUI, Citrus, Classic, Semi.Avalonia, OneDark.Avalonia, Romzetron, Fluid, LuminaUI, …) contains no gruvbox variant and no AvaloniaEdit gruvbox definition. Proceeding with the hand-written `ControlTheme` library per plan.
 
 Post-MVP "Theme & Identity" UX slice. Three deliverables:
 
