@@ -12,8 +12,8 @@
               SelectedItem="{Binding SelectedNode, Mode=TwoWay}">
         <TreeView.ItemTemplate>
             <TreeDataTemplate ItemsSource="{Binding Children}" DataType="models:NoteTreeNode">
-                <TextBlock Text="{Binding Name}">
-                    <TextBlock.ContextMenu>
+                <Border HorizontalAlignment="Stretch" Background="Transparent">
+                    <Border.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="New Folder"
                                       Command="{Binding $parent[TreeView].((vm:NoteTreeViewModel)DataContext).NewFolderCommand}"
@@ -22,8 +22,9 @@
                                       Command="{Binding $parent[TreeView].((vm:NoteTreeViewModel)DataContext).DeleteNoteCommand}"
                                       CommandParameter="{Binding}" />
                         </ContextMenu>
-                    </TextBlock.ContextMenu>
-                </TextBlock>
+                    </Border.ContextMenu>
+                    <TextBlock Text="{Binding Name}" />
+                </Border>
             </TreeDataTemplate>
         </TreeView.ItemTemplate>
     </TreeView>

@@ -1,0 +1,226 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!--
+    DatePicker + DatePickerPresenter (the flyout with day/month/year looping
+    columns) + the shared button/item sub-themes the presenter's parts use.
+    Structure mirrors Avalonia.Themes.Fluent's DatePicker/DateTimePickerShared
+    (same PART_* names, since DatePicker/DatePickerPresenter locate their
+    parts by name in code), recolored to the gruvbox palette.
+  -->
+
+  <ControlTheme x:Key="GruvboxDateTimePickerItem" TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+    <Setter Property="Padding" Value="0,3,0,6" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Style Selector="^.MonthItem">
+      <Setter Property="Padding" Value="9,3,0,6" />
+      <Setter Property="HorizontalContentAlignment" Value="Left" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="GruvboxDateTimePickerButton" TargetType="Button">
+    <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+    <Setter Property="Height" Value="26" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}">
+          <ContentPresenter x:Name="PART_ContentPresenter"
+                            Background="{TemplateBinding Background}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Foreground="{TemplateBinding Foreground}"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource ControlBackgroundHover}" />
+    </Style>
+    <Style Selector="^:pressed /template/ ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource ControlBackgroundPressed}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="GruvboxDateTimePickerUpButton" TargetType="RepeatButton" BasedOn="{StaticResource GruvboxDateTimePickerButton}">
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsVisible" Value="False" />
+    <Setter Property="Content">
+      <Template>
+        <Path Width="10" Height="6" Stretch="Uniform" Fill="{Binding $parent[RepeatButton].Foreground}" Data="M0,6 L10,6 5,0 Z" />
+      </Template>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="GruvboxDateTimePickerDownButton" TargetType="RepeatButton" BasedOn="{StaticResource GruvboxDateTimePickerButton}">
+    <Setter Property="VerticalAlignment" Value="Bottom" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsVisible" Value="False" />
+    <Setter Property="Content">
+      <Template>
+        <Path Width="10" Height="6" Stretch="Uniform" Fill="{Binding $parent[RepeatButton].Foreground}" Data="M0,0 L10,0 5,6 Z" />
+      </Template>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="GruvboxDatePickerFlyoutButton" TargetType="Button">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_ContentPresenter"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          Background="{TemplateBinding Background}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          Content="{TemplateBinding Content}"
+                          Foreground="{TemplateBinding Foreground}"
+                          HorizontalContentAlignment="Stretch"
+                          VerticalContentAlignment="Stretch"
+                          CornerRadius="{TemplateBinding CornerRadius}" />
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type DatePicker}" TargetType="DatePicker">
+    <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+    <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="2" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="MinWidth" Value="220" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid Name="LayoutRoot" Margin="{TemplateBinding Padding}">
+          <Button Name="PART_FlyoutButton"
+                  Theme="{StaticResource GruvboxDatePickerFlyoutButton}"
+                  Foreground="{TemplateBinding Foreground}"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  MinWidth="{TemplateBinding MinWidth}"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  TemplatedControl.IsTemplateFocusTarget="True">
+            <Grid Name="PART_ButtonContentGrid" ColumnDefinitions="78*,Auto,132*,Auto,78*" Margin="8,6">
+              <TextBlock Name="PART_DayTextBlock" Text="day" HorizontalAlignment="Center" />
+              <TextBlock Name="PART_MonthTextBlock" Text="month" TextAlignment="Left" Margin="9,0,0,0" />
+              <TextBlock Name="PART_YearTextBlock" Text="year" HorizontalAlignment="Center" />
+              <Rectangle x:Name="PART_FirstSpacer" Fill="{DynamicResource ControlBorder}" HorizontalAlignment="Center" Width="1" Grid.Column="1" />
+              <Rectangle x:Name="PART_SecondSpacer" Fill="{DynamicResource ControlBorder}" HorizontalAlignment="Center" Width="1" Grid.Column="3" />
+            </Grid>
+          </Button>
+
+          <Popup Name="PART_Popup" WindowManagerAddShadowHint="False" IsLightDismissEnabled="True" PlacementTarget="{TemplateBinding}" Placement="Bottom">
+            <DatePickerPresenter Name="PART_PickerPresenter" />
+          </Popup>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+
+    <Style Selector="^:hasnodate /template/ Button#PART_FlyoutButton TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource ForegroundMuted}" />
+    </Style>
+
+    <Style Selector="^:disabled /template/ Rectangle">
+      <Setter Property="Fill" Value="{DynamicResource ControlBorderDisabled}" />
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type DatePickerPresenter}" TargetType="DatePickerPresenter">
+    <Setter Property="Width" Value="272" />
+    <Setter Property="MinWidth" Value="272" />
+    <Setter Property="MaxHeight" Value="340" />
+    <Setter Property="Background" Value="{DynamicResource PopupBackground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource PopupBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="Background"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                MaxHeight="340">
+          <Grid Name="ContentRoot" RowDefinitions="*,Auto">
+            <Grid Name="PART_PickerContainer">
+              <Grid.Styles>
+                <Style Selector="DateTimePickerPanel > ListBoxItem">
+                  <Setter Property="Theme" Value="{StaticResource GruvboxDateTimePickerItem}" />
+                </Style>
+              </Grid.Styles>
+              <!-- Column definitions are assigned in code by DatePickerPresenter. -->
+              <Panel Name="PART_MonthHost">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+                  <DateTimePickerPanel Name="PART_MonthSelector" PanelType="Month" ItemHeight="34" ShouldLoop="True" />
+                </ScrollViewer>
+                <RepeatButton Name="PART_MonthUpButton" Theme="{StaticResource GruvboxDateTimePickerUpButton}" />
+                <RepeatButton Name="PART_MonthDownButton" Theme="{StaticResource GruvboxDateTimePickerDownButton}" />
+              </Panel>
+              <Panel Name="PART_DayHost">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+                  <DateTimePickerPanel Name="PART_DaySelector" PanelType="Day" ItemHeight="34" ShouldLoop="True" />
+                </ScrollViewer>
+                <RepeatButton Name="PART_DayUpButton" Theme="{StaticResource GruvboxDateTimePickerUpButton}" />
+                <RepeatButton Name="PART_DayDownButton" Theme="{StaticResource GruvboxDateTimePickerDownButton}" />
+              </Panel>
+              <Panel Name="PART_YearHost">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+                  <DateTimePickerPanel Name="PART_YearSelector" PanelType="Year" ItemHeight="34" ShouldLoop="False" />
+                </ScrollViewer>
+                <RepeatButton Name="PART_YearUpButton" Theme="{StaticResource GruvboxDateTimePickerUpButton}" />
+                <RepeatButton Name="PART_YearDownButton" Theme="{StaticResource GruvboxDateTimePickerDownButton}" />
+              </Panel>
+              <Rectangle Name="HighlightRect"
+                         IsHitTestVisible="False"
+                         ZIndex="-1"
+                         Fill="{DynamicResource LowContrast}"
+                         Grid.Column="0"
+                         Grid.ColumnSpan="5"
+                         VerticalAlignment="Center"
+                         Height="34" />
+              <Rectangle Name="PART_FirstSpacer" Fill="{DynamicResource ControlBorder}" HorizontalAlignment="Center" Width="1" Grid.Column="1" />
+              <Rectangle Name="PART_SecondSpacer" Fill="{DynamicResource ControlBorder}" HorizontalAlignment="Center" Width="1" Grid.Column="3" />
+            </Grid>
+
+            <Grid Name="AcceptDismissGrid" Grid.Row="1" ColumnDefinitions="*,*">
+              <Rectangle Height="1" VerticalAlignment="Top" Fill="{DynamicResource ControlBorder}" Grid.ColumnSpan="2" />
+              <Button Name="PART_AcceptButton"
+                      Grid.Column="0"
+                      Theme="{StaticResource GruvboxDateTimePickerButton}"
+                      Height="34"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
+                <Path Stroke="{Binding $parent[Button].Foreground}" StrokeLineCap="Round" StrokeThickness="1.2" Data="M0.5,8.5 5,13.5 15.5,3" />
+              </Button>
+              <Button Name="PART_DismissButton"
+                      Grid.Column="1"
+                      Theme="{StaticResource GruvboxDateTimePickerButton}"
+                      Height="34"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
+                <Path Stroke="{Binding $parent[Button].Foreground}" StrokeLineCap="Round" StrokeThickness="1.2" Data="M2,2 14,14 M2,14 14,2" />
+              </Button>
+            </Grid>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+
+    <Style Selector="^ /template/ Panel">
+      <Style Selector="^:pointerover RepeatButton">
+        <Setter Property="IsVisible" Value="True" />
+      </Style>
+    </Style>
+  </ControlTheme>
+
+</ResourceDictionary>

@@ -1,0 +1,185 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!--
+    Original gruvbox palette (medium contrast), declared per ThemeVariant so the
+    app's RequestedThemeVariant="Default" (system-following) auto-selects the
+    matching set. Every control theme in Notes/Themes/Controls/*.axaml consumes
+    these via DynamicResource so an OS theme toggle re-resolves without restart.
+
+    Layout: raw "Gruvbox*" neutrals + accents first (named after the canonical
+    gruvbox palette), then unprefixed semantic aliases (Background, Foreground,
+    Accent, ...) that the control themes actually reference. The aliases map
+    differently per variant so light/dark flip together as a unit.
+  -->
+  <ResourceDictionary.ThemeDictionaries>
+
+    <ResourceDictionary x:Key="Dark">
+      <!-- Raw neutrals (dark: darkest background, lightest foreground) -->
+      <Color x:Key="GruvboxBg0Color">#282828</Color>
+      <Color x:Key="GruvboxBg1Color">#3c3836</Color>
+      <Color x:Key="GruvboxBg2Color">#504945</Color>
+      <Color x:Key="GruvboxBg3Color">#665c54</Color>
+      <Color x:Key="GruvboxBg4Color">#7c6f64</Color>
+      <Color x:Key="GruvboxFg0Color">#fbf1c7</Color>
+      <Color x:Key="GruvboxFg1Color">#ebdbb2</Color>
+      <Color x:Key="GruvboxFg2Color">#d5c4a1</Color>
+      <Color x:Key="GruvboxFg3Color">#bdae93</Color>
+      <Color x:Key="GruvboxFg4Color">#a89984</Color>
+      <Color x:Key="GruvboxGrayColor">#928374</Color>
+
+      <!-- Raw accents: normal + bright (dark mode reads the bright ramp) -->
+      <Color x:Key="GruvboxRedColor">#cc241d</Color>
+      <Color x:Key="GruvboxGreenColor">#98971a</Color>
+      <Color x:Key="GruvboxYellowColor">#d79921</Color>
+      <Color x:Key="GruvboxBlueColor">#458588</Color>
+      <Color x:Key="GruvboxPurpleColor">#b16286</Color>
+      <Color x:Key="GruvboxAquaColor">#689d6a</Color>
+      <Color x:Key="GruvboxOrangeColor">#d65d0e</Color>
+      <Color x:Key="GruvboxBrightRedColor">#fb4934</Color>
+      <Color x:Key="GruvboxBrightGreenColor">#b8bb26</Color>
+      <Color x:Key="GruvboxBrightYellowColor">#fabd2f</Color>
+      <Color x:Key="GruvboxBrightBlueColor">#83a598</Color>
+      <Color x:Key="GruvboxBrightPurpleColor">#d3869b</Color>
+      <Color x:Key="GruvboxBrightAquaColor">#8ec07c</Color>
+      <Color x:Key="GruvboxBrightOrangeColor">#fe8019</Color>
+
+      <SolidColorBrush x:Key="GruvboxBg0" Color="{StaticResource GruvboxBg0Color}" />
+      <SolidColorBrush x:Key="GruvboxBg1" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="GruvboxBg2" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="GruvboxBg3" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="GruvboxBg4" Color="{StaticResource GruvboxBg4Color}" />
+      <SolidColorBrush x:Key="GruvboxFg0" Color="{StaticResource GruvboxFg0Color}" />
+      <SolidColorBrush x:Key="GruvboxFg1" Color="{StaticResource GruvboxFg1Color}" />
+      <SolidColorBrush x:Key="GruvboxFg2" Color="{StaticResource GruvboxFg2Color}" />
+      <SolidColorBrush x:Key="GruvboxFg3" Color="{StaticResource GruvboxFg3Color}" />
+      <SolidColorBrush x:Key="GruvboxFg4" Color="{StaticResource GruvboxFg4Color}" />
+      <SolidColorBrush x:Key="GruvboxGray" Color="{StaticResource GruvboxGrayColor}" />
+      <SolidColorBrush x:Key="GruvboxRed" Color="{StaticResource GruvboxRedColor}" />
+      <SolidColorBrush x:Key="GruvboxGreen" Color="{StaticResource GruvboxGreenColor}" />
+      <SolidColorBrush x:Key="GruvboxYellow" Color="{StaticResource GruvboxYellowColor}" />
+      <SolidColorBrush x:Key="GruvboxBlue" Color="{StaticResource GruvboxBlueColor}" />
+      <SolidColorBrush x:Key="GruvboxPurple" Color="{StaticResource GruvboxPurpleColor}" />
+      <SolidColorBrush x:Key="GruvboxAqua" Color="{StaticResource GruvboxAquaColor}" />
+      <SolidColorBrush x:Key="GruvboxOrange" Color="{StaticResource GruvboxOrangeColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightRed" Color="{StaticResource GruvboxBrightRedColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightGreen" Color="{StaticResource GruvboxBrightGreenColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightYellow" Color="{StaticResource GruvboxBrightYellowColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightBlue" Color="{StaticResource GruvboxBrightBlueColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightPurple" Color="{StaticResource GruvboxBrightPurpleColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightAqua" Color="{StaticResource GruvboxBrightAquaColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightOrange" Color="{StaticResource GruvboxBrightOrangeColor}" />
+
+      <!-- Semantic aliases consumed by Notes/Themes/Controls/*.axaml -->
+      <SolidColorBrush x:Key="Background" Color="{StaticResource GruvboxBg0Color}" />
+      <SolidColorBrush x:Key="BackgroundRaised" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="ControlBackground" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="ControlBackgroundHover" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="ControlBackgroundPressed" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="ControlBackgroundDisabled" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="ControlBorder" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="ControlBorderDisabled" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="Foreground" Color="{StaticResource GruvboxFg1Color}" />
+      <SolidColorBrush x:Key="ForegroundStrong" Color="{StaticResource GruvboxFg0Color}" />
+      <SolidColorBrush x:Key="ForegroundMuted" Color="{StaticResource GruvboxGrayColor}" />
+      <SolidColorBrush x:Key="ForegroundDisabled" Color="{StaticResource GruvboxBg4Color}" />
+      <SolidColorBrush x:Key="LowContrast" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="Accent" Color="{StaticResource GruvboxBrightYellowColor}" />
+      <SolidColorBrush x:Key="AccentForeground" Color="{StaticResource GruvboxBg0Color}" />
+      <SolidColorBrush x:Key="FocusBorder" Color="{StaticResource GruvboxBrightYellowColor}" />
+      <SolidColorBrush x:Key="SelectionBackground" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="SelectionForeground" Color="{StaticResource GruvboxFg0Color}" />
+      <SolidColorBrush x:Key="TextSelectionBackground" Color="#667c6f64" />
+      <SolidColorBrush x:Key="PopupBackground" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="PopupBorder" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="ErrorForeground" Color="{StaticResource GruvboxBrightRedColor}" />
+      <SolidColorBrush x:Key="LinkForeground" Color="{StaticResource GruvboxBrightBlueColor}" />
+      <SolidColorBrush x:Key="ScrollBarThumb" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="ScrollBarThumbHover" Color="{StaticResource GruvboxBg4Color}" />
+    </ResourceDictionary>
+
+    <ResourceDictionary x:Key="Light">
+      <!-- Raw neutrals (light: lightest background, darkest foreground) -->
+      <Color x:Key="GruvboxBg0Color">#fbf1c7</Color>
+      <Color x:Key="GruvboxBg1Color">#ebdbb2</Color>
+      <Color x:Key="GruvboxBg2Color">#d5c4a1</Color>
+      <Color x:Key="GruvboxBg3Color">#bdae93</Color>
+      <Color x:Key="GruvboxBg4Color">#a89984</Color>
+      <Color x:Key="GruvboxFg0Color">#282828</Color>
+      <Color x:Key="GruvboxFg1Color">#3c3836</Color>
+      <Color x:Key="GruvboxFg2Color">#504945</Color>
+      <Color x:Key="GruvboxFg3Color">#665c54</Color>
+      <Color x:Key="GruvboxFg4Color">#7c6f64</Color>
+      <Color x:Key="GruvboxGrayColor">#928374</Color>
+
+      <!-- Raw accents: light mode reads the normal (darker, higher-contrast-on-light) ramp -->
+      <Color x:Key="GruvboxRedColor">#cc241d</Color>
+      <Color x:Key="GruvboxGreenColor">#98971a</Color>
+      <Color x:Key="GruvboxYellowColor">#d79921</Color>
+      <Color x:Key="GruvboxBlueColor">#458588</Color>
+      <Color x:Key="GruvboxPurpleColor">#b16286</Color>
+      <Color x:Key="GruvboxAquaColor">#689d6a</Color>
+      <Color x:Key="GruvboxOrangeColor">#d65d0e</Color>
+      <Color x:Key="GruvboxBrightRedColor">#9d0006</Color>
+      <Color x:Key="GruvboxBrightGreenColor">#79740e</Color>
+      <Color x:Key="GruvboxBrightYellowColor">#b57614</Color>
+      <Color x:Key="GruvboxBrightBlueColor">#076678</Color>
+      <Color x:Key="GruvboxBrightPurpleColor">#8f3f71</Color>
+      <Color x:Key="GruvboxBrightAquaColor">#427b58</Color>
+      <Color x:Key="GruvboxBrightOrangeColor">#af3a03</Color>
+
+      <SolidColorBrush x:Key="GruvboxBg0" Color="{StaticResource GruvboxBg0Color}" />
+      <SolidColorBrush x:Key="GruvboxBg1" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="GruvboxBg2" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="GruvboxBg3" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="GruvboxBg4" Color="{StaticResource GruvboxBg4Color}" />
+      <SolidColorBrush x:Key="GruvboxFg0" Color="{StaticResource GruvboxFg0Color}" />
+      <SolidColorBrush x:Key="GruvboxFg1" Color="{StaticResource GruvboxFg1Color}" />
+      <SolidColorBrush x:Key="GruvboxFg2" Color="{StaticResource GruvboxFg2Color}" />
+      <SolidColorBrush x:Key="GruvboxFg3" Color="{StaticResource GruvboxFg3Color}" />
+      <SolidColorBrush x:Key="GruvboxFg4" Color="{StaticResource GruvboxFg4Color}" />
+      <SolidColorBrush x:Key="GruvboxGray" Color="{StaticResource GruvboxGrayColor}" />
+      <SolidColorBrush x:Key="GruvboxRed" Color="{StaticResource GruvboxRedColor}" />
+      <SolidColorBrush x:Key="GruvboxGreen" Color="{StaticResource GruvboxGreenColor}" />
+      <SolidColorBrush x:Key="GruvboxYellow" Color="{StaticResource GruvboxYellowColor}" />
+      <SolidColorBrush x:Key="GruvboxBlue" Color="{StaticResource GruvboxBlueColor}" />
+      <SolidColorBrush x:Key="GruvboxPurple" Color="{StaticResource GruvboxPurpleColor}" />
+      <SolidColorBrush x:Key="GruvboxAqua" Color="{StaticResource GruvboxAquaColor}" />
+      <SolidColorBrush x:Key="GruvboxOrange" Color="{StaticResource GruvboxOrangeColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightRed" Color="{StaticResource GruvboxBrightRedColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightGreen" Color="{StaticResource GruvboxBrightGreenColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightYellow" Color="{StaticResource GruvboxBrightYellowColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightBlue" Color="{StaticResource GruvboxBrightBlueColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightPurple" Color="{StaticResource GruvboxBrightPurpleColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightAqua" Color="{StaticResource GruvboxBrightAquaColor}" />
+      <SolidColorBrush x:Key="GruvboxBrightOrange" Color="{StaticResource GruvboxBrightOrangeColor}" />
+
+      <!-- Semantic aliases consumed by Notes/Themes/Controls/*.axaml -->
+      <SolidColorBrush x:Key="Background" Color="{StaticResource GruvboxBg0Color}" />
+      <SolidColorBrush x:Key="BackgroundRaised" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="ControlBackground" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="ControlBackgroundHover" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="ControlBackgroundPressed" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="ControlBackgroundDisabled" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="ControlBorder" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="ControlBorderDisabled" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="Foreground" Color="{StaticResource GruvboxFg1Color}" />
+      <SolidColorBrush x:Key="ForegroundStrong" Color="{StaticResource GruvboxFg0Color}" />
+      <SolidColorBrush x:Key="ForegroundMuted" Color="{StaticResource GruvboxGrayColor}" />
+      <SolidColorBrush x:Key="ForegroundDisabled" Color="{StaticResource GruvboxBg4Color}" />
+      <SolidColorBrush x:Key="LowContrast" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="Accent" Color="{StaticResource GruvboxYellowColor}" />
+      <SolidColorBrush x:Key="AccentForeground" Color="{StaticResource GruvboxBg0Color}" />
+      <SolidColorBrush x:Key="FocusBorder" Color="{StaticResource GruvboxYellowColor}" />
+      <SolidColorBrush x:Key="SelectionBackground" Color="{StaticResource GruvboxBg2Color}" />
+      <SolidColorBrush x:Key="SelectionForeground" Color="{StaticResource GruvboxFg0Color}" />
+      <SolidColorBrush x:Key="TextSelectionBackground" Color="#66a89984" />
+      <SolidColorBrush x:Key="PopupBackground" Color="{StaticResource GruvboxBg1Color}" />
+      <SolidColorBrush x:Key="PopupBorder" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="ErrorForeground" Color="{StaticResource GruvboxBrightRedColor}" />
+      <SolidColorBrush x:Key="LinkForeground" Color="{StaticResource GruvboxBrightBlueColor}" />
+      <SolidColorBrush x:Key="ScrollBarThumb" Color="{StaticResource GruvboxBg3Color}" />
+      <SolidColorBrush x:Key="ScrollBarThumbHover" Color="{StaticResource GruvboxBg4Color}" />
+    </ResourceDictionary>
+
+  </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

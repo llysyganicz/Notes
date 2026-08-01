@@ -8,6 +8,7 @@
         x:Class="Notes.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         DataContext="{ReflectionBinding Main, Source={StaticResource Locator}}"
+        Icon="avares://Notes/Assets/app-icon-256.png"
         Title="{Binding WorkspacePath, FallbackValue=Notes, TargetNullValue=Notes}">
     <Window.KeyBindings>
         <KeyBinding Gesture="Ctrl+N" Command="{Binding NewNoteCommand}" />

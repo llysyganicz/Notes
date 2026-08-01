@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets/app-icon.ico</ApplicationIcon>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <AssemblyTitle>Notes</AssemblyTitle>
     <Product>Notes</Product>
@@ -15,7 +16,6 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.0.3" />
     <PackageReference Include="Avalonia.Desktop" Version="12.0.3" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.3" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.3" />
     <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1">
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
@@ -32,6 +32,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Notes.Core\Notes.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Not auto-picked-up by the Avalonia SDK's default AvaloniaXaml item glob
+      (that glob only matches .axaml/.paxaml) - must be listed explicitly so
+      it is embedded and loadable via avares://Notes/Themes/GruvboxMarkdownHighlighting.xshd
+      (see Notes/Services/GruvboxHighlightingLoader.cs).
+    -->
+    <AvaloniaResource Include="Themes\GruvboxMarkdownHighlighting.xshd" />
+    <AvaloniaResource Include="Assets\app-icon-256.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,11 +6,27 @@
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Resources>
-        <vm:ViewModelLocator x:Key="Locator" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://Notes/Themes/GruvboxPalette.axaml" />
+                <ResourceInclude Source="avares://Notes/Themes/GruvboxControls.axaml" />
+                <ResourceInclude Source="avares://Notes/Themes/GruvboxMarkdownPreview.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <vm:ViewModelLocator x:Key="Locator" />
+        </ResourceDictionary>
     </Application.Resources>
 
     <Application.Styles>
-        <FluentTheme />
-        <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+        <!--
+            Gruvbox replaces FluentTheme entirely (see context/changes/gruvbox-theme).
+            Every TopLevel (Window plus popup roots such as ContextMenu/Flyout hosts)
+            gets gruvbox typography here, since a bare Style can't live inside the
+            ResourceDictionary above (ControlThemes there apply implicitly by
+            {x:Type}; this is the one style-selector rule that needs Styles instead).
+        -->
+        <Style Selector="TopLevel">
+            <Setter Property="FontFamily" Value="avares://Avalonia.Fonts.Inter/Assets#Inter" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
     </Application.Styles>
 </Application>

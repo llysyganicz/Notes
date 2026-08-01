@@ -1,0 +1,177 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ctb="clr-namespace:ColorTextBlock.Avalonia;assembly=ColorTextBlock.Avalonia"
+                    xmlns:mdctl="clr-namespace:Markdown.Avalonia.Controls;assembly=Markdown.Avalonia">
+  <!--
+    Gruvbox re-skin of Markdown.Avalonia's rendered preview. Assigned to
+    NoteEditorView.axaml's <md:MarkdownScrollViewer MarkdownStyle="{StaticResource
+    GruvboxMarkdownPreview}">, which *replaces* the control's own
+    auto-detected style set (Markdown.Avalonia.MarkdownStyle.Standard, since
+    Phase 1 removed FluentTheme so the library's ThemeDetector falls through
+    to "Standard") rather than layering alongside it — MarkdownScrollViewer's
+    MarkdownStyle setter inserts the assigned IStyle at index 0 of its own
+    Styles collection and removes whatever was there before, so there is no
+    specificity fight with the built-in Standard theme's hard-coded ARGB
+    colors: ours is the only style set consulted.
+
+    Selectors and every non-color layout value (Margin/BorderThickness/
+    Padding/FontSize/FontWeight) are ported 1:1 from the decompiled
+    Markdown.Avalonia.StyleCollections.MarkdownStyleStandard so spacing is
+    unchanged; only literal ARGB brushes are swapped for gruvbox
+    DynamicResource brushes (see Notes/Themes/GruvboxPalette.axaml) so an OS
+    theme toggle re-resolves preview colors without restart. Heading
+    foregrounds additionally use a distinct gruvbox accent per level
+    (1..6) instead of Standard's plain black/gray, and the base (unclassed)
+    ctb:CTextBlock rule gains an explicit Foreground the original Standard
+    theme omitted — CTextBlock does not inherit TextBlock's ambient
+    Foreground, so leaving it unset would render invisible black body text
+    against the gruvbox dark background.
+
+    Root class: Markdown.Avalonia stamps "Markdown_Avalonia_MarkdownViewer"
+    onto the rendered document's root panel (MarkdownScrollViewer.cs
+    UpdateMarkdown); every selector below is scoped as a descendant of that
+    class so these rules only ever match inside the preview, never the rest
+    of the app.
+  -->
+  <Styles x:Key="GruvboxMarkdownPreview">
+
+    <!-- Base text: unclassed CTextBlock (body paragraphs) and plain TextBlock -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CTextBlock">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Margin" Value="0,5,0,5" />
+      <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer TextBlock">
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Headings 1-6: distinct gruvbox accent per level -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CTextBlock.Heading1">
+      <Setter Property="FontSize" Value="42" />
+      <Setter Property="FontWeight" Value="Light" />
+      <Setter Property="Foreground" Value="{DynamicResource GruvboxBrightOrange}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CTextBlock.Heading2">
+      <Setter Property="FontSize" Value="20" />
+      <Setter Property="FontWeight" Value="Light" />
+      <Setter Property="Foreground" Value="{DynamicResource GruvboxBrightYellow}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CTextBlock.Heading3">
+      <Setter Property="FontSize" Value="20" />
+      <Setter Property="FontWeight" Value="Light" />
+      <Setter Property="Foreground" Value="{DynamicResource GruvboxBrightAqua}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CTextBlock.Heading4">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontWeight" Value="Light" />
+      <Setter Property="Foreground" Value="{DynamicResource GruvboxBrightBlue}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CTextBlock.Heading5">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontWeight" Value="Light" />
+      <Setter Property="Foreground" Value="{DynamicResource GruvboxBrightPurple}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CTextBlock.Heading6">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="FontWeight" Value="Light" />
+      <Setter Property="Foreground" Value="{DynamicResource GruvboxBrightGreen}" />
+    </Style>
+
+    <!-- Fenced/indented code blocks -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.CodeBlock">
+      <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
+      <Setter Property="BorderThickness" Value="0,5,0,5" />
+      <Setter Property="Margin" Value="5,0,5,0" />
+      <Setter Property="Background" Value="{DynamicResource LowContrast}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer TextBlock.CodeBlock">
+      <Setter Property="FontFamily" Value="menlo,monaco,consolas,droid sans mono,inconsolata,courier new,monospace,dejavu sans mono" />
+      <Setter Property="Foreground" Value="{DynamicResource GruvboxBrightAqua}" />
+    </Style>
+
+    <!-- Diagnostic fallback for an unhandled container (kept visible on purpose) -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.NoContainer">
+      <Setter Property="BorderBrush" Value="{DynamicResource ErrorForeground}" />
+    </Style>
+
+    <!-- Inline code span -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CCode">
+      <Setter Property="Foreground" Value="{DynamicResource GruvboxBrightAqua}" />
+      <Setter Property="Background" Value="{DynamicResource LowContrast}" />
+    </Style>
+
+    <!-- Note / admonition block -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.Note">
+      <Setter Property="Margin" Value="5,0,5,0" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
+      <Setter Property="BorderThickness" Value="3" />
+      <Setter Property="Background" Value="{DynamicResource LowContrast}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CTextBlock.Note">
+      <Setter Property="Margin" Value="10,5,10,5" />
+    </Style>
+
+    <!-- Lists -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Grid.List">
+      <Setter Property="Margin" Value="40,0,0,0" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CTextBlock.ListMarker">
+      <Setter Property="Margin" Value="0,5,5,5" />
+      <Setter Property="Foreground" Value="{DynamicResource GruvboxBrightAqua}" />
+    </Style>
+
+    <!-- Tables -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.Table">
+      <Setter Property="Margin" Value="5" />
+      <Setter Property="BorderThickness" Value="0,0,1,1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Grid.Table > Border">
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="BorderThickness" Value="1,1,0,0" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
+      <Setter Property="Padding" Value="2" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.TightTable">
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Grid.Table">
+      <Setter Property="mdctl:AutoScaleColumnDefinitions.IsEnabled" Value="True" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.TableHeader">
+      <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.TableHeader ctb|CTextBlock">
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.OddTableRow">
+      <Setter Property="Background" Value="{DynamicResource Background}" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.EvenTableRow">
+      <Setter Property="Background" Value="{DynamicResource BackgroundRaised}" />
+    </Style>
+
+    <!-- Blockquote -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer Border.Blockquote">
+      <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+      <Setter Property="BorderThickness" Value="5,0,0,0" />
+    </Style>
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer StackPanel.Blockquote">
+      <Setter Property="Margin" Value="10,5,10,5" />
+    </Style>
+
+    <!-- Links -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer ctb|CHyperlink">
+      <Setter Property="IsUnderline" Value="True" />
+      <Setter Property="Foreground" Value="{DynamicResource LinkForeground}" />
+      <Setter Property="HoverForeground" Value="{DynamicResource Accent}" />
+    </Style>
+
+    <!-- Horizontal rule -->
+    <Style Selector=".Markdown_Avalonia_MarkdownViewer mdctl|Rule">
+      <Setter Property="Margin" Value="0,3,0,3" />
+      <Setter Property="Foreground" Value="{DynamicResource ControlBorder}" />
+    </Style>
+
+  </Styles>
+</ResourceDictionary>

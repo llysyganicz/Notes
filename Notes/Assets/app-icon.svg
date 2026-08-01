@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <!-- Gruvbox app icon: a closed notebook cover with a spine strip and a big block letter
+       "N" monogram, filling the square canvas edge-to-edge (small consistent margin).
+       All shapes are original (rects + one polygon for the "N"'s diagonal stroke, sharing
+       exact corners with the two stems so there's no visible seam) - no third-party icon
+       path data. Editable source; regenerate the raster set
+       (Notes/Assets/app-icon-{16,32,48,128,256}.png, Notes/Assets/app-icon.ico) whenever
+       this file changes. See Notes/Assets/README.md for the regeneration tool/command and
+       the design-iteration history. -->
+
+  <!-- Flat backdrop: gruvbox dark bg0, square (no rounded corners) -->
+  <rect x="0" y="0" width="256" height="256" fill="#282828" />
+
+  <!-- Notebook cover: a big centered square filling the icon, with a spine strip -->
+  <g>
+    <rect x="20" y="20" width="216" height="216" fill="#ebdbb2" />
+    <rect x="20" y="20" width="24" height="216" fill="#458588" />
+  </g>
+
+  <!-- Cover monogram: a big block letter "N" as a single seamless shape (the diagonal
+       polygon's top/bottom edges exactly match the two stems' corners) -->
+  <g fill="#504945">
+    <rect x="74" y="50" width="28" height="156" />
+    <rect x="178" y="50" width="28" height="156" />
+    <polygon points="74,50 102,50 206,206 178,206" />
+  </g>
+</svg>
