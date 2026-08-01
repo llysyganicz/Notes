@@ -6,9 +6,12 @@
     avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml (removed from
     App.axaml alongside FluentTheme in this phase). Covers background,
     default text color, selection, and caret so the editor is legible and
-    gruvbox as soon as Fluent is gone. Markdown syntax token colors and
-    the line-number margin foreground are refined in Phase 2
-    (Notes/Themes/Controls/Editor.axaml continues to be the home for that).
+    gruvbox as soon as Fluent is gone. Markdown syntax token colors are
+    provided separately, via Notes/Themes/GruvboxMarkdownHighlighting.xshd
+    + Notes/Services/GruvboxHighlightingLoader.cs (Phase 2) - .xshd <Color>
+    values are load-time literals with no DynamicResource equivalent, so
+    they can't live in this file's ControlTheme setters like the rest of
+    the editor chrome above.
 
     Template structure mirrors AvaloniaEdit's own OnApplyTemplate contract:
     TextEditor looks up "PART_ScrollViewer" and assigns its Content to the
